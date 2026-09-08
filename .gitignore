@@ -1,0 +1,30 @@
+node_modules
+dist
+dist-ssr
+*.local
+*.tsbuildinfo
+
+# logs
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# editor
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# env
+.env
+.env.*
+!.env.example
+
+# WordPress theme build output (regenerate with: cd wordpress-theme && zip -r exmart-woocommerce-theme.zip exmart)
+wordpress-theme/*.zip
