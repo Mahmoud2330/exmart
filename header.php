@@ -68,7 +68,7 @@ $checkout_url = function_exists( 'wc_get_checkout_url' ) ? wc_get_checkout_url()
 			</div>
 		</div>
 
-		<div id="em-header-search-overlay" hidden style="position:absolute;top:100%;left:0;right:0;background:var(--paper);border-bottom:1px solid var(--ink-200);padding:var(--s4);box-shadow:0 8px 24px rgba(11,11,12,.10);display:flex;gap:var(--s3);align-items:center;z-index:26;">
+		<div id="em-header-search-overlay" class="em-header-search-overlay" hidden>
 			<form action="<?php echo esc_url( home_url( '/' ) ); ?>" method="get" role="search" style="flex:1;position:relative;">
 				<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ink-400);pointer-events:none;"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
 				<input type="hidden" name="post_type" value="product" />

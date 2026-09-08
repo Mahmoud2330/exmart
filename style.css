@@ -275,20 +275,38 @@ input[type="number"], input[type="search"], textarea {
 .em-tab:focus-visible { outline: 2px solid var(--accent-600); outline-offset:-2px; }
 
 /* ── Overlay & drawer ──────────────────────────────────── */
-.em-backdrop { position:fixed; inset:0; background:rgba(11,11,12,.45); z-index:9040; animation:emFadeIn .2s ease; }
+/* Hidden-by-default via the class itself (not just the [hidden] attribute
+   rule above) so these never render inline/open if that global rule is
+   ever stripped by a caching/minification plugin or fails to load —
+   mirrors the .em-mega open/closed pattern below. */
+.em-backdrop { display:none; position:fixed; inset:0; background:rgba(11,11,12,.45); z-index:9040; }
+.em-backdrop:not([hidden]) { display:block; animation:emFadeIn .2s ease; }
 @keyframes emFadeIn { from{opacity:0} to{opacity:1} }
 .em-drawer {
+  display:none;
   position:fixed; top:0; bottom:0; right:0;
   width: min(420px,100vw); background: var(--paper); box-shadow: var(--shadow-modal);
-  z-index:9050; display:flex; flex-direction:column; overflow:hidden;
-  animation: emSlideInR .25s ease;
+  z-index:9050; flex-direction:column; overflow:hidden;
 }
-.em-drawer-l { right:auto; left:0; animation: emSlideInL .25s ease; width: min(360px,100vw); }
+.em-drawer:not([hidden]) { display:flex; animation: emSlideInR .25s ease; }
+.em-drawer-l { right:auto; left:0; width: min(360px,100vw); }
+.em-drawer-l:not([hidden]) { animation: emSlideInL .25s ease; }
 @keyframes emSlideInR { from{transform:translateX(100%)} to{transform:translateX(0)} }
 @keyframes emSlideInL { from{transform:translateX(-100%)} to{transform:translateX(0)} }
 .em-drawer-header { display:flex; align-items:center; justify-content:space-between; padding: var(--s4) var(--s5); border-bottom: 1px solid var(--ink-200); flex-shrink:0; }
 .em-drawer-body { flex:1; overflow-y:auto; padding: var(--s5); scrollbar-width:thin; scrollbar-color: var(--ink-200) transparent; }
 .em-drawer-footer { padding: var(--s5); border-top: 1px solid var(--ink-200); flex-shrink:0; display:flex; flex-direction:column; gap: var(--s3); }
+
+/* Header search overlay: same hidden-by-default pattern (replaces the
+   inline display:flex that used to live on the element in header.php —
+   an inline style beats a missing/stripped [hidden] rule outright). */
+.em-header-search-overlay {
+  display:none;
+  position:absolute; top:100%; left:0; right:0; background:var(--paper);
+  border-bottom:1px solid var(--ink-200); padding:var(--s4);
+  box-shadow: var(--shadow-menu); gap:var(--s3); align-items:center; z-index:26;
+}
+.em-header-search-overlay:not([hidden]) { display:flex; }
 
 /* ── Mega menu ─────────────────────────────────────────── */
 .em-mega { position:absolute; top:100%; left:0; right:0; background: var(--paper); border-top: 1px solid var(--ink-200); box-shadow: var(--shadow-menu); z-index:30; display: none; }
