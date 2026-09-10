@@ -113,7 +113,7 @@ function exmart_customize_register( $wp_customize ) {
 		'exmart_hero',
 		array(
 			'title'       => __( 'Homepage Hero', 'exmart' ),
-			'description' => __( 'Pick the TOP main banner images (main-banner / main-2 / main-3) from Media Library — same as the old Elementor hero carousel. Leave empty to auto-detect.', 'exmart' ),
+			'description' => __( 'Choose the hero product image from your Media Library. These are the same files the old site showed as swiper-slide-image slides. You can also set a Featured Image on the Home page.', 'exmart' ),
 			'priority'    => 30,
 		)
 	);

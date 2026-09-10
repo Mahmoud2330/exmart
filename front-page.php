@@ -40,8 +40,9 @@ if ( is_wp_error( $product_brands ) ) {
 $best_sellers = exmart_get_best_sellers( 8 );
 $offers       = exmart_get_offers( 8 );
 $new_arrivals = exmart_get_new_arrivals( 8 );
-$hero_images = exmart_get_hero_images();
-$hero_multi  = count( $hero_images ) > 1;
+$hero_images  = exmart_get_hero_images();
+$hero_primary = $hero_images[0];
+$hero_multi   = count( $hero_images ) > 1;
 
 $trust_items = array(
 	array(
@@ -63,38 +64,10 @@ $trust_items = array(
 );
 ?>
 
-<section class="em-hero-banner" aria-label="<?php esc_attr_e( 'Promotional banners', 'exmart' ); ?>">
-	<div class="em-hero-banner-track" data-em-hero-slider>
-		<?php foreach ( $hero_images as $i => $slide ) :
-			$href = ! empty( $slide['href'] ) ? $slide['href'] : $shop_url;
-			?>
-			<div class="em-hero-banner-slide<?php echo 0 === $i ? ' is-active' : ''; ?>">
-				<a href="<?php echo esc_url( $href ); ?>" class="em-hero-banner-link">
-					<img
-						class="em-hero-banner-img"
-						src="<?php echo esc_url( $slide['url'] ); ?>"
-						alt="<?php echo esc_attr( $slide['alt'] ); ?>"
-						width="1600"
-						height="600"
-						<?php echo 0 === $i ? '' : 'loading="lazy"'; ?>
-						decoding="async"
-					/>
-				</a>
-			</div>
-		<?php endforeach; ?>
-	</div>
-	<?php if ( $hero_multi ) : ?>
-		<button type="button" class="em-hero-banner-nav em-hero-banner-prev" data-em-hero-prev aria-label="<?php esc_attr_e( 'Previous banner', 'exmart' ); ?>">
-			<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-		</button>
-		<button type="button" class="em-hero-banner-nav em-hero-banner-next" data-em-hero-next aria-label="<?php esc_attr_e( 'Next banner', 'exmart' ); ?>">
-			<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-		</button>
-	<?php endif; ?>
-</section>
-
-<section class="em-hero-intro">
-	<div class="em-container em-hero-intro-inner">
+<section class="em-hero">
+	<div class="em-hero-bg" style="background-image:url('<?php echo esc_url( $hero_primary['url'] ); ?>');" aria-hidden="true"></div>
+	<div class="em-hero-overlay" aria-hidden="true"></div>
+	<div class="em-container em-hero-grid">
 		<div class="em-hero-copy">
 			<p class="em-overline"><?php esc_html_e( 'Authentic health & hygiene — Egypt', 'exmart' ); ?></p>
 			<h1 class="em-h1"><?php
@@ -106,7 +79,31 @@ $trust_items = array(
 			<p class="em-body"><?php esc_html_e( 'Official sole distributor of Diversey, Grace, Oview & SureCheck in Egypt. Plus our own exclusive brands — Qualita, Vodlia, Eliv, and Verve.', 'exmart' ); ?></p>
 			<div class="em-hero-ctas">
 				<a href="<?php echo esc_url( $shop_url ); ?>" class="em-btn em-btn-lg em-btn-primary"><?php esc_html_e( 'Shop all products', 'exmart' ); ?></a>
-				<a href="<?php echo esc_url( home_url( '/about/' ) ); ?>" class="em-btn em-btn-lg em-btn-ghost"><?php esc_html_e( 'Our story', 'exmart' ); ?></a>
+				<a href="<?php echo esc_url( home_url( '/about/' ) ); ?>" class="em-btn em-btn-lg em-btn-ghost em-hero-ghost"><?php esc_html_e( 'Our story', 'exmart' ); ?></a>
+			</div>
+		</div>
+		<div class="em-hero-img-col">
+			<div class="em-hero-img-wrap<?php echo $hero_multi ? ' em-hero-img-wrap--slider' : ''; ?>"<?php echo $hero_multi ? ' data-em-hero-slider' : ''; ?>>
+				<?php foreach ( $hero_images as $i => $slide ) : ?>
+					<img
+						class="em-hero-slide<?php echo 0 === $i ? ' is-active' : ''; ?>"
+						src="<?php echo esc_url( $slide['url'] ); ?>"
+						alt="<?php echo esc_attr( $slide['alt'] ); ?>"
+						width="800"
+						height="1000"
+						<?php echo 0 === $i ? '' : 'loading="lazy"'; ?>
+						decoding="async"
+					/>
+				<?php endforeach; ?>
+				<div class="em-hero-badge">
+					<div class="em-hero-badge-icon">
+						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 12l2 2 4-4" stroke="var(--success)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" stroke="var(--success)" stroke-width="2"/></svg>
+					</div>
+					<div>
+						<p class="em-hero-badge-title"><?php esc_html_e( '100% Authentic', 'exmart' ); ?></p>
+						<p class="em-hero-badge-sub"><?php esc_html_e( 'Direct from manufacturer', 'exmart' ); ?></p>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
