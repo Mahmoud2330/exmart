@@ -85,6 +85,8 @@
 .em-hero-copy .em-overline { color: var(--accent-100); margin-bottom: var(--s4); }
 .em-hero-copy .em-body { color: var(--ink-300); margin-bottom: var(--s8); max-width: 48ch; }
 .em-hero-ctas { display: flex; gap: var(--s3); flex-wrap: wrap; }
+.em-hero-ghost { color: var(--ink-300) !important; border: 1px solid var(--ink-700) !important; }
+.em-hero-ghost:hover:not(:disabled) { background: rgba(255,255,255,.06) !important; color: var(--paper) !important; }
 .em-hero-img-col { display: none; align-items: center; justify-content: center; padding-block: var(--s8); position: relative; }
 @media (min-width: 768px) { .em-hero-img-col { display: flex; } }
 .em-hero-img-wrap { position: relative; width: 100%; max-width: 420px; }
@@ -102,6 +104,7 @@
 .em-trust-item-text { font-weight: 500; color: var(--ink-700); }
 
 /* ── Shop by category (circular strip) ────────────────── */
+.em-cat-heading { margin-bottom: var(--s5); }
 .em-cat-track { display:flex; overflow-x:auto; gap:clamp(12px,2vw,24px); padding-inline:clamp(16px,4vw,32px); padding-bottom:var(--s3); scroll-snap-type:x mandatory; scrollbar-width:none; }
 .em-cat-track::-webkit-scrollbar { display:none; }
 .em-cat-item { text-decoration:none; display:flex; flex-direction:column; align-items:center; gap:var(--s2); flex-shrink:0; scroll-snap-align:start; min-width:72px; }
@@ -120,7 +123,10 @@
 .em-brands-strip { border-bottom: 1px solid var(--ink-200); padding-block: var(--s4); }
 .em-brands-strip-row { display: flex; align-items: center; gap: var(--s4); overflow-x: auto; padding-inline: clamp(16px,4vw,32px); scrollbar-width: none; }
 .em-brands-strip-row::-webkit-scrollbar { display: none; }
+.em-brands-strip-label { color: var(--ink-400); flex-shrink: 0; }
+.em-brands-strip-divider { width: 1px; height: 20px; background: var(--ink-200); flex-shrink: 0; }
 .em-brand-pill { text-decoration: none; display: flex; align-items: center; gap: var(--s2); flex-shrink: 0; padding: var(--s2) var(--s3); border-radius: var(--r-full); border: 1px solid var(--ink-200); transition: border-color .15s, background .15s; }
+.em-brand-pill:hover { border-color: var(--brand-hover, var(--ink-400)); background: color-mix(in srgb, var(--brand-hover, var(--ink-400)) 7%, transparent); }
 .em-brand-pill-dot { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .625rem; font-weight: 700; color: #fff; flex-shrink: 0; }
 .em-brand-pill-name { font-size: .8125rem; font-weight: 600; color: var(--ink-800); white-space: nowrap; }
 

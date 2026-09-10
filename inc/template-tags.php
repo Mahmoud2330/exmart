@@ -33,11 +33,20 @@ function exmart_breadcrumb( $crumbs ) {
  * Render a 5-star rating (rounded) as inline SVGs — used on the
  * homepage testimonial band which isn't backed by WooCommerce reviews.
  */
-function exmart_stars( $rating, $size = 14 ) {
-	$full = round( $rating );
+/**
+ * Star rating SVGs.
+ *
+ * @param float  $rating  0–5.
+ * @param int    $size    Icon size in px.
+ * @param string $variant 'default' (product cards) or 'on-dark' (review band).
+ */
+function exmart_stars( $rating, $size = 14, $variant = 'default' ) {
+	$full     = (int) round( $rating );
+	$fill_on  = 'on-dark' === $variant ? 'var(--paper)' : 'var(--ink-900)';
+	$fill_off = 'on-dark' === $variant ? 'var(--ink-700)' : 'var(--ink-200)';
 	echo '<span class="em-stars" aria-label="' . esc_attr( $rating . ' out of 5 stars' ) . '">';
 	for ( $i = 0; $i < 5; $i++ ) {
-		$fill = $i < $full ? 'var(--ink-900)' : 'var(--ink-200)';
+		$fill = $i < $full ? $fill_on : $fill_off;
 		printf(
 			'<svg width="%1$d" height="%1$d" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1.5l1.545 3.13 3.455.502-2.5 2.436.59 3.432L8 9.25l-3.09 1.75.59-3.432L3 5.132l3.455-.502L8 1.5z" fill="%2$s"/></svg>',
 			absint( $size ),
@@ -123,21 +132,258 @@ function exmart_product_image( $product, $size = 'exmart-card' ) {
 }
 
 /**
+ * Shared args for homepage / collection product queries.
+ *
+ * @param int $limit
+ * @return array
+ */
+function exmart_product_query_defaults( $limit = 8 ) {
+	return array(
+		'status'     => 'publish',
+		'limit'      => max( 1, (int) $limit ),
+		'visibility' => 'visible',
+		'return'     => 'objects',
+	);
+}
+
+/**
+ * Whether a product_tag slug exists.
+ *
+ * @param string $slug
+ * @return bool
+ */
+function exmart_product_tag_exists( $slug ) {
+	$term = get_term_by( 'slug', $slug, 'product_tag' );
+	return $term && ! is_wp_error( $term );
+}
+
+/**
+ * Best Sellers — Figma: products flagged isBestSeller.
+ *
+ * WP mapping:
+ * 1. product_tag `best-sellers` (or `best-seller`)
+ * 2. fallback: highest total sales (WooCommerce popularity)
+ *
+ * @param int $limit
+ * @return WC_Product[]
+ */
+function exmart_get_best_sellers( $limit = 8 ) {
+	if ( ! function_exists( 'wc_get_products' ) ) {
+		return array();
+	}
+
+	$defaults = exmart_product_query_defaults( $limit );
+	$tag_slug = null;
+	foreach ( array( 'best-sellers', 'best-seller' ) as $candidate ) {
+		if ( exmart_product_tag_exists( $candidate ) ) {
+			$tag_slug = $candidate;
+			break;
+		}
+	}
+
+	if ( $tag_slug ) {
+		$tagged = wc_get_products(
+			array_merge(
+				$defaults,
+				array(
+					'tag'     => array( $tag_slug ),
+					'orderby' => 'popularity',
+					'order'   => 'DESC',
+				)
+			)
+		);
+		if ( ! empty( $tagged ) ) {
+			return $tagged;
+		}
+	}
+
+	return wc_get_products(
+		array_merge(
+			$defaults,
+			array(
+				'orderby' => 'popularity',
+				'order'   => 'DESC',
+			)
+		)
+	);
+}
+
+/**
+ * Offers — Figma: products with a compare-at (sale) price.
+ *
+ * WP mapping: WooCommerce on-sale products (sale price set / scheduled).
+ *
+ * @param int $limit
+ * @return WC_Product[]
+ */
+function exmart_get_offers( $limit = 8 ) {
+	if ( ! function_exists( 'wc_get_products' ) ) {
+		return array();
+	}
+
+	return wc_get_products(
+		array_merge(
+			exmart_product_query_defaults( $limit ),
+			array(
+				'on_sale' => true,
+				'orderby' => 'date',
+				'order'   => 'DESC',
+			)
+		)
+	);
+}
+
+/**
+ * New Arrivals — Figma: products flagged isNew.
+ *
+ * WP mapping (matches card "New" badge):
+ * 1. product_tag `new` or `new-arrivals`
+ * 2. products published within the last 30 days
+ * 3. fallback: newest by date (keeps the rail populated)
+ *
+ * @param int $limit
+ * @return WC_Product[]
+ */
+function exmart_get_new_arrivals( $limit = 8 ) {
+	if ( ! function_exists( 'wc_get_products' ) ) {
+		return array();
+	}
+
+	$defaults = exmart_product_query_defaults( $limit );
+	$tag_slug = null;
+	foreach ( array( 'new-arrivals', 'new' ) as $candidate ) {
+		if ( exmart_product_tag_exists( $candidate ) ) {
+			$tag_slug = $candidate;
+			break;
+		}
+	}
+
+	if ( $tag_slug ) {
+		$tagged = wc_get_products(
+			array_merge(
+				$defaults,
+				array(
+					'tag'     => array( $tag_slug ),
+					'orderby' => 'date',
+					'order'   => 'DESC',
+				)
+			)
+		);
+		if ( ! empty( $tagged ) ) {
+			return $tagged;
+		}
+	}
+
+	$recent = wc_get_products(
+		array_merge(
+			$defaults,
+			array(
+				'orderby'    => 'date',
+				'order'      => 'DESC',
+				'date_query' => array(
+					array(
+						'after'     => '30 days ago',
+						'inclusive' => true,
+					),
+				),
+			)
+		)
+	);
+	if ( ! empty( $recent ) ) {
+		return $recent;
+	}
+
+	return wc_get_products(
+		array_merge(
+			$defaults,
+			array(
+				'orderby' => 'date',
+				'order'   => 'DESC',
+			)
+		)
+	);
+}
+
+/**
+ * Shop URL for a homepage rail "View all" link.
+ *
+ * @param string $rail best_sellers|offers|new_arrivals
+ * @return string
+ */
+function exmart_rail_view_all_url( $rail ) {
+	$shop = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
+
+	switch ( $rail ) {
+		case 'best_sellers':
+			foreach ( array( 'best-sellers', 'best-seller' ) as $slug ) {
+				$term = get_term_by( 'slug', $slug, 'product_tag' );
+				if ( $term && ! is_wp_error( $term ) ) {
+					$link = get_term_link( $term );
+					if ( ! is_wp_error( $link ) ) {
+						return $link;
+					}
+				}
+			}
+			return add_query_arg( 'orderby', 'popularity', $shop );
+
+		case 'offers':
+			return add_query_arg( 'on_sale', '1', $shop );
+
+		case 'new_arrivals':
+			foreach ( array( 'new-arrivals', 'new' ) as $slug ) {
+				$term = get_term_by( 'slug', $slug, 'product_tag' );
+				if ( $term && ! is_wp_error( $term ) ) {
+					$link = get_term_link( $term );
+					if ( ! is_wp_error( $link ) ) {
+						return $link;
+					}
+				}
+			}
+			return add_query_arg( 'orderby', 'date', $shop );
+	}
+
+	return $shop;
+}
+
+/**
+ * Category image: WooCommerce thumbnail, else Unsplash placeholder.
+ *
+ * @param WP_Term $term
+ * @param int     $size
+ * @return string
+ */
+function exmart_category_image_url( $term, $size = 200 ) {
+	$thumb_id = get_term_meta( $term->term_id, 'thumbnail_id', true );
+	if ( $thumb_id ) {
+		$url = wp_get_attachment_image_url( (int) $thumb_id, 'thumbnail' );
+		if ( $url ) {
+			return $url;
+		}
+	}
+	return exmart_category_placeholder_image( $term->slug, $size );
+}
+
+/**
  * A horizontal-scroll product rail (Best Sellers / Offers / New Arrivals
  * on the homepage, "You may also like" on the product page).
  *
  * @param string        $title
  * @param WC_Product[]  $products
  * @param string        $view_all_url
+ * @param string        $empty_message
  */
-function exmart_product_rail( $title, $products, $view_all_url ) {
-	if ( empty( $products ) ) return;
+function exmart_product_rail( $title, $products, $view_all_url, $empty_message = '' ) {
 	?>
 	<section>
 		<div class="em-rail-header">
 			<h2 class="em-h3"><?php echo esc_html( $title ); ?></h2>
-			<a class="em-view-all" href="<?php echo esc_url( $view_all_url ); ?>"><?php esc_html_e( 'View all →', 'exmart' ); ?></a>
+			<?php if ( ! empty( $products ) ) : ?>
+				<a class="em-view-all" href="<?php echo esc_url( $view_all_url ); ?>"><?php esc_html_e( 'View all →', 'exmart' ); ?></a>
+			<?php endif; ?>
 		</div>
+		<?php if ( empty( $products ) ) : ?>
+			<p class="em-body em-rail-empty"><?php echo esc_html( $empty_message ? $empty_message : __( 'No products to show yet.', 'exmart' ) ); ?></p>
+		<?php else : ?>
 		<div class="em-rail-track">
 			<?php
 			global $post, $product;
@@ -157,6 +403,7 @@ function exmart_product_rail( $title, $products, $view_all_url ) {
 			wp_reset_postdata();
 			?>
 		</div>
+		<?php endif; ?>
 	</section>
 	<?php
 }

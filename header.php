@@ -94,8 +94,8 @@ $checkout_url = function_exists( 'wc_get_checkout_url' ) ? wc_get_checkout_url()
 				$quick_links = array();
 				if ( $tag = get_term_by( 'slug', 'wipes', 'product_tag' ) ) $quick_links[] = array( 'label' => __( 'Wipes', 'exmart' ), 'href' => get_term_link( $tag ) );
 				if ( $tag = get_term_by( 'slug', 'disinfectants-sanitizers', 'product_tag' ) ) $quick_links[] = array( 'label' => __( 'Disinfectants', 'exmart' ), 'href' => get_term_link( $tag ) );
-				$quick_links[] = array( 'label' => __( 'Offers', 'exmart' ), 'href' => home_url( '/?on_sale=1' ) );
-				$quick_links[] = array( 'label' => __( 'New', 'exmart' ), 'href' => home_url( '/?orderby=date' ) );
+				$quick_links[] = array( 'label' => __( 'Offers', 'exmart' ), 'href' => exmart_rail_view_all_url( 'offers' ) );
+				$quick_links[] = array( 'label' => __( 'New', 'exmart' ), 'href' => exmart_rail_view_all_url( 'new_arrivals' ) );
 				foreach ( $quick_links as $l ) :
 					if ( is_wp_error( $l['href'] ) ) continue;
 					?>

@@ -13,8 +13,9 @@ global $product;
 if ( ! $product || ! $product->is_visible() ) return;
 
 $is_sale       = $product->is_on_sale();
-$is_new        = ( time() - get_the_date( 'U' ) ) < ( 30 * DAY_IN_SECONDS );
-$is_bestseller = has_term( 'best-sellers', 'product_tag', $product->get_id() );
+$is_new        = has_term( array( 'new', 'new-arrivals' ), 'product_tag', $product->get_id() )
+	|| ( ( time() - get_the_date( 'U', $product->get_id() ) ) < ( 30 * DAY_IN_SECONDS ) );
+$is_bestseller = has_term( array( 'best-sellers', 'best-seller' ), 'product_tag', $product->get_id() );
 $out_of_stock  = ! $product->is_in_stock();
 ?>
 <article <?php wc_product_class( 'em-card', $product ); ?>>

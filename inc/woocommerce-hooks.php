@@ -231,3 +231,25 @@ add_filter( 'woocommerce_add_to_cart_fragments', 'exmart_cart_count_fragment' );
  * (mirrors the original app's "add to cart opens the drawer" behavior).
  * Handled in assets/js/site.js by listening for the added_to_cart event.
  */
+
+/**
+ * Support ?on_sale=1 on the Shop archive so homepage Offers "View all"
+ * (and the header Offers quick link) actually filter sale products.
+ *
+ * @param WP_Query $q
+ */
+function exmart_on_sale_product_query( $q ) {
+	if ( is_admin() || ! isset( $_GET['on_sale'] ) ) {
+		return;
+	}
+	if ( '1' !== wc_clean( wp_unslash( $_GET['on_sale'] ) ) ) {
+		return;
+	}
+	$ids = function_exists( 'wc_get_product_ids_on_sale' ) ? wc_get_product_ids_on_sale() : array();
+	$ids = array_values( array_unique( array_map( 'absint', $ids ) ) );
+	if ( empty( $ids ) ) {
+		$ids = array( 0 );
+	}
+	$q->set( 'post__in', $ids );
+}
+add_action( 'woocommerce_product_query', 'exmart_on_sale_product_query' );
