@@ -409,28 +409,30 @@ function exmart_get_nav_categories( $limit = 8 ) {
 }
 
 /**
- * Resolve homepage hero images from WordPress (old Swiper slides live in Media Library).
+ * Homepage hero banners — the old site's TOP Elementor Image Carousel
+ * (filenames like main-banner-*, main-2-2, main-3-2), NOT product/logo carousels.
  *
  * Priority:
- * 1. Appearance → Customize → Homepage Hero image(s)
- * 2. Home page Featured Image
- * 3. <img class="swiper-slide-image"> still in Home page content
- * 4. Images attached to the Home page
- * 5. Bundled theme fallback
+ * 1. Appearance → Customize → Homepage Hero
+ * 2. First Elementor `image-carousel` on the Home page (carousel attachment IDs)
+ * 3. Media Library files matching main-banner / main-N naming
+ * 4. Known live main-banner URLs (maps to local attachment when present)
+ * 5. Bundled fallback
  *
- * @return array<int, array{id:int,url:string,alt:string}>
+ * @return array<int, array{id:int,url:string,alt:string,href?:string}>
  */
 function exmart_get_hero_images() {
 	$images = array();
 	$seen   = array();
+	$shop   = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
 
-	$push = static function ( $attachment_id = 0, $url = '', $alt = '' ) use ( &$images, &$seen ) {
+	$add = static function ( $attachment_id = 0, $url = '', $alt = '', $href = '' ) use ( &$images, &$seen ) {
 		$attachment_id = absint( $attachment_id );
 		if ( $attachment_id ) {
 			if ( isset( $seen[ 'id:' . $attachment_id ] ) ) {
 				return;
 			}
-			$resolved = wp_get_attachment_image_url( $attachment_id, 'large' );
+			$resolved = wp_get_attachment_image_url( $attachment_id, 'full' );
 			if ( ! $resolved ) {
 				return;
 			}
@@ -440,9 +442,10 @@ function exmart_get_hero_images() {
 			}
 			$seen[ 'id:' . $attachment_id ] = true;
 			$images[]                       = array(
-				'id'  => $attachment_id,
-				'url' => $resolved,
-				'alt' => $meta_alt ? $meta_alt : __( 'Professional hygiene products', 'exmart' ),
+				'id'   => $attachment_id,
+				'url'  => $resolved,
+				'alt'  => $meta_alt ? $meta_alt : __( 'exMart banner', 'exmart' ),
+				'href' => $href,
 			);
 			return;
 		}
@@ -451,129 +454,176 @@ function exmart_get_hero_images() {
 		if ( ! $url || isset( $seen[ 'url:' . $url ] ) ) {
 			return;
 		}
-		$mapped = attachment_url_to_postid( $url );
-		if ( $mapped ) {
-			$push_id = absint( $mapped );
-			if ( $push_id && ! isset( $seen[ 'id:' . $push_id ] ) ) {
-				$resolved = wp_get_attachment_image_url( $push_id, 'large' );
-				if ( $resolved ) {
-					$meta_alt = get_post_meta( $push_id, '_wp_attachment_image_alt', true );
-					$seen[ 'id:' . $push_id ]  = true;
-					$seen[ 'url:' . $url ]     = true;
-					$images[]                 = array(
-						'id'  => $push_id,
-						'url' => $resolved,
-						'alt' => $meta_alt ? $meta_alt : ( $alt ? $alt : __( 'Professional hygiene products', 'exmart' ) ),
-					);
-					return;
-				}
+		$mapped = absint( attachment_url_to_postid( $url ) );
+		if ( $mapped && ! isset( $seen[ 'id:' . $mapped ] ) ) {
+			$resolved = wp_get_attachment_image_url( $mapped, 'full' );
+			if ( $resolved ) {
+				$meta_alt                    = get_post_meta( $mapped, '_wp_attachment_image_alt', true );
+				$seen[ 'id:' . $mapped ]     = true;
+				$seen[ 'url:' . $url ]       = true;
+				$images[]                    = array(
+					'id'   => $mapped,
+					'url'  => $resolved,
+					'alt'  => $meta_alt ? $meta_alt : ( $alt ? $alt : __( 'exMart banner', 'exmart' ) ),
+					'href' => $href,
+				);
+				return;
 			}
 		}
 		$seen[ 'url:' . $url ] = true;
 		$images[]              = array(
-			'id'  => 0,
-			'url' => $url,
-			'alt' => $alt ? $alt : __( 'Professional hygiene products', 'exmart' ),
+			'id'   => 0,
+			'url'  => $url,
+			'alt'  => $alt ? $alt : __( 'exMart banner', 'exmart' ),
+			'href' => $href,
 		);
 	};
 
+	// 1) Customizer overrides.
 	$custom_id = absint( get_theme_mod( 'exmart_hero_image', 0 ) );
 	if ( $custom_id ) {
-		$push( $custom_id );
+		$add( $custom_id );
 	}
 	$extra_ids = (string) get_theme_mod( 'exmart_hero_image_ids', '' );
 	if ( '' !== $extra_ids ) {
 		foreach ( preg_split( '/[\s,]+/', $extra_ids ) as $piece ) {
-			$push( absint( $piece ) );
+			$add( absint( $piece ) );
 		}
+	}
+	if ( ! empty( $images ) ) {
+		return array_values( $images );
 	}
 
 	$front_id = (int) get_option( 'page_on_front' );
 
-	if ( $front_id && has_post_thumbnail( $front_id ) ) {
-		$push( (int) get_post_thumbnail_id( $front_id ) );
-	}
-
+	// 2) First Elementor Image Carousel on the Home page (= top main banner).
 	if ( $front_id ) {
-		$sources = array( (string) get_post_field( 'post_content', $front_id ) );
-		$elementor = get_post_meta( $front_id, '_elementor_data', true );
-		if ( is_string( $elementor ) && $elementor !== '' ) {
-			$sources[] = $elementor;
-		}
-
-		foreach ( $sources as $blob ) {
-			if ( ! $blob ) {
-				continue;
-			}
-			// Classic <img class="swiper-slide-image" …>
-			if ( preg_match_all( '/<img\b[^>]*>/i', $blob, $img_tags ) ) {
-				foreach ( $img_tags[0] as $tag ) {
-					if ( ! preg_match( '/class=(["\'])[^"\']*swiper-slide-image[^"\']*\1/i', $tag )
-						&& ! preg_match( '/swiper-slide-image/i', $tag ) ) {
-						continue;
-					}
-					if ( preg_match( '/wp-image-(\d+)/i', $tag, $m ) ) {
-						$push( absint( $m[1] ) );
-						continue;
-					}
-					$src = '';
-					$alt = '';
-					if ( preg_match( '/\ssrc=(["\'])([^"\']+)\1/i', $tag, $sm ) ) {
-						$src = $sm[2];
-					}
-					if ( preg_match( '/\salt=(["\'])([^"\']*)\1/i', $tag, $am ) ) {
-						$alt = $am[2];
-					}
-					if ( $src ) {
-						$push( 0, $src, $alt );
-					}
-				}
-			}
-			// Elementor / JSON: "id":123 near swiper slide image urls, or plain attachment IDs in urls.
-			if ( preg_match_all( '/swiper-slide-image[^"]*"[^"]*"(?:[^"]*"){0,6}[^"]*wp-content\/uploads\/[^"\\]+/i', $blob, $url_hits ) ) {
-				foreach ( $url_hits[0] as $chunk ) {
-					if ( preg_match( '#https?://[^"\\]+\.(?:jpe?g|png|webp|gif)#i', $chunk, $um ) ) {
-						$push( 0, $um[0] );
-					}
-				}
-			}
-			if ( preg_match_all( '#https?://[^"\\s]+/wp-content/uploads/[^"\\s]+\.(?:jpe?g|png|webp|gif)#i', $blob, $all_urls ) && false !== stripos( $blob, 'swiper-slide-image' ) ) {
-				foreach ( array_slice( $all_urls[0], 0, 8 ) as $u ) {
-					$push( 0, $u );
+		$raw = get_post_meta( $front_id, '_elementor_data', true );
+		if ( is_string( $raw ) && $raw !== '' ) {
+			$data = json_decode( $raw, true );
+			if ( is_array( $data ) ) {
+				foreach ( exmart_elementor_first_image_carousel_ids( $data ) as $cid ) {
+					$add( (int) $cid );
 				}
 			}
 		}
 	}
-
-	if ( $front_id ) {
-		$children = get_children(
-			array(
-				'post_parent'    => $front_id,
-				'post_type'      => 'attachment',
-				'post_mime_type' => 'image',
-				'numberposts'    => 8,
-				'orderby'        => 'menu_order ID',
-				'order'          => 'ASC',
-			)
-		);
-		if ( $children ) {
-			foreach ( $children as $child ) {
-				$push( (int) $child->ID );
-			}
-		}
+	if ( ! empty( $images ) ) {
+		return array_values( $images );
 	}
 
+	// 3) Media Library by main-banner filename (same assets as live Elementor hero).
+	global $wpdb;
+	$like_rows = $wpdb->get_col(
+		"SELECT post_id FROM {$wpdb->postmeta}
+		WHERE meta_key = '_wp_attached_file'
+		AND (
+			meta_value LIKE '%main-banner%'
+			OR meta_value LIKE '%/main-2-%'
+			OR meta_value LIKE '%/main-3-%'
+			OR meta_value LIKE '%main-2-2%'
+			OR meta_value LIKE '%main-3-2%'
+		)
+		ORDER BY post_id DESC
+		LIMIT 12"
+	);
+	$candidates = array_map( 'absint', $like_rows ? $like_rows : array() );
+	usort(
+		$candidates,
+		static function ( $a, $b ) {
+			$fa    = strtolower( (string) get_post_meta( $a, '_wp_attached_file', true ) );
+			$fb    = strtolower( (string) get_post_meta( $b, '_wp_attached_file', true ) );
+			$score = static function ( $f ) {
+				if ( false !== strpos( $f, 'main-banner' ) ) {
+					return 0;
+				}
+				if ( preg_match( '/main-?2/', $f ) ) {
+					return 1;
+				}
+				if ( preg_match( '/main-?3/', $f ) ) {
+					return 2;
+				}
+				return 9;
+			};
+			return $score( $fa ) <=> $score( $fb );
+		}
+	);
+	foreach ( array_slice( $candidates, 0, 6 ) as $cid ) {
+		$add( (int) $cid );
+	}
+	if ( ! empty( $images ) ) {
+		return array_values( $images );
+	}
+
+	// 4) Known live-site main banner URLs.
+	$known = array(
+		array(
+			'url' => 'https://exmartegypt.com/wp-content/uploads/2025/12/main-banner-good-sense-spring.jpg',
+			'alt' => 'main banner good sense spring',
+		),
+		array(
+			'url' => 'https://exmartegypt.com/wp-content/uploads/2025/07/main-2-2.jpg',
+			'alt' => 'main 2-2',
+		),
+		array(
+			'url' => 'https://exmartegypt.com/wp-content/uploads/2025/07/main-3-2.png',
+			'alt' => 'main 3-2',
+		),
+	);
+	foreach ( $known as $slide ) {
+		$add( 0, $slide['url'], $slide['alt'], $shop );
+	}
 	if ( ! empty( $images ) ) {
 		return array_values( $images );
 	}
 
 	return array(
 		array(
-			'id'  => 0,
-			'url' => EXMART_URI . '/assets/images/hero-product.jpg',
-			'alt' => __( 'Professional hygiene products', 'exmart' ),
+			'id'   => 0,
+			'url'  => EXMART_URI . '/assets/images/hero-product.jpg',
+			'alt'  => __( 'exMart banner', 'exmart' ),
+			'href' => $shop,
 		),
 	);
+}
+
+/**
+ * Walk Elementor JSON and return attachment IDs from the first image-carousel widget.
+ *
+ * @param array $elements
+ * @return int[]
+ */
+function exmart_elementor_first_image_carousel_ids( $elements ) {
+	foreach ( $elements as $el ) {
+		if ( ! is_array( $el ) ) {
+			continue;
+		}
+		$widget = isset( $el['widgetType'] ) ? $el['widgetType'] : '';
+		if ( 'image-carousel' === $widget ) {
+			$carousel = array();
+			if ( ! empty( $el['settings']['carousel'] ) && is_array( $el['settings']['carousel'] ) ) {
+				$carousel = $el['settings']['carousel'];
+			}
+			$ids = array();
+			foreach ( $carousel as $item ) {
+				if ( is_array( $item ) && ! empty( $item['id'] ) ) {
+					$ids[] = absint( $item['id'] );
+				} elseif ( is_numeric( $item ) ) {
+					$ids[] = absint( $item );
+				}
+			}
+			if ( $ids ) {
+				return $ids;
+			}
+		}
+		if ( ! empty( $el['elements'] ) && is_array( $el['elements'] ) ) {
+			$nested = exmart_elementor_first_image_carousel_ids( $el['elements'] );
+			if ( $nested ) {
+				return $nested;
+			}
+		}
+	}
+	return array();
 }
 
 /**

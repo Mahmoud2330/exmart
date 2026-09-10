@@ -24,22 +24,36 @@
 		initHeroSlider();
 	} );
 
-	// ── Homepage hero (multi-image fade, old Swiper replacement) ──
+	// ── Homepage hero (main banner carousel from old Elementor) ──
 	function initHeroSlider() {
-		var wrap = document.querySelector( '[data-em-hero-slider]' );
-		if ( ! wrap ) return;
-		var slides = Array.prototype.slice.call( wrap.querySelectorAll( '.em-hero-slide' ) );
+		var track = document.querySelector( '[data-em-hero-slider]' );
+		if ( ! track ) return;
+		var slides = Array.prototype.slice.call( track.querySelectorAll( '.em-hero-banner-slide' ) );
 		if ( slides.length < 2 ) return;
 		var index = 0;
-		setInterval( function () {
+		var timer = null;
+
+		function go( next ) {
 			slides[ index ].classList.remove( 'is-active' );
-			index = ( index + 1 ) % slides.length;
+			index = ( next + slides.length ) % slides.length;
 			slides[ index ].classList.add( 'is-active' );
-			var bg = document.querySelector( '.em-hero-bg' );
-			if ( bg && slides[ index ].src ) {
-				bg.style.backgroundImage = 'url("' + slides[ index ].src + '")';
-			}
-		}, 5000 );
+		}
+		function start() {
+			stop();
+			timer = setInterval( function () { go( index + 1 ); }, 5000 );
+		}
+		function stop() {
+			if ( timer ) clearInterval( timer );
+			timer = null;
+		}
+
+		var prev = document.querySelector( '[data-em-hero-prev]' );
+		var next = document.querySelector( '[data-em-hero-next]' );
+		if ( prev ) prev.addEventListener( 'click', function () { go( index - 1 ); start(); } );
+		if ( next ) next.addEventListener( 'click', function () { go( index + 1 ); start(); } );
+		track.addEventListener( 'mouseenter', stop );
+		track.addEventListener( 'mouseleave', start );
+		start();
 	}
 
 	// ── Announcement bar dismiss ──────────────────────────

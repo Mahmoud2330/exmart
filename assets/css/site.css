@@ -76,17 +76,42 @@
 .em-footer-payments { display: flex; gap: var(--s2); flex-wrap: wrap; }
 .em-footer-copyright { border-top: 1px solid var(--ink-100); padding: var(--s3) 0; text-align: center; color: var(--ink-400); font-size: .8125rem; }
 
-/* ── Hero ──────────────────────────────────────────────── */
+/* ── Hero banner (old Elementor main carousel) ─────────── */
+.em-hero-banner { position: relative; background: var(--ink-900); overflow: hidden; }
+.em-hero-banner-track { position: relative; width: 100%; }
+.em-hero-banner-slide { display: none; }
+.em-hero-banner-slide.is-active { display: block; }
+.em-hero-banner-link { display: block; line-height: 0; }
+.em-hero-banner-img { width: 100%; height: auto; max-height: min(70vh, 560px); object-fit: cover; object-position: center; display: block; aspect-ratio: 16 / 6; }
+@media (max-width: 767px) {
+  .em-hero-banner-img { aspect-ratio: 16 / 9; max-height: 42vh; }
+}
+.em-hero-banner-nav {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 44px; height: 44px; border-radius: 50%;
+  border: none; background: rgba(255,255,255,.92); color: var(--ink-900);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; z-index: 3; box-shadow: var(--shadow-menu);
+}
+.em-hero-banner-prev { left: clamp(8px, 2vw, 24px); }
+.em-hero-banner-next { right: clamp(8px, 2vw, 24px); }
+.em-hero-banner-nav:hover { background: #fff; }
+.em-hero-banner-nav:focus-visible { outline: 2px solid var(--accent-600); outline-offset: 2px; }
+
+.em-hero-intro { border-bottom: 1px solid var(--ink-200); background: var(--paper); }
+.em-hero-intro-inner { padding-block: clamp(32px, 5vw, 56px); }
+.em-hero-intro .em-hero-copy .em-h1 { color: var(--ink-900); margin-bottom: var(--s5); }
+.em-hero-intro .em-hero-copy .em-overline { color: var(--accent-600); margin-bottom: var(--s4); }
+.em-hero-intro .em-hero-copy .em-body { color: var(--ink-500); margin-bottom: var(--s8); max-width: 56ch; }
+.em-hero-ctas { display: flex; gap: var(--s3); flex-wrap: wrap; }
+
+/* legacy dark hero pieces kept for other templates */
 .em-hero { background: var(--ink-900); color: var(--paper); position: relative; overflow: hidden; }
 .em-hero-bg { position: absolute; inset: 0; z-index: 0; background-size: cover; background-position: center right; opacity: .18; }
 .em-hero-overlay { position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg, var(--ink-900) 45%, transparent 100%); }
 .em-hero-grid { position: relative; z-index: 2; display: grid; grid-template-columns: 1fr; gap: var(--s8); align-items: center; min-height: clamp(380px, 55vw, 560px); }
 @media (min-width: 768px) { .em-hero-grid { grid-template-columns: 1fr 1fr; } }
-.em-hero-copy { padding-block: clamp(48px, 8vw, 96px); }
-.em-hero-copy .em-h1 { color: var(--paper); margin-bottom: var(--s5); }
-.em-hero-copy .em-overline { color: var(--accent-100); margin-bottom: var(--s4); }
-.em-hero-copy .em-body { color: var(--ink-300); margin-bottom: var(--s8); max-width: 48ch; }
-.em-hero-ctas { display: flex; gap: var(--s3); flex-wrap: wrap; }
+.em-hero-copy { padding-block: 0; }
 .em-hero-ghost { color: var(--ink-300) !important; border: 1px solid var(--ink-700) !important; }
 .em-hero-ghost:hover:not(:disabled) { background: rgba(255,255,255,.06) !important; color: var(--paper) !important; }
 .em-hero-img-col { display: none; align-items: center; justify-content: center; padding-block: var(--s8); position: relative; }
@@ -94,9 +119,6 @@
 .em-hero-img-wrap { position: relative; width: 100%; max-width: 420px; }
 .em-hero-img-wrap img,
 .em-hero-img-wrap .em-hero-slide { width: 100%; aspect-ratio: 4/5; object-fit: cover; border-radius: var(--r-lg); box-shadow: 0 32px 64px rgba(0,0,0,.4); display: block; }
-.em-hero-img-wrap--slider .em-hero-slide { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity .6s ease; box-shadow: none; pointer-events: none; }
-.em-hero-img-wrap--slider .em-hero-slide.is-active { opacity: 1; position: relative; pointer-events: auto; }
-.em-hero-img-wrap--slider { min-height: 0; }
 .em-hero-badge { position: absolute; bottom: 24px; left: -24px; background: var(--paper); border-radius: var(--r-md); padding: var(--s3) var(--s4); box-shadow: 0 8px 24px rgba(0,0,0,.2); display: flex; align-items: center; gap: var(--s3); z-index: 2; }
 .em-hero-badge-icon { width: 40px; height: 40px; border-radius: 50%; background: var(--success-bg); display: flex; align-items: center; justify-content: center; }
 .em-hero-badge-title { font-size: .75rem; font-weight: 700; color: var(--ink-900); margin: 0; }
