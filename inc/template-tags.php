@@ -364,6 +364,51 @@ function exmart_category_image_url( $term, $size = 200 ) {
 }
 
 /**
+ * Top-level storefront categories in Figma order (Shop by Category / footer).
+ * Excludes Uncategorized and nested Home Care children.
+ *
+ * @param int $limit
+ * @return WP_Term[]
+ */
+function exmart_get_nav_categories( $limit = 8 ) {
+	$order = array(
+		'personal-care',
+		'hair-care',
+		'skin-care',
+		'baby-care',
+		'feminine-care',
+		'home-care',
+		'home-diagnostics',
+		'health-protection',
+	);
+	$args  = array(
+		'taxonomy'   => 'product_cat',
+		'hide_empty' => false,
+		'parent'     => 0,
+		'number'     => 12,
+	);
+	$uncat = get_term_by( 'slug', 'uncategorized', 'product_cat' );
+	if ( $uncat && ! is_wp_error( $uncat ) ) {
+		$args['exclude'] = array( (int) $uncat->term_id );
+	}
+	$terms = get_terms( $args );
+	if ( is_wp_error( $terms ) || empty( $terms ) ) {
+		return array();
+	}
+	usort(
+		$terms,
+		static function ( $a, $b ) use ( $order ) {
+			$ai = array_search( $a->slug, $order, true );
+			$bi = array_search( $b->slug, $order, true );
+			$ai = false === $ai ? 999 : $ai;
+			$bi = false === $bi ? 999 : $bi;
+			return $ai <=> $bi;
+		}
+	);
+	return array_slice( $terms, 0, max( 1, (int) $limit ) );
+}
+
+/**
  * A horizontal-scroll product rail (Best Sellers / Offers / New Arrivals
  * on the homepage, "You may also like" on the product page).
  *

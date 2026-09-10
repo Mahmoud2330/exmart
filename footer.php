@@ -7,10 +7,22 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 	</main><!-- #main-content -->
 
 	<?php
-	$product_cats   = get_terms( array( 'taxonomy' => 'product_cat', 'hide_empty' => false ) );
+	$product_cats   = exmart_get_nav_categories( 8 );
 	$product_brands = get_terms( array( 'taxonomy' => 'product_brand', 'hide_empty' => false ) );
-	$distributed    = array_slice( array_filter( $product_brands, fn( $t ) => exmart_brand_type( $t->term_id ) === 'distributed' ), 0, 2 );
-	$shop_url       = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
+	if ( is_wp_error( $product_brands ) ) {
+		$product_brands = array();
+	}
+	$distributed = array_slice(
+		array_filter(
+			$product_brands,
+			static function ( $t ) {
+				return exmart_brand_type( $t->term_id ) === 'distributed';
+			}
+		),
+		0,
+		2
+	);
+	$shop_url = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
 	?>
 
 	<footer class="em-site-footer">
@@ -57,7 +69,15 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		<div class="em-footer-strip">
 			<div class="em-container em-footer-strip-row">
 				<div class="em-footer-brand-block">
-					<a href="<?php echo esc_url( home_url( '/' ) ); ?>"><img src="<?php echo esc_url( EXMART_URI . '/assets/images/logo.png' ); ?>" alt="exMart" height="40" style="width:auto" /></a>
+					<a class="em-footer-logo-link" href="<?php echo esc_url( home_url( '/' ) ); ?>">
+						<img
+							class="em-footer-logo"
+							src="<?php echo esc_url( EXMART_URI . '/assets/images/logo.png' ); ?>"
+							alt="exMart"
+							width="140"
+							height="40"
+						/>
+					</a>
 					<p class="em-caption em-footer-address">
 						12 El-Nozha St, Heliopolis, Cairo, Egypt<br />
 						+20 100 123 4567 · hello@exmart.eg

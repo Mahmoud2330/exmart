@@ -11,43 +11,8 @@ get_header();
 
 $shop_url = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
 
-/* Categories: top-level only, Figma order, no Uncategorized. */
-$cat_order = array(
-	'personal-care',
-	'hair-care',
-	'skin-care',
-	'baby-care',
-	'feminine-care',
-	'home-care',
-	'home-diagnostics',
-	'health-protection',
-);
-$uncat    = get_term_by( 'slug', 'uncategorized', 'product_cat' );
-$cat_args = array(
-	'taxonomy'   => 'product_cat',
-	'hide_empty' => false,
-	'parent'     => 0,
-	'number'     => 12,
-);
-if ( $uncat && ! is_wp_error( $uncat ) ) {
-	$cat_args['exclude'] = array( (int) $uncat->term_id );
-}
-$product_cats = get_terms( $cat_args );
-if ( ! is_wp_error( $product_cats ) && $product_cats ) {
-	usort(
-		$product_cats,
-		static function ( $a, $b ) use ( $cat_order ) {
-			$ai = array_search( $a->slug, $cat_order, true );
-			$bi = array_search( $b->slug, $cat_order, true );
-			$ai = false === $ai ? 999 : $ai;
-			$bi = false === $bi ? 999 : $bi;
-			return $ai <=> $bi;
-		}
-	);
-	$product_cats = array_slice( $product_cats, 0, 8 );
-} else {
-	$product_cats = array();
-}
+/* Categories: top-level only, Figma order (shared with footer). */
+$product_cats = exmart_get_nav_categories( 8 );
 
 /* Brands: distributed first, then house (Figma brand strip). */
 $product_brands = get_terms(

@@ -69,6 +69,8 @@
 .em-footer-strip { border-top: 1px solid var(--ink-200); background: var(--paper); }
 .em-footer-strip-row { padding-block: var(--s6); display: flex; flex-wrap: wrap; gap: var(--s6); align-items: flex-start; justify-content: space-between; }
 .em-footer-brand-block { display: flex; flex-direction: column; gap: var(--s1); }
+.em-footer-logo-link { display: inline-block; line-height: 0; }
+.em-footer-logo { display: block; height: 36px; width: auto; max-width: 140px; object-fit: contain; }
 .em-footer-address { color: var(--ink-500); max-width: 260px; line-height: 1.5; }
 .em-footer-trust-row { display: flex; flex-wrap: wrap; gap: var(--s3); margin-bottom: var(--s3); }
 .em-footer-payments { display: flex; gap: var(--s2); flex-wrap: wrap; }
