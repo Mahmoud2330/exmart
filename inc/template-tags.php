@@ -57,6 +57,66 @@ function exmart_stars( $rating, $size = 14, $variant = 'default' ) {
 }
 
 /**
+ * Format a numeric price for card display (store decimals / separators).
+ *
+ * @param float|string $amount
+ * @return string
+ */
+function exmart_format_card_price( $amount ) {
+	if ( '' === $amount || null === $amount ) {
+		return '';
+	}
+	$decimals = function_exists( 'wc_get_price_decimals' ) ? wc_get_price_decimals() : 2;
+	$dec_sep  = function_exists( 'wc_get_price_decimal_separator' ) ? wc_get_price_decimal_separator() : '.';
+	$tho_sep  = function_exists( 'wc_get_price_thousand_separator' ) ? wc_get_price_thousand_separator() : ',';
+	return number_format( (float) $amount, $decimals, $dec_sep, $tho_sep );
+}
+
+/**
+ * Product-card price lockup (Figma): EGP + sale in red + struck regular.
+ * Avoids WooCommerce <ins>/<del> markup that theme/plugin CSS often overrides.
+ *
+ * @param WC_Product $product
+ */
+function exmart_card_price_html( $product ) {
+	if ( ! $product || ! is_a( $product, 'WC_Product' ) ) {
+		return;
+	}
+
+	$currency = function_exists( 'get_woocommerce_currency' ) ? get_woocommerce_currency() : 'EGP';
+	$label    = ( 'EGP' === $currency ) ? 'EGP' : ( function_exists( 'get_woocommerce_currency_symbol' ) ? get_woocommerce_currency_symbol( $currency ) : $currency );
+
+	$current  = null;
+	$regular  = null;
+	$on_sale  = $product->is_on_sale();
+
+	if ( $product->is_type( 'variable' ) ) {
+		$current = (float) $product->get_variation_price( 'min', true );
+		$regular = (float) $product->get_variation_regular_price( 'min', true );
+		$on_sale = $on_sale && $regular > 0 && $current < $regular;
+	} else {
+		$current = wc_get_price_to_display( $product );
+		$reg_raw = $product->get_regular_price();
+		if ( '' !== $reg_raw && null !== $reg_raw ) {
+			$regular = wc_get_price_to_display( $product, array( 'price' => $reg_raw ) );
+		}
+		$on_sale = $on_sale && null !== $regular && (float) $current < (float) $regular;
+	}
+
+	echo '<span class="em-price-lockup">';
+	echo '<span class="em-price-currency">' . esc_html( $label ) . '</span>';
+
+	if ( $on_sale && null !== $regular ) {
+		echo '<span class="em-price-number sale">' . esc_html( exmart_format_card_price( $current ) ) . '</span>';
+		echo '<span class="em-price-compare">' . esc_html( exmart_format_card_price( $regular ) ) . '</span>';
+	} else {
+		echo '<span class="em-price-number">' . esc_html( exmart_format_card_price( $current ) ) . '</span>';
+	}
+
+	echo '</span>';
+}
+
+/**
  * Category emoji used on the Category Index page tiles (matches the
  * original design's lightweight iconography — swap for real icons any time).
  */

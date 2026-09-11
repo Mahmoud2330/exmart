@@ -36,9 +36,7 @@ $out_of_stock  = ! $product->is_in_stock();
 			<?php exmart_stars( (float) $product->get_average_rating(), 12 ); ?>
 			<span class="em-rating-count">(<?php echo esc_html( (string) (int) $product->get_review_count() ); ?>)</span>
 		</div>
-		<span class="em-price-lockup">
-			<?php echo $product->get_price_html(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-		</span>
+		<?php exmart_card_price_html( $product ); ?>
 		<div class="em-card-actions">
 			<button
 				type="button"

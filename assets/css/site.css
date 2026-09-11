@@ -330,17 +330,11 @@
 	border-color: var(--ink-300) !important;
 }
 
-/* Sale price red inside cards (WC amount markup). */
-.em-card .em-price-lockup .price ins,
-.em-card .em-price-lockup .price ins .amount,
-.em-card .em-price-lockup .price ins .woocommerce-Price-amount,
-.em-card .em-price-lockup .price ins bdi,
-.woocommerce .em-card .price ins,
-.woocommerce .em-card .price ins .amount,
-.woocommerce .em-card .price ins bdi {
-	color: var(--sale) !important;
-	text-decoration: none !important;
-	font-weight: 600;
+/* Sale price — explicit card class (not WC <ins>). */
+.em-card .em-price-number.sale,
+.woocommerce .em-card .em-price-number.sale,
+.em-rail-card .em-price-number.sale {
+	color: #E5341C !important;
 }
 
 .woocommerce nav.woocommerce-pagination ul { display: flex; gap: var(--s2); list-style: none; padding: 0; margin-top: var(--s10); justify-content: center; }
