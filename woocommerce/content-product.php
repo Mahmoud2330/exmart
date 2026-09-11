@@ -32,14 +32,12 @@ $out_of_stock  = ! $product->is_in_stock();
 		<a href="<?php the_permalink(); ?>">
 			<p class="em-card-title"><?php echo esc_html( $product->get_name() ); ?></p>
 		</a>
-		<div style="display:flex;align-items:center;">
-			<?php echo wc_get_rating_html( $product->get_average_rating() ); ?>
-			<?php if ( $product->get_review_count() ) : ?>
-				<span class="em-rating-count">(<?php echo esc_html( $product->get_review_count() ); ?>)</span>
-			<?php endif; ?>
+		<div class="em-card-rating">
+			<?php exmart_stars( (float) $product->get_average_rating(), 12 ); ?>
+			<span class="em-rating-count">(<?php echo esc_html( (string) (int) $product->get_review_count() ); ?>)</span>
 		</div>
 		<span class="em-price-lockup">
-			<?php echo $product->get_price_html(); ?>
+			<?php echo $product->get_price_html(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		</span>
 		<div class="em-card-actions">
 			<button

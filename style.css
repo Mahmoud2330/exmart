@@ -3,7 +3,7 @@ Theme Name: exMart
 Theme URI: https://exmart.eg
 Author: exMart
 Description: Authentic health & hygiene storefront theme for WooCommerce. Ported from the exMart React storefront design system.
-Version: 1.0.12
+Version: 1.0.13
 Requires at least: 6.0
 Tested up to: 6.6
 Requires PHP: 7.4
@@ -220,6 +220,7 @@ input[type="number"], input[type="search"], textarea {
 }
 .em-card-actions { display:flex; gap: var(--s2); align-items:center; margin-top:auto; padding-top: var(--s2); }
 .em-card-actions .em-btn, .em-card-actions a.button, .em-card-actions button.button { flex: 1; }
+.em-card-rating { display: flex; align-items: center; gap: var(--s1); min-height: 16px; }
 .em-wishlist-btn {
   display:flex; align-items:center; justify-content:center;
   min-height:44px; min-width:44px; background:transparent;
@@ -237,10 +238,20 @@ input[type="number"], input[type="search"], textarea {
 .em-price-number.sale { color: var(--sale); }
 .em-price-number-lg { font-size:1.5rem; font-weight:700; }
 .em-price-compare { font-size:.875rem; color: var(--ink-400); text-decoration: line-through; }
-.em-price-lockup .price { font-variant-numeric: tabular-nums; }
+.em-price-lockup .price { font-variant-numeric: tabular-nums; display: inline-flex; align-items: baseline; flex-wrap: wrap; gap: 6px; }
 .em-price-lockup .price ins { text-decoration: none; font-weight: 600; color: var(--sale); }
-.em-price-lockup .price del { color: var(--ink-400); font-size: .875rem; opacity: 1; text-decoration: line-through; margin-right: 4px; }
+.em-price-lockup .price ins .amount,
+.em-price-lockup .price ins .woocommerce-Price-amount,
+.em-price-lockup .price ins bdi { color: var(--sale); font-weight: 600; }
+.em-price-lockup .price del { color: var(--ink-400); font-size: .875rem; opacity: 1; text-decoration: line-through; order: 2; }
+.em-price-lockup .price del .amount,
+.em-price-lockup .price del .woocommerce-Price-amount,
+.em-price-lockup .price del bdi { color: var(--ink-400); font-weight: 400; }
 .em-price-lockup .price bdi { font-weight: 600; }
+/* Sale: show new price (ins) before struck-through compare (del), matching Figma. */
+.em-card .em-price-lockup .price ins { order: 1; }
+.em-card .em-price-lockup .price > .amount,
+.em-card .em-price-lockup .price > .woocommerce-Price-amount { font-weight: 600; color: var(--ink-900); }
 
 /* ── Rail ──────────────────────────────────────────────── */
 .em-rail-header { display:flex; align-items:baseline; justify-content:space-between; margin-bottom: var(--s4); gap: var(--s4); }

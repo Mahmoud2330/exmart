@@ -293,6 +293,56 @@
 .woocommerce ul.products li.product { margin: 0; height: 100%; display: flex; }
 .woocommerce ul.products li.product > .em-card { width: 100%; }
 
+/* Product card ATC — outline + centered label (Figma), override global WC primary buttons. */
+.em-card-actions a.button,
+.em-card-actions button.button,
+.em-card-actions a.add_to_cart_button,
+.em-card-actions a.product_type_simple,
+.woocommerce ul.products .em-card-actions a.button,
+.woocommerce .em-card .em-card-actions a.button,
+.woocommerce .em-card .em-card-actions a.add_to_cart_button {
+	flex: 1;
+	display: inline-flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	text-align: center !important;
+	min-height: 44px;
+	padding-block: var(--s3);
+	padding-inline: var(--s4);
+	background: var(--paper) !important;
+	color: var(--ink-900) !important;
+	border: 1px solid var(--ink-200) !important;
+	border-radius: var(--r-sm);
+	box-shadow: none !important;
+	font-family: var(--font);
+	font-size: .875rem;
+	font-weight: 600;
+	line-height: 1;
+	text-decoration: none !important;
+	white-space: nowrap;
+}
+.em-card-actions a.button:hover,
+.em-card-actions a.add_to_cart_button:hover,
+.woocommerce ul.products .em-card-actions a.button:hover,
+.woocommerce .em-card .em-card-actions a.button:hover {
+	background: var(--ink-50) !important;
+	color: var(--ink-900) !important;
+	border-color: var(--ink-300) !important;
+}
+
+/* Sale price red inside cards (WC amount markup). */
+.em-card .em-price-lockup .price ins,
+.em-card .em-price-lockup .price ins .amount,
+.em-card .em-price-lockup .price ins .woocommerce-Price-amount,
+.em-card .em-price-lockup .price ins bdi,
+.woocommerce .em-card .price ins,
+.woocommerce .em-card .price ins .amount,
+.woocommerce .em-card .price ins bdi {
+	color: var(--sale) !important;
+	text-decoration: none !important;
+	font-weight: 600;
+}
+
 .woocommerce nav.woocommerce-pagination ul { display: flex; gap: var(--s2); list-style: none; padding: 0; margin-top: var(--s10); justify-content: center; }
 .woocommerce nav.woocommerce-pagination ul li { border: none; }
 .woocommerce nav.woocommerce-pagination ul li a,
