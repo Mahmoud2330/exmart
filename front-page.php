@@ -40,6 +40,9 @@ if ( is_wp_error( $product_brands ) ) {
 $best_sellers = exmart_get_best_sellers( 8 );
 $offers       = exmart_get_offers( 8 );
 $new_arrivals = exmart_get_new_arrivals( 8 );
+$hero_images  = exmart_get_hero_images();
+$hero_primary = $hero_images[0];
+$hero_multi   = count( $hero_images ) > 1;
 
 $trust_items = array(
 	array(
@@ -62,7 +65,7 @@ $trust_items = array(
 ?>
 
 <section class="em-hero">
-	<div class="em-hero-bg" style="background-image:url('https://images.unsplash.com/photo-1600709206786-f96656b15a3c?w=1600&fit=crop&auto=format');" aria-hidden="true"></div>
+	<div class="em-hero-bg" style="background-image:url('<?php echo esc_url( $hero_primary['url'] ); ?>');" aria-hidden="true"></div>
 	<div class="em-hero-overlay" aria-hidden="true"></div>
 	<div class="em-container em-hero-grid">
 		<div class="em-hero-copy">
@@ -80,8 +83,18 @@ $trust_items = array(
 			</div>
 		</div>
 		<div class="em-hero-img-col">
-			<div class="em-hero-img-wrap">
-				<img src="https://images.unsplash.com/photo-1627495395570-d2c94e3319f5?w=800&fit=crop&auto=format" alt="<?php esc_attr_e( 'Professional hygiene products', 'exmart' ); ?>" width="800" height="1000" />
+			<div class="em-hero-img-wrap<?php echo $hero_multi ? ' em-hero-img-wrap--slider' : ''; ?>"<?php echo $hero_multi ? ' data-em-hero-slider' : ''; ?>>
+				<?php foreach ( $hero_images as $i => $slide ) : ?>
+					<img
+						class="em-hero-slide<?php echo 0 === $i ? ' is-active' : ''; ?>"
+						src="<?php echo esc_url( $slide['url'] ); ?>"
+						alt="<?php echo esc_attr( $slide['alt'] ); ?>"
+						width="800"
+						height="1000"
+						<?php echo 0 === $i ? '' : 'loading="lazy"'; ?>
+						decoding="async"
+					/>
+				<?php endforeach; ?>
 				<div class="em-hero-badge">
 					<div class="em-hero-badge-icon">
 						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 12l2 2 4-4" stroke="var(--success)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" stroke="var(--success)" stroke-width="2"/></svg>

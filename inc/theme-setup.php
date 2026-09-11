@@ -101,3 +101,59 @@ function exmart_excerpt_length( $length ) {
 	return 24;
 }
 add_filter( 'excerpt_length', 'exmart_excerpt_length' );
+
+/**
+ * Customizer: override hero banner slides (main-banner images).
+ *
+ * @param WP_Customize_Manager $wp_customize
+ */
+function exmart_customize_register( $wp_customize ) {
+	$wp_customize->add_section(
+		'exmart_hero',
+		array(
+			'title'       => __( 'Homepage Hero', 'exmart' ),
+			'description' => __( 'Hero image slot uses the old site’s main-banner carousel (main-banner / main-2 / main-3). Override here if needed — the Figma hero layout stays the same.', 'exmart' ),
+			'priority'    => 30,
+		)
+	);
+
+	$wp_customize->add_setting(
+		'exmart_hero_image',
+		array(
+			'default'           => 0,
+			'sanitize_callback' => 'absint',
+		)
+	);
+	$wp_customize->add_control(
+		new WP_Customize_Media_Control(
+			$wp_customize,
+			'exmart_hero_image',
+			array(
+				'label'     => __( 'Hero image', 'exmart' ),
+				'section'   => 'exmart_hero',
+				'mime_type' => 'image',
+			)
+		)
+	);
+
+	$wp_customize->add_setting(
+		'exmart_hero_image_ids',
+		array(
+			'default'           => '',
+			'sanitize_callback' => static function ( $value ) {
+				$ids = array_filter( array_map( 'absint', preg_split( '/[\s,]+/', (string) $value ) ) );
+				return implode( ',', $ids );
+			},
+		)
+	);
+	$wp_customize->add_control(
+		'exmart_hero_image_ids',
+		array(
+			'label'       => __( 'Extra hero slide IDs (optional)', 'exmart' ),
+			'description' => __( 'Comma-separated Media Library IDs for rotating slides inside the hero image slot.', 'exmart' ),
+			'section'     => 'exmart_hero',
+			'type'        => 'text',
+		)
+	);
+}
+add_action( 'customize_register', 'exmart_customize_register' );
