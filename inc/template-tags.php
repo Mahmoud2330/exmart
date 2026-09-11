@@ -141,6 +141,74 @@ function exmart_email() {
 }
 
 /**
+ * Resolve a Media Library attachment URL by exact filename basename.
+ *
+ * @param string $filename e.g. Fawry.png
+ * @return string Empty when not found.
+ */
+function exmart_media_url_by_filename( $filename ) {
+	$filename = ltrim( (string) $filename, '/' );
+	if ( '' === $filename ) {
+		return '';
+	}
+
+	global $wpdb;
+	$found = absint(
+		$wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT post_id FROM {$wpdb->postmeta}
+				WHERE meta_key = '_wp_attached_file'
+				AND (
+					meta_value = %s
+					OR meta_value LIKE %s
+				)
+				ORDER BY post_id DESC
+				LIMIT 1",
+				$filename,
+				'%/' . $wpdb->esc_like( $filename )
+			)
+		)
+	);
+
+	if ( ! $found ) {
+		return '';
+	}
+
+	$url = wp_get_attachment_image_url( $found, 'medium' );
+	return $url ? $url : '';
+}
+
+/**
+ * Footer payment methods: label + optional Media Library logo filename.
+ *
+ * @return array<int, array{label: string, file: string}>
+ */
+function exmart_payment_methods() {
+	return array(
+		array(
+			'label' => 'COD',
+			'file'  => '',
+		),
+		array(
+			'label' => 'Fawry',
+			'file'  => 'Fawry.png',
+		),
+		array(
+			'label' => 'Meeza',
+			'file'  => 'Meeza-Digital-.png',
+		),
+		array(
+			'label' => 'Visa / Mastercard',
+			'file'  => 'visa-and-mastercard-logos-logo-visa-png-logo-visa-mastercard-png-visa-logo-white-png-awesome-logos.png',
+		),
+		array(
+			'label' => 'InstaPay',
+			'file'  => 'InstaPay-Logo.webp',
+		),
+	);
+}
+
+/**
  * Official WhatsApp glyph (green) for CTAs.
  *
  * @param int $size Icon size in px.
