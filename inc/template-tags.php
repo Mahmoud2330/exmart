@@ -203,7 +203,7 @@ function exmart_payment_methods() {
 		),
 		array(
 			'label' => 'InstaPay',
-			'file'  => 'InstaPay-Logo.webp',
+			'file'  => 'InstaPay-Logo.png',
 		),
 	);
 }
