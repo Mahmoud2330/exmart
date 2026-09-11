@@ -263,8 +263,8 @@ $trust_items = array(
 				</form>
 				<p class="em-body em-newsletter-done" id="em-newsletter-done-2" hidden></p>
 			</div>
-			<a href="https://wa.me/201001234567" class="em-whatsapp-link">
-				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 1.89.52 3.66 1.43 5.17L2 22l4.95-1.41A9.97 9.97 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm-1.5 13.5c-2.5-1.5-4-4-4-4s.5-1 1-1.5c.5-.5.5-1 0-1.5s-1.5-2-2-2c-.5 0-1 .5-1.5 1.5S3 9.5 4 11s3.5 4.5 6 5.5 4 .5 4.5 0 1-1.5.5-2-1.5-1.5-2-2-.5-.5-1-.5c-.5.5-.5.5-1.5 1.5z" fill="var(--success)"/></svg>
+			<a href="<?php echo esc_url( exmart_whatsapp_url() ); ?>" class="em-whatsapp-link" target="_blank" rel="noopener noreferrer">
+				<?php exmart_whatsapp_icon( 20 ); ?>
 				<?php esc_html_e( 'Chat with us on WhatsApp', 'exmart' ); ?>
 			</a>
 		</div>

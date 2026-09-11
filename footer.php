@@ -77,7 +77,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 					</a>
 					<p class="em-caption em-footer-address">
 						12 El-Nozha St, Heliopolis, Cairo, Egypt<br />
-						+20 100 123 4567 · hello@exmart.eg
+						<a href="<?php echo esc_url( 'tel:' . exmart_phone_tel() ); ?>"><?php echo esc_html( exmart_phone_display() ); ?></a>
+						·
+						<a href="<?php echo esc_url( 'mailto:' . exmart_email() ); ?>"><?php echo esc_html( exmart_email() ); ?></a>
 					</p>
 				</div>
 				<div>

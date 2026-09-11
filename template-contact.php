@@ -20,15 +20,15 @@ $subjects = array( 'Order issue', 'Product inquiry', 'Authenticity / warranty', 
 			</div>
 			<div>
 				<p class="em-overline" style="color:var(--ink-500);margin-bottom:var(--s3);"><?php esc_html_e( 'Phone & WhatsApp', 'exmart' ); ?></p>
-				<a href="tel:+201001234567" style="display:block;color:var(--ink-800);text-decoration:none;font-weight:600;">+20 100 123 4567</a>
-				<a href="https://wa.me/201001234567" style="display:inline-flex;align-items:center;gap:var(--s2);color:var(--success);font-size:.875rem;font-weight:600;margin-top:var(--s2);text-decoration:none;">
-					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 1.89.52 3.66 1.43 5.17L2 22l4.95-1.41A9.97 9.97 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z" fill="var(--success)"/></svg>
+				<a href="<?php echo esc_url( 'tel:' . exmart_phone_tel() ); ?>" style="display:block;color:var(--ink-800);text-decoration:none;font-weight:600;"><?php echo esc_html( exmart_phone_display() ); ?></a>
+				<a href="<?php echo esc_url( exmart_whatsapp_url() ); ?>" class="em-whatsapp-link" style="margin-top:var(--s2);" target="_blank" rel="noopener noreferrer">
+					<?php exmart_whatsapp_icon( 18 ); ?>
 					<?php esc_html_e( 'Chat on WhatsApp', 'exmart' ); ?>
 				</a>
 			</div>
 			<div>
 				<p class="em-overline" style="color:var(--ink-500);margin-bottom:var(--s3);"><?php esc_html_e( 'Email', 'exmart' ); ?></p>
-				<a href="mailto:hello@exmart.eg" style="color:var(--ink-800);text-decoration:none;font-weight:600;">hello@exmart.eg</a>
+				<a href="<?php echo esc_url( 'mailto:' . exmart_email() ); ?>" style="color:var(--ink-800);text-decoration:none;font-weight:600;"><?php echo esc_html( exmart_email() ); ?></a>
 			</div>
 			<div>
 				<p class="em-overline" style="color:var(--ink-500);margin-bottom:var(--s3);"><?php esc_html_e( 'Hours', 'exmart' ); ?></p>

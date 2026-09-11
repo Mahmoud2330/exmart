@@ -80,6 +80,8 @@
 	object-fit: contain !important;
 }
 .em-site-footer .em-footer-address { color: var(--ink-500); max-width: 260px; line-height: 1.5; }
+.em-site-footer .em-footer-address a { color: inherit; text-decoration: none; }
+.em-site-footer .em-footer-address a:hover { color: var(--ink-800); text-decoration: underline; }
 .em-site-footer .em-footer-trust-row { display: flex; flex-wrap: wrap; gap: var(--s3); margin-bottom: var(--s3); }
 .em-site-footer .em-footer-payments { display: flex; gap: var(--s2); flex-wrap: wrap; }
 .em-site-footer .em-footer-copyright { border-top: 1px solid var(--ink-100); padding: var(--s3) 0; text-align: center; color: var(--ink-400); font-size: .8125rem; }
@@ -174,7 +176,9 @@
 /* ── Newsletter section ────────────────────────────────── */
 .em-newsletter-section { text-align: center; }
 .em-newsletter-inner { max-width: 520px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: var(--s4); }
-.em-whatsapp-link { display: inline-flex; align-items: center; gap: var(--s2); color: var(--ink-700); font-size: .875rem; font-weight: 600; text-decoration: none; }
+.em-whatsapp-link { display: inline-flex; align-items: center; gap: var(--s2); color: var(--ink-800); font-size: .875rem; font-weight: 600; text-decoration: none; }
+.em-whatsapp-link:hover { color: var(--ink-900); }
+.em-whatsapp-icon { display: block; flex-shrink: 0; }
 
 /* ── Category index / brand index cards ───────────────── */
 .em-tile-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: var(--s6); }
