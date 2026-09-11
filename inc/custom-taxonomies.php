@@ -137,9 +137,26 @@ function exmart_brand_tagline( $term_id ) {
 }
 
 /**
+ * Exact Media Library basenames for each brand logo (Our Brands strip).
+ *
+ * @return array<string, string> slug => filename
+ */
+function exmart_brand_logo_filenames() {
+	return array(
+		'diversey'  => 'diversey_core_logo_master_usage_rgb.png',
+		'grace'     => 'logo_Kero-01.jpg',
+		'oview'     => 'Oview-panner-logo-scaled.webp',
+		'surecheck' => 'Surecheck-logo2.webp',
+		'qualita'   => '327386967_971846660460839_9112051114943853646_n.jpg',
+		'eliv'      => 'eliv-logo.webp',
+		'verve'     => 'verve-logo.jpeg',
+	);
+}
+
+/**
  * Brand logo URL for the “Our Brands” strip (and similar chrome).
  *
- * Priority: term meta attachment → Media Library filename match → known live logos.
+ * Priority: term meta attachment → exact filename map in Media Library.
  *
  * @param int $term_id
  * @return string Empty when no logo found.
@@ -163,52 +180,333 @@ function exmart_brand_logo_url( $term_id ) {
 		return '';
 	}
 
-	$slug = strtolower( $term->slug );
-	$name = strtolower( sanitize_title( $term->name ) );
+	$slug      = strtolower( $term->slug );
+	$filenames = exmart_brand_logo_filenames();
+	if ( empty( $filenames[ $slug ] ) ) {
+		return '';
+	}
 
+	$filename = $filenames[ $slug ];
 	global $wpdb;
-	$patterns = array_unique( array_filter( array( $slug, $name ) ) );
-	foreach ( $patterns as $needle ) {
-		$like = '%' . $wpdb->esc_like( $needle ) . '%';
-		$found = absint(
-			$wpdb->get_var(
-				$wpdb->prepare(
-					"SELECT post_id FROM {$wpdb->postmeta}
-					WHERE meta_key = '_wp_attached_file'
-					AND meta_value LIKE %s
-					ORDER BY
-						CASE WHEN meta_value LIKE %s THEN 0 ELSE 1 END,
-						post_id DESC
-					LIMIT 1",
-					$like,
-					'%logo%'
+	$found = absint(
+		$wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT post_id FROM {$wpdb->postmeta}
+				WHERE meta_key = '_wp_attached_file'
+				AND (
+					meta_value = %s
+					OR meta_value LIKE %s
 				)
+				ORDER BY post_id DESC
+				LIMIT 1",
+				$filename,
+				'%/' . $wpdb->esc_like( $filename )
+			)
+		)
+	);
+
+	if ( ! $found ) {
+		return '';
+	}
+
+	$url = wp_get_attachment_image_url( $found, 'medium' );
+	return $url ? $url : '';
+}
+
+/**
+ * Map theme brand slugs → how products are tagged on the live catalog.
+ *
+ * Existing products use WooCommerce product tags (and sometimes Perfect
+ * Brands /pwb-brand/), not product_brand — so brand archives stay empty
+ * until we bridge those sources.
+ *
+ * @return array<string, array{tags: string[], tag_names: string[], pwb: string[], titles: string[], require_title: bool}>
+ */
+function exmart_brand_product_sources() {
+	return array(
+		'diversey'  => array(
+			'tags'          => array( 'diversey' ),
+			'tag_names'     => array( 'Diversey' ),
+			'pwb'           => array( 'diversey' ),
+			'titles'        => array( 'Diversey' ),
+			'require_title' => false,
+		),
+		'grace'     => array(
+			'tags'          => array( 'grace' ),
+			'tag_names'     => array( 'Grace' ),
+			'pwb'           => array( 'grace' ),
+			'titles'        => array( 'Grace' ),
+			'require_title' => false,
+		),
+		'oview'     => array(
+			'tags'          => array( 'surecheck-oview', 'oview' ),
+			'tag_names'     => array( 'Surecheck & Oview', 'Oview' ),
+			'pwb'           => array( 'oview' ),
+			'titles'        => array( 'Oview' ),
+			'require_title' => true,
+		),
+		'surecheck' => array(
+			'tags'          => array( 'surecheck-oview', 'surecheck' ),
+			'tag_names'     => array( 'Surecheck & Oview', 'Surecheck', 'SureCheck' ),
+			'pwb'           => array( 'surecheck' ),
+			'titles'        => array( 'Surecheck', 'SureCheck' ),
+			'require_title' => true,
+		),
+		'qualita'   => array(
+			'tags'          => array( 'qualita' ),
+			'tag_names'     => array( 'Qualita' ),
+			'pwb'           => array( 'qualita' ),
+			'titles'        => array( 'Qualita' ),
+			'require_title' => false,
+		),
+		'eliv'      => array(
+			'tags'          => array( 'eliv' ),
+			'tag_names'     => array( 'éliv', 'eliv', 'Eliv' ),
+			'pwb'           => array( 'eliv' ),
+			'titles'        => array( 'eliv', 'éliv', 'Eliv' ),
+			'require_title' => false,
+		),
+		'verve'     => array(
+			'tags'          => array( 'verve' ),
+			'tag_names'     => array( 'Verve' ),
+			'pwb'           => array( 'verve' ),
+			'titles'        => array( 'Verve' ),
+			'require_title' => false,
+		),
+		'vodlia'    => array(
+			'tags'          => array( 'vodlia' ),
+			'tag_names'     => array( 'Vodlia' ),
+			'pwb'           => array( 'vodlia' ),
+			'titles'        => array( 'Vodlia' ),
+			'require_title' => false,
+		),
+	);
+}
+
+/**
+ * Whether a product title matches any of the brand title prefixes.
+ *
+ * @param string   $title
+ * @param string[] $prefixes
+ */
+function exmart_product_title_matches_brand( $title, $prefixes ) {
+	$title = (string) $title;
+	foreach ( (array) $prefixes as $prefix ) {
+		$prefix = (string) $prefix;
+		if ( '' === $prefix ) {
+			continue;
+		}
+		if ( 0 === stripos( $title, $prefix ) ) {
+			return true;
+		}
+	}
+	return false;
+}
+
+/**
+ * Collect product IDs that belong to a brand via tags / Perfect Brands / title.
+ *
+ * @param string $brand_slug
+ * @return int[]
+ */
+function exmart_find_legacy_brand_product_ids( $brand_slug ) {
+	$sources = exmart_brand_product_sources();
+	if ( empty( $sources[ $brand_slug ] ) ) {
+		return array();
+	}
+
+	$cfg = $sources[ $brand_slug ];
+	$ids = array();
+
+	$tag_term_ids = array();
+	foreach ( $cfg['tags'] as $tag_slug ) {
+		$term = get_term_by( 'slug', $tag_slug, 'product_tag' );
+		if ( $term && ! is_wp_error( $term ) ) {
+			$tag_term_ids[] = (int) $term->term_id;
+		}
+	}
+	foreach ( $cfg['tag_names'] as $tag_name ) {
+		$term = get_term_by( 'name', $tag_name, 'product_tag' );
+		if ( $term && ! is_wp_error( $term ) ) {
+			$tag_term_ids[] = (int) $term->term_id;
+		}
+	}
+	$tag_term_ids = array_values( array_unique( array_filter( $tag_term_ids ) ) );
+
+	if ( $tag_term_ids ) {
+		$tagged = get_posts(
+			array(
+				'post_type'              => 'product',
+				'post_status'            => 'publish',
+				'posts_per_page'         => -1,
+				'fields'                 => 'ids',
+				'no_found_rows'          => true,
+				'update_post_meta_cache' => false,
+				'update_post_term_cache' => false,
+				'tax_query'              => array(
+					array(
+						'taxonomy' => 'product_tag',
+						'field'    => 'term_id',
+						'terms'    => $tag_term_ids,
+					),
+				),
 			)
 		);
-		if ( $found ) {
-			$url = wp_get_attachment_image_url( $found, 'medium' );
-			if ( $url ) {
-				return $url;
+		foreach ( $tagged as $pid ) {
+			if ( ! empty( $cfg['require_title'] ) ) {
+				if ( ! exmart_product_title_matches_brand( get_the_title( $pid ), $cfg['titles'] ) ) {
+					continue;
+				}
 			}
+			$ids[] = (int) $pid;
 		}
 	}
 
-	$known = array(
-		'diversey'  => 'https://exmartegypt.com/wp-content/uploads/2025/03/diversey-logo-300x150.jpg',
-		'oview'     => 'https://exmartegypt.com/wp-content/uploads/2023/03/Oview-panner-logo-300x129.webp',
-		'surecheck' => 'https://exmartegypt.com/wp-content/uploads/2023/03/surecheck_vector.svg',
-		'grace'     => 'https://exmartegypt.com/wp-content/uploads/2023/03/logo-w.png-300x74.webp',
-	);
-	if ( ! empty( $known[ $slug ] ) ) {
-		$mapped = absint( attachment_url_to_postid( $known[ $slug ] ) );
-		if ( $mapped ) {
-			$url = wp_get_attachment_image_url( $mapped, 'medium' );
-			if ( $url ) {
-				return $url;
-			}
+	if ( taxonomy_exists( 'pwb-brand' ) && ! empty( $cfg['pwb'] ) ) {
+		$pwb = get_posts(
+			array(
+				'post_type'              => 'product',
+				'post_status'            => 'publish',
+				'posts_per_page'         => -1,
+				'fields'                 => 'ids',
+				'no_found_rows'          => true,
+				'update_post_meta_cache' => false,
+				'update_post_term_cache' => false,
+				'tax_query'              => array(
+					array(
+						'taxonomy' => 'pwb-brand',
+						'field'    => 'slug',
+						'terms'    => $cfg['pwb'],
+					),
+				),
+			)
+		);
+		foreach ( $pwb as $pid ) {
+			$ids[] = (int) $pid;
 		}
-		return $known[ $slug ];
 	}
 
-	return '';
+	global $wpdb;
+	foreach ( $cfg['titles'] as $prefix ) {
+		$prefix = (string) $prefix;
+		if ( '' === $prefix ) {
+			continue;
+		}
+		$found = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT ID FROM {$wpdb->posts}
+				WHERE post_type = 'product'
+				AND post_status = 'publish'
+				AND post_title LIKE %s",
+				$wpdb->esc_like( $prefix ) . '%'
+			)
+		);
+		foreach ( $found as $pid ) {
+			$ids[] = (int) $pid;
+		}
+	}
+
+	return array_values( array_unique( array_filter( $ids ) ) );
 }
+
+/**
+ * Assign product_brand terms from existing product tags / titles (idempotent).
+ * Re-runs when EXMART_VERSION changes so new mappings apply after deploys.
+ */
+function exmart_sync_brand_product_assignments() {
+	$flag = 'exmart_brand_sync_' . EXMART_VERSION;
+	if ( get_option( $flag ) ) {
+		return;
+	}
+
+	$sources = exmart_brand_product_sources();
+	foreach ( $sources as $slug => $cfg ) {
+		$term = get_term_by( 'slug', $slug, 'product_brand' );
+		if ( ! $term || is_wp_error( $term ) ) {
+			continue;
+		}
+
+		$ids = exmart_find_legacy_brand_product_ids( $slug );
+		foreach ( $ids as $product_id ) {
+			wp_set_object_terms( $product_id, (int) $term->term_id, 'product_brand', true );
+		}
+	}
+
+	$tt_ids = get_terms(
+		array(
+			'taxonomy'   => 'product_brand',
+			'hide_empty' => false,
+			'fields'     => 'tt_ids',
+		)
+	);
+	if ( ! is_wp_error( $tt_ids ) && $tt_ids ) {
+		wp_update_term_count_now( $tt_ids, 'product_brand' );
+	}
+
+	update_option( $flag, 1, false );
+}
+add_action( 'init', 'exmart_sync_brand_product_assignments', 30 );
+
+/**
+ * Brand archives: also include products matched via product tags / Perfect Brands
+ * (covers the period before sync runs, and any products sync missed).
+ *
+ * @param WP_Query $query
+ */
+function exmart_brand_archive_include_legacy_sources( $query ) {
+	if ( is_admin() || ! $query->is_main_query() || ! $query->is_tax( 'product_brand' ) ) {
+		return;
+	}
+
+	$term = get_queried_object();
+	if ( ! $term || empty( $term->slug ) || empty( $term->term_id ) ) {
+		return;
+	}
+
+	$legacy_ids = exmart_find_legacy_brand_product_ids( $term->slug );
+
+	$brand_ids = get_posts(
+		array(
+			'post_type'              => 'product',
+			'post_status'            => 'publish',
+			'posts_per_page'         => -1,
+			'fields'                 => 'ids',
+			'no_found_rows'          => true,
+			'update_post_meta_cache' => false,
+			'update_post_term_cache' => false,
+			'tax_query'              => array(
+				array(
+					'taxonomy' => 'product_brand',
+					'field'    => 'term_id',
+					'terms'    => array( (int) $term->term_id ),
+				),
+			),
+		)
+	);
+
+	$all_ids = array_values(
+		array_unique(
+			array_merge(
+				array_map( 'intval', (array) $brand_ids ),
+				array_map( 'intval', (array) $legacy_ids )
+			)
+		)
+	);
+
+	if ( ! $all_ids ) {
+		return;
+	}
+
+	// Membership via post__in. Clear taxonomy query vars so WP does not AND
+	// an empty product_brand constraint with these IDs.
+	unset( $query->query_vars['product_brand'] );
+	$query->set( 'taxonomy', '' );
+	$query->set( 'term', '' );
+	$query->set( 'term_id', '' );
+	$query->set( 'tax_query', array() );
+	$query->set( 'post_type', 'product' );
+	$query->set( 'post__in', $all_ids );
+	$query->set( 'orderby', 'title' );
+	$query->set( 'order', 'ASC' );
+}
+add_action( 'pre_get_posts', 'exmart_brand_archive_include_legacy_sources' );

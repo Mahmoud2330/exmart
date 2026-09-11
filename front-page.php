@@ -24,6 +24,14 @@ $product_brands = get_terms(
 if ( is_wp_error( $product_brands ) ) {
 	$product_brands = array();
 } elseif ( $product_brands ) {
+	$product_brands = array_values(
+		array_filter(
+			$product_brands,
+			static function ( $brand ) {
+				return 'vodlia' !== $brand->slug;
+			}
+		)
+	);
 	usort(
 		$product_brands,
 		static function ( $a, $b ) {
@@ -76,7 +84,7 @@ $trust_items = array(
 					array( 'br' => array() )
 				);
 			?></h1>
-			<p class="em-body"><?php esc_html_e( 'Official sole distributor of Diversey, Grace, Oview & SureCheck in Egypt. Plus our own exclusive brands — Qualita, Vodlia, Eliv, and Verve.', 'exmart' ); ?></p>
+			<p class="em-body"><?php esc_html_e( 'Official sole distributor of Diversey, Grace, Oview & SureCheck in Egypt. Plus our own exclusive brands — Qualita, Eliv, and Verve.', 'exmart' ); ?></p>
 			<div class="em-hero-ctas">
 				<a href="<?php echo esc_url( $shop_url ); ?>" class="em-btn em-btn-lg em-btn-primary"><?php esc_html_e( 'Shop all products', 'exmart' ); ?></a>
 				<a href="<?php echo esc_url( home_url( '/about/' ) ); ?>" class="em-btn em-btn-lg em-btn-ghost em-hero-ghost"><?php esc_html_e( 'Our story', 'exmart' ); ?></a>

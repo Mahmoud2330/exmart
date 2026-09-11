@@ -34,12 +34,16 @@ $type  = exmart_brand_type( $term->term_id );
 </div>
 
 <div class="em-container" style="padding-block: var(--s8);">
+	<?php
+	global $wp_query;
+	$product_count = isset( $wp_query->found_posts ) ? (int) $wp_query->found_posts : (int) $term->count;
+	?>
 	<div style="display:flex;align-items:center;justify-content:space-between;gap:var(--s4);flex-wrap:wrap;margin-bottom:var(--s6);">
 		<p class="em-body-s" style="color:var(--ink-500);"><?php
 			printf(
 				/* translators: %d: number of products */
-				esc_html( _n( '%d product', '%d products', $term->count, 'exmart' ) ),
-				(int) $term->count
+				esc_html( _n( '%d product', '%d products', $product_count, 'exmart' ) ),
+				$product_count
 			);
 		?></p>
 	</div>
