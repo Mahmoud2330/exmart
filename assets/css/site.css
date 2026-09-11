@@ -115,7 +115,14 @@
 
 /* ── Trust strip ───────────────────────────────────────── */
 .em-trust-strip { border-bottom: 1px solid var(--ink-200); }
-.em-trust-strip-row { padding-block: var(--s5); display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: var(--s4); }
+.em-trust-strip-row {
+	padding-block: var(--s5);
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+	gap: var(--s4) clamp(24px, 4vw, 48px);
+}
 .em-trust-item { display: flex; align-items: center; gap: var(--s3); }
 .em-trust-item-icon { width: 36px; height: 36px; border-radius: 50%; background: var(--ink-100); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .em-trust-item-text { font-weight: 500; color: var(--ink-700); }
@@ -283,7 +290,8 @@
 
 .woocommerce ul.products,
 .woocommerce ul.products.columns-4 { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: clamp(16px, 2vw, 24px); margin: 0; padding: 0; list-style: none; }
-.woocommerce ul.products li.product { margin: 0; }
+.woocommerce ul.products li.product { margin: 0; height: 100%; display: flex; }
+.woocommerce ul.products li.product > .em-card { width: 100%; }
 
 .woocommerce nav.woocommerce-pagination ul { display: flex; gap: var(--s2); list-style: none; padding: 0; margin-top: var(--s10); justify-content: center; }
 .woocommerce nav.woocommerce-pagination ul li { border: none; }
