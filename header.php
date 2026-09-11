@@ -5,10 +5,10 @@
  */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-$product_cats   = get_terms( array( 'taxonomy' => 'product_cat', 'hide_empty' => false, 'exclude' => array( get_option( 'default_product_cat' ) ) ) );
-$product_brands = get_terms( array( 'taxonomy' => 'product_brand', 'hide_empty' => false ) );
-$brands_distributed = array_filter( $product_brands, fn( $t ) => exmart_brand_type( $t->term_id ) === 'distributed' );
-$brands_house       = array_filter( $product_brands, fn( $t ) => exmart_brand_type( $t->term_id ) === 'house' );
+$product_cats         = exmart_get_nav_categories( 8 );
+$product_brands       = exmart_get_nav_brands();
+$brands_distributed   = array_filter( $product_brands, fn( $t ) => exmart_brand_type( $t->term_id ) === 'distributed' );
+$brands_house         = array_filter( $product_brands, fn( $t ) => exmart_brand_type( $t->term_id ) === 'house' );
 
 $cart_count = ( function_exists( 'WC' ) && WC()->cart ) ? WC()->cart->get_cart_contents_count() : 0;
 $wishlist_url = home_url( '/wishlist/' );

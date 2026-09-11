@@ -100,6 +100,36 @@ add_filter( 'wp_resource_hints', 'exmart_resource_hints', 10, 2 );
 function exmart_excerpt_length( $length ) {
 	return 24;
 }
+/**
+ * Prefer this theme's header/footer everywhere (Shop, product, etc.).
+ * Prevents Elementor Theme Builder from injecting the old long footer.
+ *
+ * @param bool   $need_override
+ * @param string $location
+ * @return bool
+ */
+function exmart_skip_elementor_theme_chrome( $need_override, $location ) {
+	if ( in_array( $location, array( 'header', 'footer' ), true ) ) {
+		return false;
+	}
+	return $need_override;
+}
+add_filter( 'elementor/theme/need_override_location', 'exmart_skip_elementor_theme_chrome', 999, 2 );
+
+/**
+ * Extra guard: if Elementor still tries to print a Theme Builder footer, skip it.
+ */
+function exmart_block_elementor_theme_footer() {
+	if ( ! did_action( 'elementor/loaded' ) ) {
+		return;
+	}
+	// Theme Builder prints via these actions when a footer template matches.
+	remove_all_actions( 'elementor/theme/footer' );
+	remove_all_actions( 'elementor/theme/before_do_footer' );
+	remove_all_actions( 'elementor/theme/after_do_footer' );
+}
+add_action( 'wp', 'exmart_block_elementor_theme_footer', 20 );
+
 add_filter( 'excerpt_length', 'exmart_excerpt_length' );
 
 /**

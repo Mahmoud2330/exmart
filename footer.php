@@ -8,11 +8,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 	<?php
 	$product_cats   = exmart_get_nav_categories( 8 );
-	$product_brands = get_terms( array( 'taxonomy' => 'product_brand', 'hide_empty' => false ) );
-	if ( is_wp_error( $product_brands ) ) {
-		$product_brands = array();
-	}
-	$distributed = array_slice(
+	$product_brands = exmart_get_nav_brands();
+	$distributed    = array_slice(
 		array_filter(
 			$product_brands,
 			static function ( $t ) {

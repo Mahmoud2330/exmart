@@ -409,6 +409,35 @@ function exmart_get_nav_categories( $limit = 8 ) {
 }
 
 /**
+ * Brands for chrome (header mega / footer): distributed first, then house.
+ *
+ * @return WP_Term[]
+ */
+function exmart_get_nav_brands() {
+	$brands = get_terms(
+		array(
+			'taxonomy'   => 'product_brand',
+			'hide_empty' => false,
+		)
+	);
+	if ( is_wp_error( $brands ) || empty( $brands ) ) {
+		return array();
+	}
+	usort(
+		$brands,
+		static function ( $a, $b ) {
+			$ta = get_term_meta( $a->term_id, 'exmart_brand_type', true ) ?: 'distributed';
+			$tb = get_term_meta( $b->term_id, 'exmart_brand_type', true ) ?: 'distributed';
+			if ( $ta === $tb ) {
+				return strcasecmp( $a->name, $b->name );
+			}
+			return ( 'distributed' === $ta ) ? -1 : 1;
+		}
+	);
+	return $brands;
+}
+
+/**
  * Homepage hero banners — the old site's TOP Elementor Image Carousel
  * (filenames like main-banner-*, main-2-2, main-3-2), NOT product/logo carousels.
  *
