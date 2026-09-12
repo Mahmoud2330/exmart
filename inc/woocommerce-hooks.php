@@ -467,6 +467,51 @@ function exmart_product_brand_row() {
 add_action( 'woocommerce_single_product_summary', 'exmart_product_brand_row', 4 );
 
 /**
+ * PDP quantity stepper — wraps WooCommerce's native qty input with real
+ * −/+ buttons using the theme's existing .em-qty component (it was fully
+ * styled in style.css but never actually wired to any template; the PDP
+ * was rendering WooCommerce's bare number input instead).
+ */
+function exmart_pdp_qty_minus_button() {
+	if ( ! is_product() ) {
+		return;
+	}
+	echo '<button type="button" class="em-qty-btn" data-em-qty-minus aria-label="' . esc_attr__( 'Decrease quantity', 'exmart' ) . '">&minus;</button>';
+}
+add_action( 'woocommerce_before_add_to_cart_quantity', 'exmart_pdp_qty_minus_button' );
+
+function exmart_pdp_qty_plus_button() {
+	if ( ! is_product() ) {
+		return;
+	}
+	echo '<button type="button" class="em-qty-btn" data-em-qty-plus aria-label="' . esc_attr__( 'Increase quantity', 'exmart' ) . '">+</button>';
+}
+add_action( 'woocommerce_after_add_to_cart_quantity', 'exmart_pdp_qty_plus_button' );
+
+/**
+ * Wishlist heart next to the PDP Add to Cart button — the same
+ * .em-wishlist-toggle button/JS already used on product cards, just
+ * placed here too (it only ever existed on cards before).
+ */
+function exmart_pdp_wishlist_button() {
+	global $product;
+	if ( ! $product ) {
+		return;
+	}
+	?>
+	<button
+		type="button"
+		class="em-wishlist-btn em-wishlist-toggle"
+		data-product-id="<?php echo esc_attr( $product->get_id() ); ?>"
+		aria-label="<?php esc_attr_e( 'Add to wishlist', 'exmart' ); ?>"
+	>
+		<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" stroke="currentColor" stroke-width="2"/></svg>
+	</button>
+	<?php
+}
+add_action( 'woocommerce_after_add_to_cart_button', 'exmart_pdp_wishlist_button' );
+
+/**
  * Small brand label shown above each product card title. Called
  * directly from woocommerce/content-product.php (that template fully
  * replaces WooCommerce's default loop-item hooks, so this isn't wired

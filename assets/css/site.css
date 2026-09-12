@@ -303,7 +303,31 @@
 .em-pdp-info .woocommerce-product-rating { display: flex; align-items: center; gap: var(--s3); }
 .em-pdp-info .woocommerce-product-rating a { color: var(--ink-500); font-size: .875rem; text-decoration: none; }
 .em-pdp-info form.cart { display: flex; gap: var(--s3); flex-wrap: wrap; align-items: center; }
-.em-pdp-info form.cart .quantity { margin: 0; }
+.em-pdp-info form.cart button.single_add_to_cart_button { flex: 1; min-width: 160px; }
+/* Quantity stepper — .em-qty-btn already existed in the design system
+   (style.css) but was never wired to any template; the PDP was showing
+   WooCommerce's bare number input with browser spinner arrows. */
+.em-pdp-info form.cart .quantity {
+	display: inline-flex;
+	align-items: center;
+	margin: 0;
+	border: 1px solid var(--ink-200);
+	border-radius: var(--r-sm);
+	overflow: hidden;
+	height: 48px;
+}
+.em-pdp-info form.cart .quantity .qty {
+	height: 100%;
+	width: 48px;
+	min-height: auto;
+	border: none;
+	border-inline: 1px solid var(--ink-200);
+	border-radius: 0;
+	font-weight: 600;
+	-moz-appearance: textfield;
+}
+.em-pdp-info form.cart .quantity .qty::-webkit-inner-spin-button,
+.em-pdp-info form.cart .quantity .qty::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 .em-pdp-trust-block { border: 1px solid var(--ink-200); border-radius: var(--r-md); padding: var(--s4); display: flex; flex-direction: column; gap: var(--s3); }
 .em-pdp-trust-block-item { display: flex; gap: var(--s2); align-items: flex-start; }
 
