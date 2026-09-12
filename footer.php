@@ -122,6 +122,10 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		<span class="em-floating-pill-sep"></span>
 		<button id="em-pill-cart" aria-label="<?php esc_attr_e( 'Cart', 'exmart' ); ?>" class="em-icon-badge">
 			<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 3h2l2.4 12.4a2 2 0 002 1.6h8.2a2 2 0 002-1.6L21 8H6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="21" r="1" fill="currentColor"/><circle cx="18" cy="21" r="1" fill="currentColor"/></svg>
+			<span class="em-icon-count em-cart-count-badge" id="em-pill-cart-count" <?php
+				$pill_count = ( function_exists( 'WC' ) && WC()->cart ) ? WC()->cart->get_cart_contents_count() : 0;
+				echo $pill_count > 0 ? '' : 'hidden';
+			?>><?php echo esc_html( (string) $pill_count ); ?></span>
 		</button>
 	</div>
 

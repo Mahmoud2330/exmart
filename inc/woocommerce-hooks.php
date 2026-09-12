@@ -528,15 +528,21 @@ function exmart_loop_brand_label() {
 }
 
 /**
- * Extend cart fragments: header count badge + product-card qty map.
+ * Extend cart fragments: header + floating-pill count badges + qty map.
  */
-function exmart_cart_count_fragment( $fragments ) {
+function exmart_cart_count_badge_html( $count, $id ) {
+	$count = max( 0, (int) $count );
 	ob_start();
-	$count = WC()->cart ? WC()->cart->get_cart_contents_count() : 0;
 	?>
-	<span class="em-icon-count" id="em-cart-count" style="<?php echo $count > 0 ? '' : 'display:none;'; ?>"><?php echo esc_html( $count ); ?></span>
+	<span class="em-icon-count em-cart-count-badge" id="<?php echo esc_attr( $id ); ?>" <?php echo $count > 0 ? '' : 'hidden'; ?>><?php echo esc_html( (string) $count ); ?></span>
 	<?php
-	$fragments['#em-cart-count'] = ob_get_clean();
+	return ob_get_clean();
+}
+
+function exmart_cart_count_fragment( $fragments ) {
+	$count = ( WC()->cart ) ? WC()->cart->get_cart_contents_count() : 0;
+	$fragments['#em-cart-count']      = exmart_cart_count_badge_html( $count, 'em-cart-count' );
+	$fragments['#em-pill-cart-count'] = exmart_cart_count_badge_html( $count, 'em-pill-cart-count' );
 	$fragments['#exmart-cart-qty-map'] = '<script type="application/json" id="exmart-cart-qty-map">' . wp_json_encode( exmart_get_cart_qty_map() ) . '</script>';
 	return $fragments;
 }

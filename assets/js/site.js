@@ -10,8 +10,33 @@
 	var WISHLIST_KEY = 'exmart_wishlist';
 	var latestMiniCartHtml = null;
 
+	function updateCartBadges( count ) {
+		count = Math.max( 0, parseInt( count, 10 ) || 0 );
+		document.querySelectorAll( '.em-cart-count-badge' ).forEach( function ( badge ) {
+			badge.textContent = String( count );
+			if ( count > 0 ) {
+				badge.hidden = false;
+				badge.removeAttribute( 'hidden' );
+				badge.style.display = '';
+			} else {
+				badge.hidden = true;
+				badge.style.display = 'none';
+			}
+		} );
+	}
+
 	function fillMiniCart( html ) {
-		if ( typeof html !== 'string' ) return;
+		if ( typeof html !== 'string' || ! html.trim() ) return;
+		// Don't wipe a full cart with an empty-state response mid-flight.
+		var looksEmpty = html.indexOf( 'woocommerce-mini-cart__empty-message' ) !== -1
+			|| html.indexOf( 'em-mini-cart-empty' ) !== -1;
+		var hasButtons = html.indexOf( 'em-mini-cart-btn' ) !== -1
+			|| html.indexOf( 'woocommerce-mini-cart__buttons' ) !== -1;
+		if ( looksEmpty && ! hasButtons && latestMiniCartHtml && latestMiniCartHtml.indexOf( 'em-mini-cart-btn' ) !== -1 ) {
+			var badge = document.querySelector( '.em-cart-count-badge' );
+			var shown = badge ? ( parseInt( badge.textContent, 10 ) || 0 ) : 0;
+			if ( shown > 0 ) return;
+		}
 		latestMiniCartHtml = html;
 		var target = document.querySelector( '#em-cart-drawer .widget_shopping_cart_content' );
 		if ( target ) {
@@ -32,6 +57,9 @@
 				if ( ! json || ! json.success || ! json.data ) return;
 				if ( typeof json.data.mini_cart_html === 'string' ) {
 					fillMiniCart( json.data.mini_cart_html );
+				}
+				if ( typeof json.data.count !== 'undefined' ) {
+					updateCartBadges( json.data.count );
 				}
 				if ( typeof window.exmartApplyCartSnapshot === 'function' ) {
 					window.exmartApplyCartSnapshot( json.data );
@@ -75,18 +103,14 @@
 		var inflight = {};
 
 		function setBadgeCount( count ) {
-			var badge = document.getElementById( 'em-cart-count' );
-			if ( ! badge ) return;
-			count = Math.max( 0, parseInt( count, 10 ) || 0 );
-			badge.textContent = String( count );
-			badge.style.display = count > 0 ? '' : 'none';
+			updateCartBadges( count );
 		}
 
 		function bumpCartBadge( delta ) {
 			if ( ! delta ) return;
-			var badge = document.getElementById( 'em-cart-count' );
-			if ( ! badge ) return;
-			setBadgeCount( ( parseInt( badge.textContent, 10 ) || 0 ) + delta );
+			var badge = document.querySelector( '.em-cart-count-badge' );
+			var current = badge ? ( parseInt( badge.textContent, 10 ) || 0 ) : 0;
+			setBadgeCount( current + delta );
 		}
 
 		function writeQtyMap( map ) {

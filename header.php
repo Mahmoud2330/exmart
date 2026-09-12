@@ -70,7 +70,7 @@ $checkout_url = function_exists( 'wc_get_checkout_url' ) ? wc_get_checkout_url()
 				</a>
 				<button class="em-btn-icon em-desktop-only em-icon-badge" id="em-cart-toggle" aria-label="<?php esc_attr_e( 'Cart', 'exmart' ); ?>">
 					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 3h2l2.4 12.4a2 2 0 002 1.6h8.2a2 2 0 002-1.6L21 8H6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="21" r="1" fill="currentColor"/><circle cx="18" cy="21" r="1" fill="currentColor"/></svg>
-					<span class="em-icon-count" id="em-cart-count" <?php echo $cart_count > 0 ? '' : 'style="display:none;"'; ?>><?php echo esc_html( $cart_count ); ?></span>
+					<span class="em-icon-count em-cart-count-badge" id="em-cart-count" <?php echo $cart_count > 0 ? '' : 'hidden'; ?>><?php echo esc_html( (string) $cart_count ); ?></span>
 				</button>
 			</div>
 		</div>
