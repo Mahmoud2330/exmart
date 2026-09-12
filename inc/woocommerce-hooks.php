@@ -48,37 +48,304 @@ remove_action( 'woocommerce_before_main_content', 'woocommerce_output_content_wr
 remove_action( 'woocommerce_after_main_content', 'woocommerce_output_content_wrapper_end', 10 );
 
 /**
- * The optional "Shop Sidebar" widget area (Appearance → Widgets) shows
- * up automatically on the Shop page and any product category/tag
- * archive, as long as you've actually added widgets to it — e.g.
- * WooCommerce's own "Filter Products by Price/Rating/Attribute"
- * widgets. Empty by default, so nothing changes until you use it.
- * (Brand archives use their own bespoke template — taxonomy-product_brand.php —
- * which doesn't route through these hooks, so it's intentionally excluded here.)
+ * Shop / category / tag archives use woocommerce/archive-product.php
+ * (filters + product grid). Other WC surfaces still get .em-container.
  */
-function exmart_should_show_shop_sidebar() {
-	return is_active_sidebar( 'shop-sidebar' )
-		&& function_exists( 'is_woocommerce' )
+function exmart_is_shop_plp() {
+	return function_exists( 'is_shop' )
 		&& ( is_shop() || is_product_category() || is_product_tag() );
 }
 
 function exmart_wc_wrapper_start() {
-	echo '<div class="em-container" style="padding-block: var(--s8);">';
-	if ( exmart_should_show_shop_sidebar() ) {
-		echo '<div class="em-two-col" style="align-items:start;"><div>';
+	if ( exmart_is_shop_plp() ) {
+		return;
 	}
+	echo '<div class="em-container" style="padding-block: var(--s8);">';
 }
 add_action( 'woocommerce_before_main_content', 'exmart_wc_wrapper_start', 10 );
 
 function exmart_wc_wrapper_end() {
-	if ( exmart_should_show_shop_sidebar() ) {
-		echo '</div><aside class="em-sidebar-col">';
-		dynamic_sidebar( 'shop-sidebar' );
-		echo '</aside></div>';
+	if ( exmart_is_shop_plp() ) {
+		return;
 	}
 	echo '</div>';
 }
 add_action( 'woocommerce_after_main_content', 'exmart_wc_wrapper_end', 10 );
+
+/* Default WC sidebar dumps blog widgets beside the shop — remove it. */
+remove_action( 'woocommerce_sidebar', 'woocommerce_get_sidebar', 10 );
+remove_action( 'woocommerce_before_main_content', 'woocommerce_breadcrumb', 20 );
+remove_action( 'woocommerce_before_shop_loop', 'woocommerce_result_count', 20 );
+remove_action( 'woocommerce_before_shop_loop', 'woocommerce_catalog_ordering', 30 );
+remove_action( 'woocommerce_before_shop_loop', 'woocommerce_output_all_notices', 10 );
+remove_action( 'woocommerce_shop_loop_header', 'woocommerce_product_taxonomy_archive_header', 10 );
+
+add_filter( 'loop_shop_columns', function () {
+	return 4;
+} );
+
+/**
+ * Apply Brand / Category / In-stock filters from the PLP sidebar.
+ *
+ * Query args: filter_brand[], filter_cat[], in_stock=1
+ */
+function exmart_apply_shop_filters( $q ) {
+	if ( is_admin() ) {
+		return;
+	}
+
+	$tax_query = $q->get( 'tax_query' );
+	if ( ! is_array( $tax_query ) ) {
+		$tax_query = array();
+	}
+
+	if ( ! empty( $_GET['filter_brand'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$brands = array_filter( array_map( 'sanitize_title', (array) wp_unslash( $_GET['filter_brand'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( $brands && taxonomy_exists( 'product_brand' ) ) {
+			$tax_query[] = array(
+				'taxonomy' => 'product_brand',
+				'field'    => 'slug',
+				'terms'    => $brands,
+				'operator' => 'IN',
+			);
+		}
+	}
+
+	if ( ! empty( $_GET['filter_cat'] ) && ! is_product_category() ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$cats = array_filter( array_map( 'sanitize_title', (array) wp_unslash( $_GET['filter_cat'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( $cats ) {
+			$tax_query[] = array(
+				'taxonomy' => 'product_cat',
+				'field'    => 'slug',
+				'terms'    => $cats,
+				'operator' => 'IN',
+			);
+		}
+	}
+
+	if ( count( $tax_query ) > 1 && empty( $tax_query['relation'] ) ) {
+		$tax_query['relation'] = 'AND';
+	}
+	$q->set( 'tax_query', $tax_query );
+
+	if ( ! empty( $_GET['in_stock'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$meta_query = $q->get( 'meta_query' );
+		if ( ! is_array( $meta_query ) ) {
+			$meta_query = array();
+		}
+		$meta_query[] = array(
+			'key'     => '_stock_status',
+			'value'   => 'instock',
+			'compare' => '=',
+		);
+		$q->set( 'meta_query', $meta_query );
+	}
+}
+add_action( 'woocommerce_product_query', 'exmart_apply_shop_filters' );
+
+/**
+ * Selected filter GET values (sanitized).
+ *
+ * @return array{brands: string[], cats: string[], in_stock: bool}
+ */
+function exmart_shop_filter_state() {
+	$brands = array();
+	$cats   = array();
+	if ( ! empty( $_GET['filter_brand'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$brands = array_values( array_filter( array_map( 'sanitize_title', (array) wp_unslash( $_GET['filter_brand'] ) ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	}
+	if ( ! empty( $_GET['filter_cat'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$cats = array_values( array_filter( array_map( 'sanitize_title', (array) wp_unslash( $_GET['filter_cat'] ) ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	}
+	return array(
+		'brands'   => $brands,
+		'cats'     => $cats,
+		'in_stock' => ! empty( $_GET['in_stock'] ), // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	);
+}
+
+/**
+ * Left-rail Brand / Category / Availability filters (Figma Shop).
+ */
+function exmart_render_shop_filters() {
+	$state  = exmart_shop_filter_state();
+	$action = '';
+	if ( function_exists( 'is_shop' ) && is_shop() && function_exists( 'wc_get_page_permalink' ) ) {
+		$action = wc_get_page_permalink( 'shop' );
+	} elseif ( is_product_taxonomy() ) {
+		$link = get_term_link( get_queried_object() );
+		if ( ! is_wp_error( $link ) ) {
+			$action = $link;
+		}
+	}
+
+	$orderby = isset( $_GET['orderby'] ) ? sanitize_text_field( wp_unslash( $_GET['orderby'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+	$brands = taxonomy_exists( 'product_brand' )
+		? get_terms( array( 'taxonomy' => 'product_brand', 'hide_empty' => true ) )
+		: array();
+	$cats = get_terms( array(
+		'taxonomy'   => 'product_cat',
+		'hide_empty' => true,
+		'parent'     => 0,
+	) );
+	if ( is_wp_error( $brands ) ) {
+		$brands = array();
+	}
+	if ( is_wp_error( $cats ) ) {
+		$cats = array();
+	}
+
+	echo '<form class="em-shop-filter-form" method="get" action="' . esc_url( $action ? $action : '' ) . '">';
+	if ( $orderby ) {
+		echo '<input type="hidden" name="orderby" value="' . esc_attr( $orderby ) . '">';
+	}
+
+	if ( $brands ) {
+		echo '<div class="em-shop-filter-group">';
+		echo '<p class="em-overline em-shop-filter-label">' . esc_html__( 'Brand', 'exmart' ) . '</p>';
+		foreach ( $brands as $brand ) {
+			$checked = in_array( $brand->slug, $state['brands'], true );
+			printf(
+				'<label class="em-shop-filter-row"><input type="checkbox" name="filter_brand[]" value="%s"%s><span class="em-body-s">%s</span></label>',
+				esc_attr( $brand->slug ),
+				$checked ? ' checked' : '',
+				esc_html( $brand->name )
+			);
+		}
+		echo '</div>';
+	}
+
+	if ( $cats && ! is_product_category() ) {
+		echo '<div class="em-shop-filter-group">';
+		echo '<p class="em-overline em-shop-filter-label">' . esc_html__( 'Category', 'exmart' ) . '</p>';
+		foreach ( $cats as $cat ) {
+			$checked = in_array( $cat->slug, $state['cats'], true );
+			printf(
+				'<label class="em-shop-filter-row"><input type="checkbox" name="filter_cat[]" value="%s"%s><span class="em-body-s">%s</span></label>',
+				esc_attr( $cat->slug ),
+				$checked ? ' checked' : '',
+				esc_html( $cat->name )
+			);
+		}
+		echo '</div>';
+	}
+
+	echo '<div class="em-shop-filter-group">';
+	echo '<p class="em-overline em-shop-filter-label">' . esc_html__( 'Availability', 'exmart' ) . '</p>';
+	printf(
+		'<label class="em-shop-filter-row"><input type="checkbox" name="in_stock" value="1"%s><span class="em-body-s">%s</span></label>',
+		$state['in_stock'] ? ' checked' : '',
+		esc_html__( 'In stock only', 'exmart' )
+	);
+	echo '</div>';
+
+	echo '<noscript><button type="submit" class="em-btn em-btn-secondary" style="width:100%;margin-top:var(--s3);">' . esc_html__( 'Apply filters', 'exmart' ) . '</button></noscript>';
+	echo '</form>';
+}
+
+/**
+ * Active filter chips above the product grid.
+ */
+function exmart_shop_active_filters() {
+	$state = exmart_shop_filter_state();
+	if ( ! $state['brands'] && ! $state['cats'] && ! $state['in_stock'] ) {
+		return;
+	}
+
+	$base = '';
+	if ( function_exists( 'is_shop' ) && is_shop() && function_exists( 'wc_get_page_permalink' ) ) {
+		$base = wc_get_page_permalink( 'shop' );
+	} elseif ( is_product_taxonomy() ) {
+		$link = get_term_link( get_queried_object() );
+		if ( ! is_wp_error( $link ) ) {
+			$base = $link;
+		}
+	}
+	$orderby = isset( $_GET['orderby'] ) ? sanitize_text_field( wp_unslash( $_GET['orderby'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	$clear_url = $base ? remove_query_arg( array( 'filter_brand', 'filter_cat', 'in_stock' ), $base ) : '';
+	if ( $orderby && $clear_url ) {
+		$clear_url = add_query_arg( 'orderby', $orderby, $clear_url );
+	}
+
+	echo '<div class="em-shop-active-filters">';
+
+	foreach ( $state['brands'] as $slug ) {
+		$term = get_term_by( 'slug', $slug, 'product_brand' );
+		$label = $term ? $term->name : $slug;
+		$next  = array_values( array_diff( $state['brands'], array( $slug ) ) );
+		$url   = $base ? remove_query_arg( 'filter_brand', $base ) : '';
+		if ( $url && $next ) {
+			$url = add_query_arg( 'filter_brand', $next, $url );
+		}
+		if ( $url && $state['cats'] ) {
+			$url = add_query_arg( 'filter_cat', $state['cats'], $url );
+		}
+		if ( $url && $state['in_stock'] ) {
+			$url = add_query_arg( 'in_stock', '1', $url );
+		}
+		if ( $url && $orderby ) {
+			$url = add_query_arg( 'orderby', $orderby, $url );
+		}
+		printf(
+			'<a class="em-chip active" href="%s">%s <span aria-hidden="true">×</span></a>',
+			esc_url( $url ? $url : '#' ),
+			esc_html( $label )
+		);
+	}
+
+	foreach ( $state['cats'] as $slug ) {
+		$term  = get_term_by( 'slug', $slug, 'product_cat' );
+		$label = $term ? $term->name : $slug;
+		$next  = array_values( array_diff( $state['cats'], array( $slug ) ) );
+		$url   = $base ? remove_query_arg( 'filter_cat', $base ) : '';
+		if ( $url && $next ) {
+			$url = add_query_arg( 'filter_cat', $next, $url );
+		}
+		if ( $url && $state['brands'] ) {
+			$url = add_query_arg( 'filter_brand', $state['brands'], $url );
+		}
+		if ( $url && $state['in_stock'] ) {
+			$url = add_query_arg( 'in_stock', '1', $url );
+		}
+		if ( $url && $orderby ) {
+			$url = add_query_arg( 'orderby', $orderby, $url );
+		}
+		printf(
+			'<a class="em-chip active" href="%s">%s <span aria-hidden="true">×</span></a>',
+			esc_url( $url ? $url : '#' ),
+			esc_html( $label )
+		);
+	}
+
+	if ( $state['in_stock'] ) {
+		$url = $base ? remove_query_arg( 'in_stock', $base ) : '';
+		if ( $url && $state['brands'] ) {
+			$url = add_query_arg( 'filter_brand', $state['brands'], $url );
+		}
+		if ( $url && $state['cats'] ) {
+			$url = add_query_arg( 'filter_cat', $state['cats'], $url );
+		}
+		if ( $url && $orderby ) {
+			$url = add_query_arg( 'orderby', $orderby, $url );
+		}
+		printf(
+			'<a class="em-chip active" href="%s">%s <span aria-hidden="true">×</span></a>',
+			esc_url( $url ? $url : '#' ),
+			esc_html__( 'In stock only', 'exmart' )
+		);
+	}
+
+	if ( $clear_url ) {
+		printf(
+			'<a class="em-chip em-shop-clear-filters" href="%s">%s</a>',
+			esc_url( $clear_url ),
+			esc_html__( 'Clear all', 'exmart' )
+		);
+	}
+
+	echo '</div>';
+}
 
 /**
  * Related products: match the original "You may also like" rail (up to 6).

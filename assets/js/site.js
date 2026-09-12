@@ -54,6 +54,7 @@
 		initBrandFilter();
 		initHeroSlider();
 		initCardAtc();
+		initShopFilters();
 	} );
 
 	// ── Product card ATC → quantity stepper ───────────────
@@ -623,6 +624,17 @@
 				group.style.display = hasVisible ? '' : 'none';
 			} );
 			if ( emptyMsg ) emptyMsg.style.display = anyVisible ? 'none' : 'block';
+		} );
+	}
+
+	// ── Shop PLP filters — submit on checkbox change ───────
+	function initShopFilters() {
+		var form = document.querySelector( '.em-shop-filter-form' );
+		if ( ! form ) return;
+		form.addEventListener( 'change', function ( e ) {
+			if ( e.target && e.target.matches( 'input[type="checkbox"]' ) ) {
+				form.submit();
+			}
 		} );
 	}
 } )();

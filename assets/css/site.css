@@ -619,9 +619,112 @@ body:not(.logged-in).woocommerce-account .col-2 {
    so the native Shop/Product/Cart/Checkout/Account pages match
    without needing to override every template. ──────────── */
 
+/* ── Shop / PLP (Figma) ─────────────────────────────────── */
+.em-shop-toolbar {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: var(--s4);
+	flex-wrap: wrap;
+	margin-bottom: var(--s6);
+}
+.em-shop-toolbar .em-h2 { margin: 0; }
+.em-shop-count {
+	font-size: 1rem;
+	color: var(--ink-400);
+	font-weight: 400;
+}
+.em-shop-layout {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--s8);
+	align-items: start;
+}
+@media (min-width: 1024px) {
+	.em-shop-layout {
+		/* Filters left (~220px), products fill remaining width inside 1280 container */
+		grid-template-columns: 220px minmax(0, 1fr);
+	}
+}
+.em-shop-filters {
+	display: flex;
+	flex-direction: column;
+	gap: var(--s6);
+}
+.em-shop-filter-form {
+	display: flex;
+	flex-direction: column;
+	gap: var(--s6);
+}
+.em-shop-filter-label {
+	color: var(--ink-500);
+	margin-bottom: var(--s3);
+}
+.em-shop-filter-row {
+	display: flex;
+	align-items: center;
+	gap: var(--s2);
+	padding-block: var(--s1);
+	cursor: pointer;
+	min-height: 36px;
+}
+.em-shop-filter-row input[type="checkbox"] {
+	accent-color: var(--ink-900);
+	width: 16px;
+	height: 16px;
+	flex-shrink: 0;
+}
+.em-shop-main { min-width: 0; }
+.em-shop-active-filters {
+	display: flex;
+	gap: var(--s2);
+	flex-wrap: wrap;
+	margin-bottom: var(--s4);
+}
+.em-shop-clear-filters { color: var(--ink-400); }
+.em-shop-page .woocommerce-ordering { margin: 0; }
+.em-shop-page .woocommerce-ordering select,
+.woocommerce .woocommerce-ordering select {
+	min-height: 40px;
+	width: auto;
+	font-size: .875rem;
+	font-family: var(--font);
+	padding: var(--s2) var(--s3);
+	border: 1px solid var(--ink-200);
+	border-radius: var(--r-sm);
+	background: var(--paper);
+	color: var(--ink-800);
+	cursor: pointer;
+}
+
 .woocommerce ul.products,
-.woocommerce ul.products.columns-4 { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: clamp(16px, 2vw, 24px); margin: 0; padding: 0; list-style: none; }
-.woocommerce ul.products li.product { margin: 0; height: 100%; display: flex; }
+.woocommerce ul.products.columns-4,
+.em-shop-main ul.products {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+	gap: clamp(16px, 2vw, 24px);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	width: 100%;
+}
+.woocommerce ul.products::before,
+.woocommerce ul.products::after,
+.em-shop-main ul.products::before,
+.em-shop-main ul.products::after {
+	content: none !important;
+	display: none !important;
+}
+.woocommerce ul.products li.product,
+.em-shop-main ul.products li.product {
+	float: none !important;
+	width: auto !important;
+	max-width: none !important;
+	clear: none !important;
+	margin: 0 !important;
+	height: 100%;
+	display: flex;
+}
 .woocommerce ul.products li.product > .em-card { width: 100%; }
 
 /* Product card ATC — outline button + qty stepper (Figma). */
@@ -701,6 +804,7 @@ body:not(.logged-in).woocommerce-account .col-2 {
 }
 .em-card-qty-btn {
 	flex: 1;
+	align-self: stretch;
 	height: 100%;
 	min-width: 0;
 	display: inline-flex;
@@ -708,6 +812,9 @@ body:not(.logged-in).woocommerce-account .col-2 {
 	justify-content: center;
 	background: none;
 	border: none;
+	margin: 0;
+	padding: 0 !important;
+	box-sizing: border-box;
 	cursor: pointer;
 	font-family: var(--font);
 	font-size: 1.25rem;
@@ -724,13 +831,24 @@ body:not(.logged-in).woocommerce-account .col-2 {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
+	line-height: 1;
 	pointer-events: none;
+	/* More empty space was showing above — shift glyphs up optically. */
+	transform: translateY(-1px);
 }
 .em-card-qty-bin { display: none; }
 .em-card-qty-btn.is-remove .em-card-qty-minus { display: none; }
 .em-card-qty-btn.is-remove .em-card-qty-bin { display: inline-flex; }
+.em-card-qty-btn[data-em-qty-plus] {
+	/* Keep the hit area full-height; padding pushes the “+” up optically. */
+	padding-bottom: 2px !important;
+}
 .em-card-qty-val {
 	min-width: 32px;
+	align-self: stretch;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
 	padding-inline: 4px;
 	text-align: center;
 	font-size: .9375rem;

@@ -15,7 +15,7 @@ Living tracker for the Figma → WordPress/WooCommerce rebuild.
 | 1 | Design system | Partial (cards/prices improved during Home) |
 | 2 | Header / footer chrome | Mostly done (footer contacts + payment logos) |
 | **3** | **Home** | **Done — polish left (images + mobile)** |
-| 4 | Shop / PLP / Search / Collections | Not started as a focused pass |
+| 4 | Shop / PLP / Search / Collections | **Shop PLP shell (1.0.42):** filters left + multi-col grid in 1280 container; Search/Collections still open |
 | 5 | Product detail (PDP) | Not started as a focused pass |
 | 6 | Brands index + brand landing | Partial (brand sync / logos work; Figma polish left) |
 | 7 | Cart + mini-cart | Not started as a focused pass |
@@ -32,7 +32,7 @@ Treat **Home as done** (aside from small polish). What’s left to “tackle dow
 
 ### A. Storefront / shopping (highest priority) — **~6**
 
-1. **Shop / category PLP** — grid, filters, sort, empty states  
+1. **Shop / category PLP** — layout + Brand/Category/Availability filters shipped (1.0.42); polish/edge cases left  
 2. **Search results** — same grid language as PLP  
 3. **Collections** — Offers / New / Best Sellers / tag archives  
 4. **Product detail (PDP)** — gallery, trust, tabs, related  
