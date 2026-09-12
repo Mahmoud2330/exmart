@@ -197,16 +197,18 @@
 .em-cat-heading { margin-bottom: var(--s5); }
 .em-cat-track { display:flex; overflow-x:auto; gap:clamp(12px,2vw,24px); padding-bottom:var(--s3); scroll-snap-type:x mandatory; scrollbar-width:none; }
 .em-cat-track::-webkit-scrollbar { display:none; }
-.em-cat-item { text-decoration:none; display:flex; flex-direction:column; align-items:center; gap:var(--s2); flex-shrink:0; scroll-snap-align:start; min-width:72px; }
-.em-cat-circle { border-radius:50%; overflow:hidden; flex-shrink:0; border:2.5px solid var(--ink-100); transition:transform .15s, border-color .15s; width:64px; height:64px; }
+.em-cat-item { text-decoration:none; display:flex; flex-direction:column; align-items:center; gap:var(--s2); flex-shrink:0; scroll-snap-align:start; min-width:88px; }
+/* Was a fixed 64px on mobile regardless of screen size — tiny next to
+   everything else on the page, which all scales with the viewport.
+   One continuous clamp() now covers mobile through desktop with no size
+   jump at the 640px breakpoint below. */
+.em-cat-circle { border-radius:50%; overflow:hidden; flex-shrink:0; border:2.5px solid var(--ink-100); transition:transform .15s, border-color .15s; width:clamp(80px,22vw,112px); height:clamp(80px,22vw,112px); }
 .em-cat-circle:hover { transform:scale(1.08); border-color:var(--accent-600); }
 .em-cat-circle img { width:100%; height:100%; object-fit:cover; display:block; }
-.em-cat-label { font-weight:600; color:var(--ink-700); text-align:center; line-height:1.25; width:100%; font-size:.6875rem; }
+.em-cat-label { font-weight:600; color:var(--ink-700); text-align:center; line-height:1.25; width:100%; font-size:clamp(.75rem,1.8vw,.9375rem); }
 @media(min-width:640px) {
   .em-cat-track { overflow-x:visible; justify-content:space-evenly; flex-wrap:nowrap; }
   .em-cat-item { flex:1; min-width:0; flex-shrink:1; scroll-snap-align:unset; }
-  .em-cat-circle { width:clamp(72px,8vw,112px); height:clamp(72px,8vw,112px); }
-  .em-cat-label { font-size:clamp(.75rem,.9vw,.9375rem); }
 }
 
 /* ── Brands strip ──────────────────────────────────────── */
