@@ -588,11 +588,14 @@
 	width: 100% !important;
 }
 
-/* ── Auth pages (separate Login / Register) ─────────────── */
+/* ── Auth pages (separate Login / Register) ───────────────
+   Outer .em-container = same 1280 guideline as header.
+   Inner .em-auth = form column, left-aligned to that guideline. */
 .em-auth {
+	width: 100%;
 	max-width: 420px;
-	padding-block: var(--s10) var(--s16);
-	padding-inline-start: clamp(1.25rem, 8vw, 5.5rem);
+	box-sizing: border-box;
+	padding-block: var(--s8) var(--s16);
 	margin-inline: 0;
 }
 .em-auth-title { margin: var(--s4) 0 var(--s6); }
@@ -602,12 +605,48 @@
 	gap: var(--s4);
 	margin: 0;
 	max-width: 100%;
+	width: 100%;
 }
-.em-auth-form .em-input-wrap { margin: 0; }
-.em-auth-form .em-input { width: 100%; }
+.em-auth-form .em-input-wrap {
+	margin: 0;
+	float: none;
+	width: 100%;
+	max-width: 100%;
+}
+.em-auth-form .em-input,
+.em-auth-form input.em-input {
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+}
 .em-auth-submit {
 	width: 100%;
 	margin-top: var(--s2);
+}
+/* Kill WC float/column leftovers that break mobile auth forms. */
+.em-auth .woocommerce-form::before,
+.em-auth .woocommerce-form::after {
+	content: none !important;
+	display: none !important;
+}
+.em-auth .woocommerce-form .em-input-wrap,
+.woocommerce form.em-auth-form .em-input-wrap {
+	float: none !important;
+	clear: none !important;
+	width: 100% !important;
+	padding: 0 !important;
+}
+@media (max-width: 639px) {
+	.em-auth {
+		max-width: none;
+		padding-block: var(--s6) var(--s12);
+	}
+	.em-auth-title {
+		margin: var(--s3) 0 var(--s5);
+		font-size: clamp(1.5rem, 1.2rem + 2vw, 2rem);
+	}
+	.em-auth-form { gap: var(--s3); }
+	.em-auth-switch { margin-top: var(--s4); }
 }
 .em-auth-social {
 	display: flex;
