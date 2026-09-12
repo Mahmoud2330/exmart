@@ -34,6 +34,7 @@
 		var desired = {};
 		var timers = {};
 		var inflight = {};
+		var syncingFromCart = false;
 
 		function applyFragments( fragments ) {
 			if ( ! fragments ) return;
@@ -97,6 +98,57 @@
 			} );
 		}
 
+		function readCartQtyMap() {
+			var el = document.getElementById( 'exmart-cart-qty-map' );
+			if ( ! el ) return {};
+			try {
+				var parsed = JSON.parse( el.textContent || '{}' );
+				return parsed && typeof parsed === 'object' ? parsed : {};
+			} catch ( err ) {
+				return {};
+			}
+		}
+
+		function applyCartQtyMap( map ) {
+			if ( ! map || typeof map !== 'object' ) map = {};
+			syncingFromCart = true;
+			document.querySelectorAll( '[data-em-card-atc]' ).forEach( function ( wrap ) {
+				var id = wrap.getAttribute( 'data-product-id' );
+				if ( ! id ) return;
+				var qty = parseInt( map[ id ] != null ? map[ id ] : ( map[ String( id ) ] || 0 ), 10 ) || 0;
+				desired[ id ] = qty;
+				if ( timers[ id ] ) {
+					window.clearTimeout( timers[ id ] );
+					delete timers[ id ];
+				}
+				syncUi( id, qty );
+			} );
+			syncingFromCart = false;
+		}
+
+		function fetchCartQtys() {
+			var body = new FormData();
+			body.append( 'action', 'exmart_get_cart_qtys' );
+			body.append( 'nonce', nonce );
+			return fetch( ajaxUrl, { method: 'POST', body: body, credentials: 'same-origin' } )
+				.then( function ( res ) { return res.json(); } )
+				.then( function ( json ) {
+					if ( ! json || ! json.success || ! json.data ) return;
+					applyCartQtyMap( json.data.quantities || {} );
+					var mapEl = document.getElementById( 'exmart-cart-qty-map' );
+					if ( mapEl ) {
+						mapEl.textContent = JSON.stringify( json.data.quantities || {} );
+					}
+					var badge = document.getElementById( 'em-cart-count' );
+					if ( badge && typeof json.data.count !== 'undefined' ) {
+						var count = parseInt( json.data.count, 10 ) || 0;
+						badge.textContent = String( count );
+						badge.style.display = count > 0 ? '' : 'none';
+					}
+				} )
+				.catch( function () { /* ignore */ } );
+		}
+
 		function sendSync( productId ) {
 			var quantity = desired[ productId ];
 			if ( typeof quantity === 'undefined' ) return;
@@ -123,7 +175,6 @@
 
 					if ( json && json.success && json.data ) {
 						var serverQty = parseInt( json.data.quantity, 10 ) || 0;
-						// Keep optimistic UI if user already moved past this response.
 						if ( desired[ productId ] === sentQty ) {
 							syncUi( productId, serverQty );
 							desired[ productId ] = serverQty;
@@ -131,13 +182,12 @@
 						applyFragments( json.data.fragments );
 					}
 
-					if ( ( meta.resend || desired[ productId ] !== sentQty ) && desired[ productId ] !== sentQty ) {
+					if ( desired[ productId ] !== sentQty ) {
 						sendSync( productId );
 					}
 				} )
 				.catch( function () {
 					delete inflight[ productId ];
-					// Retry once shortly if still out of sync.
 					if ( typeof desired[ productId ] !== 'undefined' ) {
 						window.setTimeout( function () { sendSync( productId ); }, 400 );
 					}
@@ -148,7 +198,6 @@
 			if ( timers[ productId ] ) {
 				window.clearTimeout( timers[ productId ] );
 			}
-			// Short debounce so rapid taps feel instant but only one request fires.
 			timers[ productId ] = window.setTimeout( function () {
 				sendSync( productId );
 			}, 220 );
@@ -195,6 +244,34 @@
 				var qPlus = parseInt( wrapPlus.getAttribute( 'data-qty' ) || '0', 10 ) || 0;
 				var max = parseInt( wrapPlus.getAttribute( 'data-max' ) || '9999', 10 ) || 9999;
 				setQty( wrapPlus, Math.min( max, qPlus + 1 ) );
+			}
+		} );
+
+		// Keep steppers in sync when cart changes elsewhere (mini-cart, cart page AJAX, fragments).
+		function onExternalCartChange() {
+			if ( syncingFromCart ) return;
+			window.setTimeout( function () {
+				applyCartQtyMap( readCartQtyMap() );
+			}, 0 );
+		}
+
+		if ( typeof jQuery !== 'undefined' ) {
+			jQuery( document.body ).on(
+				'removed_from_cart updated_cart_totals updated_wc_div wc_fragments_refreshed wc_fragments_loaded added_to_cart',
+				onExternalCartChange
+			);
+		}
+
+		// Browser back/forward cache: home may restore stale steppers after cart edits.
+		window.addEventListener( 'pageshow', function ( e ) {
+			if ( e.persisted ) {
+				fetchCartQtys();
+			}
+		} );
+
+		document.addEventListener( 'visibilitychange', function () {
+			if ( document.visibilityState === 'visible' ) {
+				fetchCartQtys();
 			}
 		} );
 	}

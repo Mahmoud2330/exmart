@@ -127,6 +127,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 </div><!-- #page -->
 
+<script type="application/json" id="exmart-cart-qty-map"><?php echo wp_json_encode( function_exists( 'exmart_get_cart_qty_map' ) ? exmart_get_cart_qty_map() : array() ); ?></script>
+
 <?php wp_footer(); ?>
 </body>
 </html>

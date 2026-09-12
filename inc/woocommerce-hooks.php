@@ -222,6 +222,10 @@ function exmart_cart_count_fragment( $fragments ) {
 	<span class="em-icon-count" id="em-cart-count" style="<?php echo $count > 0 ? '' : 'display:none;'; ?>"><?php echo esc_html( $count ); ?></span>
 	<?php
 	$fragments['#em-cart-count'] = ob_get_clean();
+
+	$map = exmart_get_cart_qty_map();
+	$fragments['#exmart-cart-qty-map'] = '<script type="application/json" id="exmart-cart-qty-map">' . wp_json_encode( $map ) . '</script>';
+
 	return $fragments;
 }
 add_filter( 'woocommerce_add_to_cart_fragments', 'exmart_cart_count_fragment' );
@@ -521,6 +525,47 @@ function exmart_cart_qty_for_product( $product_id ) {
 	}
 	return $qty;
 }
+
+/**
+ * Map of simple product_id => quantity currently in the cart.
+ *
+ * @return array<string, int>
+ */
+function exmart_get_cart_qty_map() {
+	$map = array();
+	if ( ! function_exists( 'WC' ) || ! WC()->cart ) {
+		return $map;
+	}
+
+	foreach ( WC()->cart->get_cart() as $item ) {
+		// Card steppers track the parent simple product id.
+		if ( ! empty( $item['variation_id'] ) ) {
+			continue;
+		}
+		$pid = (string) absint( $item['product_id'] );
+		if ( ! $pid ) {
+			continue;
+		}
+		$map[ $pid ] = ( isset( $map[ $pid ] ) ? (int) $map[ $pid ] : 0 ) + (int) $item['quantity'];
+	}
+
+	return $map;
+}
+
+/**
+ * AJAX: current cart quantities for product-card stepper sync.
+ */
+function exmart_ajax_get_cart_qtys() {
+	check_ajax_referer( 'exmart_ajax', 'nonce' );
+	wp_send_json_success(
+		array(
+			'quantities' => exmart_get_cart_qty_map(),
+			'count'      => ( function_exists( 'WC' ) && WC()->cart ) ? WC()->cart->get_cart_contents_count() : 0,
+		)
+	);
+}
+add_action( 'wp_ajax_exmart_get_cart_qtys', 'exmart_ajax_get_cart_qtys' );
+add_action( 'wp_ajax_nopriv_exmart_get_cart_qtys', 'exmart_ajax_get_cart_qtys' );
 
 /**
  * Product card add-to-cart / quantity stepper (Figma ProductCard behaviour).
