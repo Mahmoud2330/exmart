@@ -6,7 +6,19 @@
 .em-skip-link:focus { left:0; }
 
 /* ── Header ────────────────────────────────────────────── */
-.em-site-header { border-bottom: 1px solid var(--ink-200); background: var(--paper); position: sticky; top: 0; z-index: 20; }
+.em-site-header {
+	border-bottom: 1px solid rgba(228,230,234,.6);
+	background: rgba(255,255,255,.72);
+	backdrop-filter: blur(16px) saturate(180%);
+	-webkit-backdrop-filter: blur(16px) saturate(180%);
+	box-shadow: 0 1px 24px rgba(11,11,12,.06);
+	position: sticky;
+	top: 0;
+	z-index: 20;
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+	.em-site-header { background: var(--paper); }
+}
 .em-header-bar { display: flex; align-items: center; min-height: 72px; position: relative; }
 .em-header-left, .em-header-right { display: flex; align-items: center; gap: var(--s1); z-index: 1; }
 .em-header-right { margin-left: auto; }
