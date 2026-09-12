@@ -68,7 +68,18 @@ function exmart_scripts() {
 	// loads as a real <link> tag rather than a CSS @import.
 	wp_enqueue_style( 'exmart-site', EXMART_URI . '/assets/css/site.css', array( 'exmart-style' ), EXMART_VERSION );
 
-	wp_enqueue_script( 'exmart-main', EXMART_URI . '/assets/js/site.js', array(), EXMART_VERSION, true );
+	// Cart fragments keeps WC session cookies healthy for guest carts.
+	if ( function_exists( 'is_woocommerce' ) ) {
+		wp_enqueue_script( 'wc-cart-fragments' );
+	}
+
+	wp_enqueue_script(
+		'exmart-main',
+		EXMART_URI . '/assets/js/site.js',
+		array_filter( array( 'jquery', wp_script_is( 'wc-cart-fragments', 'registered' ) ? 'wc-cart-fragments' : null ) ),
+		EXMART_VERSION,
+		true
+	);
 
 	wp_localize_script( 'exmart-main', 'exmartData', array(
 		'ajaxUrl'   => admin_url( 'admin-ajax.php' ),

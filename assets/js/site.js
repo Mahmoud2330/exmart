@@ -8,6 +8,37 @@
 
 	var data = window.exmartData || {};
 	var WISHLIST_KEY = 'exmart_wishlist';
+	var latestMiniCartHtml = null;
+
+	function fillMiniCart( html ) {
+		if ( typeof html !== 'string' ) return;
+		latestMiniCartHtml = html;
+		var target = document.querySelector( '#em-cart-drawer .widget_shopping_cart_content' );
+		if ( target ) {
+			target.innerHTML = html;
+		}
+	}
+
+	function refreshMiniCartFromServer() {
+		var ajaxUrl = data.ajaxUrl || '';
+		var nonce = data.nonce || '';
+		if ( ! ajaxUrl ) return Promise.resolve();
+		var body = new FormData();
+		body.append( 'action', 'exmart_get_cart_qtys' );
+		body.append( 'nonce', nonce );
+		return fetch( ajaxUrl, { method: 'POST', body: body, credentials: 'same-origin' } )
+			.then( function ( res ) { return res.json(); } )
+			.then( function ( json ) {
+				if ( ! json || ! json.success || ! json.data ) return;
+				if ( typeof json.data.mini_cart_html === 'string' ) {
+					fillMiniCart( json.data.mini_cart_html );
+				}
+				if ( typeof window.exmartApplyCartSnapshot === 'function' ) {
+					window.exmartApplyCartSnapshot( json.data );
+				}
+			} )
+			.catch( function () { /* ignore */ } );
+	}
 
 	document.addEventListener( 'DOMContentLoaded', function () {
 		initAnnouncement();
@@ -129,9 +160,19 @@
 					if ( typeof json.data.count !== 'undefined' ) {
 						setBadgeCount( json.data.count );
 					}
+					if ( typeof json.data.mini_cart_html === 'string' ) {
+						fillMiniCart( json.data.mini_cart_html );
+					}
 				} )
 				.catch( function () { /* ignore network blips */ } );
 		}
+
+		window.exmartApplyCartSnapshot = function ( snapshot ) {
+			if ( ! snapshot ) return;
+			if ( snapshot.quantities ) applyQtyMap( snapshot.quantities, false );
+			if ( typeof snapshot.count !== 'undefined' ) setBadgeCount( snapshot.count );
+			if ( typeof snapshot.mini_cart_html === 'string' ) fillMiniCart( snapshot.mini_cart_html );
+		};
 
 		function sendSync( productId ) {
 			var quantity = desired[ productId ];
@@ -164,6 +205,9 @@
 						}
 						if ( typeof json.data.count !== 'undefined' ) {
 							setBadgeCount( json.data.count );
+						}
+						if ( typeof json.data.mini_cart_html === 'string' ) {
+							fillMiniCart( json.data.mini_cart_html );
 						}
 						if ( desired[ productId ] === sent ) {
 							var serverQty = parseInt( json.data.quantity, 10 ) || 0;
@@ -357,10 +401,11 @@
 		function show() {
 			drawer.hidden = false;
 			backdrop.hidden = false;
-			// Refresh mini-cart contents only when the shopper opens it.
-			if ( typeof jQuery !== 'undefined' ) {
-				jQuery( document.body ).trigger( 'wc_fragment_refresh' );
+			// Prefer last synced mini-cart HTML, then confirm with server.
+			if ( latestMiniCartHtml ) {
+				fillMiniCart( latestMiniCartHtml );
 			}
+			refreshMiniCartFromServer();
 		}
 		function hide() {
 			drawer.hidden = true;

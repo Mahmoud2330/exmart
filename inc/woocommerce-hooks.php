@@ -495,6 +495,41 @@ function exmart_save_account_phone( $user_id ) {
 add_action( 'woocommerce_save_account_details', 'exmart_save_account_phone' );
 
 /**
+ * Ensure WooCommerce cart + customer session exist (needed for guest AJAX adds).
+ *
+ * @return bool
+ */
+function exmart_ensure_wc_cart() {
+	if ( ! function_exists( 'WC' ) ) {
+		return false;
+	}
+
+	if ( is_null( WC()->cart ) && function_exists( 'wc_load_cart' ) ) {
+		wc_load_cart();
+	}
+
+	if ( WC()->session && ! WC()->session->has_session() ) {
+		WC()->session->set_customer_session_cookie( true );
+	}
+
+	return (bool) WC()->cart;
+}
+
+/**
+ * Render mini-cart HTML for the drawer.
+ *
+ * @return string
+ */
+function exmart_get_mini_cart_html() {
+	if ( ! function_exists( 'woocommerce_mini_cart' ) ) {
+		return '';
+	}
+	ob_start();
+	woocommerce_mini_cart();
+	return ob_get_clean();
+}
+
+/**
  * How many units of a product are already in the cart (simple product id).
  *
  * @param int $product_id
@@ -502,7 +537,7 @@ add_action( 'woocommerce_save_account_details', 'exmart_save_account_phone' );
  */
 function exmart_cart_qty_for_product( $product_id ) {
 	$product_id = absint( $product_id );
-	if ( ! $product_id || ! function_exists( 'WC' ) || ! WC()->cart ) {
+	if ( ! $product_id || ! exmart_ensure_wc_cart() ) {
 		return 0;
 	}
 
@@ -524,7 +559,7 @@ function exmart_cart_qty_for_product( $product_id ) {
  */
 function exmart_get_cart_qty_map() {
 	$map = array();
-	if ( ! function_exists( 'WC' ) || ! WC()->cart ) {
+	if ( ! exmart_ensure_wc_cart() ) {
 		return $map;
 	}
 	foreach ( WC()->cart->get_cart() as $item ) {
@@ -541,14 +576,16 @@ function exmart_get_cart_qty_map() {
 }
 
 /**
- * AJAX: cart qty map for reconciling product cards after external cart changes.
+ * AJAX: cart snapshot for card steppers + mini-cart drawer.
  */
 function exmart_ajax_get_cart_qtys() {
 	check_ajax_referer( 'exmart_ajax', 'nonce' );
+	exmart_ensure_wc_cart();
 	wp_send_json_success(
 		array(
-			'quantities' => exmart_get_cart_qty_map(),
-			'count'      => ( function_exists( 'WC' ) && WC()->cart ) ? (int) WC()->cart->get_cart_contents_count() : 0,
+			'quantities'     => exmart_get_cart_qty_map(),
+			'count'          => WC()->cart ? (int) WC()->cart->get_cart_contents_count() : 0,
+			'mini_cart_html' => exmart_get_mini_cart_html(),
 		)
 	);
 }
@@ -631,7 +668,7 @@ function exmart_card_atc_control( $product ) {
 function exmart_ajax_set_cart_qty() {
 	check_ajax_referer( 'exmart_ajax', 'nonce' );
 
-	if ( ! function_exists( 'WC' ) || ! WC()->cart ) {
+	if ( ! exmart_ensure_wc_cart() ) {
 		wp_send_json_error( array( 'message' => 'Cart unavailable' ), 400 );
 	}
 
@@ -656,7 +693,7 @@ function exmart_ajax_set_cart_qty() {
 		$quantity = $max;
 	}
 
-	$cart     = WC()->cart;
+	$cart      = WC()->cart;
 	$found_key = null;
 	foreach ( $cart->get_cart() as $key => $item ) {
 		if ( (int) $item['product_id'] === $product_id && empty( $item['variation_id'] ) ) {
@@ -681,16 +718,21 @@ function exmart_ajax_set_cart_qty() {
 		}
 	}
 
+	$cart->calculate_totals();
+	if ( method_exists( $cart, 'maybe_set_cart_cookies' ) ) {
+		$cart->maybe_set_cart_cookies();
+	}
+
 	$final_qty = exmart_cart_qty_for_product( $product_id );
 
-	// Lightweight response only — never rewrite mini-cart HTML from card taps.
 	wp_send_json_success(
 		array(
-			'product_id' => $product_id,
-			'quantity'   => $final_qty,
-			'count'      => (int) $cart->get_cart_contents_count(),
-			'quantities' => exmart_get_cart_qty_map(),
-			'cart_hash'  => $cart->get_cart_hash(),
+			'product_id'     => $product_id,
+			'quantity'       => $final_qty,
+			'count'          => (int) $cart->get_cart_contents_count(),
+			'quantities'     => exmart_get_cart_qty_map(),
+			'mini_cart_html' => exmart_get_mini_cart_html(),
+			'cart_hash'      => $cart->get_cart_hash(),
 		)
 	);
 }
