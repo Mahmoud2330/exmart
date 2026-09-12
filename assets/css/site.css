@@ -102,8 +102,7 @@
 .elementor-location-footer { display: none !important; }
 
 /* ── Hero (bento grid) ─────────────────────────────────────
-   Desktop layout done first per design brief; mobile is a plain
-   single-column stack for now, to be refined as its own pass. ── */
+   Single-column stack below 900px, 3-column bento grid above it. ── */
 .em-hero-bento { padding-block: clamp(16px, 3vw, 28px); }
 .em-hero-bento-grid { display: grid; grid-template-columns: 1fr; gap: var(--s4); }
 @media (min-width: 900px) {
@@ -121,13 +120,17 @@
 	border-radius: var(--r-lg);
 	color: var(--paper);
 	text-decoration: none;
-	min-height: 260px;
+	min-height: 200px;
 	padding: clamp(20px, 3vw, 40px);
 }
-.em-hero-tile--main { grid-area: main; min-height: 420px; background: linear-gradient(135deg, var(--ink-900) 0%, var(--accent-700) 100%); }
+.em-hero-tile--main { grid-area: main; min-height: 320px; background: linear-gradient(135deg, var(--ink-900) 0%, var(--accent-700) 100%); }
 .em-hero-tile--offers { grid-area: offers; background: linear-gradient(135deg, #3A0D08 0%, var(--sale) 100%); }
 .em-hero-tile--new { grid-area: new; background: linear-gradient(135deg, #0A2E1C 0%, var(--success) 100%); }
 .em-hero-tile--best { grid-area: best; background: linear-gradient(135deg, #3A2A08 0%, var(--warning) 100%); }
+@media (min-width: 900px) {
+	.em-hero-tile { min-height: 260px; }
+	.em-hero-tile--main { min-height: 420px; }
+}
 
 /* Full-bleed photo fills the tile behind the text; a dark scrim keeps
    the text legible over whatever the photo looks like. */
@@ -139,12 +142,24 @@
 	position: absolute;
 	inset: 0;
 	z-index: 1;
-	background: linear-gradient(90deg, rgba(0,0,0,.55) 0%, rgba(0,0,0,.2) 45%, rgba(0,0,0,0) 75%);
+	background: linear-gradient(90deg, rgba(0,0,0,.6) 0%, rgba(0,0,0,.35) 100%);
 	pointer-events: none;
 }
+@media (min-width: 900px) {
+	/* Text is confined to the left column at this width, so the scrim
+	   can fade out earlier and let the image show through on the right. */
+	.em-hero-tile::before { background: linear-gradient(90deg, rgba(0,0,0,.55) 0%, rgba(0,0,0,.2) 45%, rgba(0,0,0,0) 75%); }
+}
 
-.em-hero-tile-content { position: relative; z-index: 2; max-width: 60%; height: 100%; display: flex; flex-direction: column; gap: var(--s3); }
-.em-hero-tile--main .em-hero-tile-content { max-width: 480px; justify-content: center; gap: var(--s5); }
+.em-hero-tile-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; gap: var(--s3); }
+.em-hero-tile--main .em-hero-tile-content { justify-content: center; gap: var(--s5); }
+@media (min-width: 900px) {
+	/* Narrower text column only once the image has room beside it; on the
+	   mobile single-column stack the full-bleed image sits behind the
+	   text, so there's no side column to leave room for. */
+	.em-hero-tile-content { max-width: 60%; }
+	.em-hero-tile--main .em-hero-tile-content { max-width: 480px; }
+}
 .em-hero-tile-content .em-overline { color: rgba(255,255,255,.75); }
 .em-hero-tile-content .em-h1 { color: var(--paper); margin: 0; }
 .em-hero-tile-title { color: var(--paper); margin: 0; }
