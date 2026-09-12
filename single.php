@@ -6,7 +6,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 get_header();
 ?>
-<div class="em-container em-page-narrow" style="padding-block: var(--s12);">
+<div class="em-container" style="padding-block: var(--s12);">
 	<?php while ( have_posts() ) : the_post(); ?>
 		<?php exmart_breadcrumb( array( array( 'label' => __( 'Home', 'exmart' ), 'href' => home_url( '/' ) ), array( 'label' => get_the_title() ) ) ); ?>
 		<h1 class="em-h1" style="margin-bottom:var(--s4);"><?php the_title(); ?></h1>

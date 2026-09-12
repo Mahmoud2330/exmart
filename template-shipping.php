@@ -5,7 +5,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 get_header();
 ?>
-<div class="em-container em-page-narrow" style="padding-block: var(--s12);">
+<div class="em-container" style="padding-block: var(--s12);">
 	<?php exmart_breadcrumb( array( array( 'label' => __( 'Home', 'exmart' ), 'href' => home_url( '/' ) ), array( 'label' => __( 'Shipping & Returns', 'exmart' ) ) ) ); ?>
 	<h1 class="em-h1" style="margin-bottom:var(--s8);"><?php esc_html_e( 'Shipping & Returns', 'exmart' ); ?></h1>
 

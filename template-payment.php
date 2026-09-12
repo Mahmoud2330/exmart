@@ -13,7 +13,7 @@ $methods = array(
 	array( 'name' => 'InstaPay', 'desc' => __( 'Send a bank transfer via InstaPay to our registered number. Your order will be confirmed within 30 minutes during business hours.', 'exmart' ) ),
 );
 ?>
-<div class="em-container em-page-narrow" style="padding-block: var(--s12);">
+<div class="em-container" style="padding-block: var(--s12);">
 	<?php exmart_breadcrumb( array( array( 'label' => __( 'Home', 'exmart' ), 'href' => home_url( '/' ) ), array( 'label' => __( 'Payment Methods', 'exmart' ) ) ) ); ?>
 	<h1 class="em-h1" style="margin-bottom:var(--s8);"><?php esc_html_e( 'Payment Methods', 'exmart' ); ?></h1>
 	<div style="display:flex;flex-direction:column;gap:var(--s4);">

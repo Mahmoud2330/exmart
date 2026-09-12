@@ -260,7 +260,6 @@
 .em-faq-item.open .em-faq-a { display: block; }
 
 /* ── Info page shared ──────────────────────────────────── */
-.em-page-narrow { max-width: 760px; }
 .em-info-list { display: flex; flex-direction: column; gap: var(--s3); }
 .em-info-list-item { display: flex; gap: var(--s3); align-items: flex-start; }
 .em-info-table { border-collapse: collapse; width: 100%; }

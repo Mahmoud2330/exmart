@@ -16,7 +16,7 @@ $faqs = array(
 	array( 'q' => __( 'How do I track my order?', 'exmart' ), 'a' => __( 'After dispatch you will receive an SMS with your tracking number. You can also track your order from the Account section on our website.', 'exmart' ) ),
 );
 ?>
-<div class="em-container em-page-narrow" style="padding-block: var(--s12);">
+<div class="em-container" style="padding-block: var(--s12);">
 	<?php exmart_breadcrumb( array( array( 'label' => __( 'Home', 'exmart' ), 'href' => home_url( '/' ) ), array( 'label' => __( 'FAQ', 'exmart' ) ) ) ); ?>
 	<h1 class="em-h1" style="margin-bottom:var(--s8);"><?php esc_html_e( 'Frequently Asked Questions', 'exmart' ); ?></h1>
 	<div>

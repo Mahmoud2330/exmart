@@ -8,7 +8,7 @@ get_header();
 $distributed = get_terms( array( 'taxonomy' => 'product_brand', 'hide_empty' => false, 'meta_key' => 'exmart_brand_type', 'meta_value' => 'distributed' ) );
 $house       = get_terms( array( 'taxonomy' => 'product_brand', 'hide_empty' => false, 'meta_key' => 'exmart_brand_type', 'meta_value' => 'house' ) );
 ?>
-<div class="em-container em-page-narrow" style="padding-block: var(--s12);">
+<div class="em-container" style="padding-block: var(--s12);">
 	<?php exmart_breadcrumb( array( array( 'label' => __( 'Home', 'exmart' ), 'href' => home_url( '/' ) ), array( 'label' => __( 'About', 'exmart' ) ) ) ); ?>
 	<h1 class="em-h1" style="margin-bottom:var(--s8);"><?php esc_html_e( 'About exMart', 'exmart' ); ?></h1>
 

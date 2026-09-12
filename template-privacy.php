@@ -14,7 +14,7 @@ $sections = array(
 	array( 'title' => __( 'Governing law', 'exmart' ), 'body' => __( 'These terms are governed by Egyptian law. Any disputes shall be subject to the jurisdiction of Egyptian courts.', 'exmart' ) ),
 );
 ?>
-<div class="em-container em-page-narrow" style="padding-block: var(--s12);">
+<div class="em-container" style="padding-block: var(--s12);">
 	<?php exmart_breadcrumb( array( array( 'label' => __( 'Home', 'exmart' ), 'href' => home_url( '/' ) ), array( 'label' => __( 'Privacy & Terms', 'exmart' ) ) ) ); ?>
 	<h1 class="em-h1" style="margin-bottom:var(--s8);"><?php esc_html_e( 'Privacy Policy & Terms of Use', 'exmart' ); ?></h1>
 	<?php foreach ( $sections as $s ) : ?>
