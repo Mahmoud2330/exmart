@@ -90,6 +90,8 @@ $phone     = isset( $_POST['exmart_phone'] ) ? sanitize_text_field( wp_unslash( 
 			/>
 		</p>
 
+		<?php exmart_social_auth_block( 'register' ); ?>
+
 		<?php wp_nonce_field( 'woocommerce-register', 'woocommerce-register-nonce' ); ?>
 
 		<button type="submit" class="em-btn em-btn-primary em-btn-lg em-auth-submit" name="register" value="<?php esc_attr_e( 'Register', 'exmart' ); ?>">

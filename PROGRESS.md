@@ -19,7 +19,7 @@ Living tracker for the Figma → WordPress/WooCommerce rebuild.
 | 5 | Product detail (PDP) | Not started as a focused pass |
 | 6 | Brands index + brand landing | Partial (brand sync / logos work; Figma polish left) |
 | 7 | Cart + mini-cart | Not started as a focused pass |
-| 8 | Checkout · thank-you · account | Login/Register separate; logged-in Account matches Figma (Orders / Addresses / Wishlist / Profile + order cards) — **1.0.20**. Checkout still deferred |
+| 8 | Checkout · thank-you · account | **Account shell rebuilt to Figma (1.0.21):** Orders / Addresses / Wishlist / Profile stay in one shell; wishlist is `/my-account/wishlist/` (not a separate page jump); Track uses order pipeline. Checkout still deferred. |
 | 9 | Content pages (About, FAQ, …) | Templates exist; need real content + Figma polish |
 | 10 | Full responsive / a11y QA | Later (Home mobile still open) |
 | 11 | Deploy / versioning habit | In use |

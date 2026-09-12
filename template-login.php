@@ -59,6 +59,8 @@ $register_url = function_exists( 'exmart_register_url' ) ? exmart_register_url()
 			/>
 		</p>
 
+		<?php exmart_social_auth_block( 'login' ); ?>
+
 		<?php wp_nonce_field( 'woocommerce-login', 'woocommerce-login-nonce' ); ?>
 		<input type="hidden" name="redirect" value="<?php echo esc_url( function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'myaccount' ) : home_url( '/' ) ); ?>" />
 

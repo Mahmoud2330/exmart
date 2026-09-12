@@ -411,24 +411,63 @@ function exmart_account_menu_items( $items ) {
 		'edit-account' => __( 'Profile', 'exmart' ),
 	);
 }
-add_filter( 'woocommerce_account_menu_items', 'exmart_account_menu_items' );
+add_filter( 'woocommerce_account_menu_items', 'exmart_account_menu_items', 99 );
 
 /**
- * Point the custom “wishlist” menu item at the Wishlist page.
- *
- * @param string $url
- * @param string $endpoint
- * @param string $value
- * @param string $permalink
- * @return string
+ * Register /my-account/wishlist/ as a real WooCommerce endpoint
+ * so wishlist stays inside the Account shell (Figma behaviour).
  */
-function exmart_account_endpoint_url( $url, $endpoint, $value, $permalink ) {
-	if ( 'wishlist' === $endpoint ) {
-		return home_url( '/wishlist/' );
-	}
-	return $url;
+function exmart_register_wishlist_endpoint() {
+	add_rewrite_endpoint( 'wishlist', EP_ROOT | EP_PAGES );
 }
-add_filter( 'woocommerce_get_endpoint_url', 'exmart_account_endpoint_url', 10, 4 );
+add_action( 'init', 'exmart_register_wishlist_endpoint', 0 );
+
+/**
+ * @param array $vars
+ * @return array
+ */
+function exmart_wishlist_query_vars( $vars ) {
+	$vars['wishlist'] = 'wishlist';
+	return $vars;
+}
+add_filter( 'woocommerce_get_query_vars', 'exmart_wishlist_query_vars' );
+
+/**
+ * Flush rewrites once after introducing the wishlist endpoint.
+ */
+function exmart_maybe_flush_wishlist_endpoint() {
+	if ( get_option( 'exmart_flush_wishlist_endpoint_v2' ) ) {
+		return;
+	}
+	flush_rewrite_rules( false );
+	update_option( 'exmart_flush_wishlist_endpoint_v2', 1, false );
+}
+add_action( 'init', 'exmart_maybe_flush_wishlist_endpoint', 99 );
+
+/**
+ * Wishlist panel content inside My Account.
+ */
+function exmart_account_wishlist_content() {
+	$shop_url = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
+	?>
+	<div class="em-account-panel em-account-wishlist" data-em-wishlist-panel>
+		<h2 class="em-h4 em-account-panel-title">
+			<?php esc_html_e( 'Wishlist', 'exmart' ); ?>
+			<span id="em-wishlist-count" class="em-account-wishlist-count"></span>
+		</h2>
+
+		<div id="em-wishlist-loading" class="em-body" style="color:var(--ink-500);"><?php esc_html_e( 'Loading…', 'exmart' ); ?></div>
+
+		<div id="em-wishlist-empty" class="em-empty-state" hidden>
+			<p class="em-body" style="color:var(--ink-500);margin-bottom:var(--s4);"><?php esc_html_e( 'Your wishlist is empty.', 'exmart' ); ?></p>
+			<a href="<?php echo esc_url( $shop_url ); ?>" class="em-btn em-btn-primary"><?php esc_html_e( 'Discover products', 'exmart' ); ?></a>
+		</div>
+
+		<ul class="products em-grid em-account-wishlist-grid" id="em-wishlist-grid" hidden></ul>
+	</div>
+	<?php
+}
+add_action( 'woocommerce_account_wishlist_endpoint', 'exmart_account_wishlist_content' );
 
 /**
  * Logged-in users landing on /my-account/ go to Orders (Figma default tab).
@@ -449,9 +488,13 @@ function exmart_account_default_to_orders() {
 add_action( 'template_redirect', 'exmart_account_default_to_orders', 20 );
 
 /**
- * Section titles inside account content panels.
+ * Save phone from Profile form.
+ *
+ * @param int $user_id
  */
-function exmart_account_profile_heading() {
-	echo '<h2 class="em-h4 em-account-panel-title">' . esc_html__( 'Profile', 'exmart' ) . '</h2>';
+function exmart_save_account_phone( $user_id ) {
+	if ( isset( $_POST['billing_phone'] ) ) {
+		update_user_meta( $user_id, 'billing_phone', sanitize_text_field( wp_unslash( $_POST['billing_phone'] ) ) );
+	}
 }
-add_action( 'woocommerce_before_edit_account_form', 'exmart_account_profile_heading', 5 );
+add_action( 'woocommerce_save_account_details', 'exmart_save_account_phone' );

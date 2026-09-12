@@ -24,20 +24,27 @@ $get_addresses = apply_filters(
 	<div class="em-account-addresses">
 		<?php foreach ( $get_addresses as $name => $title ) :
 			$address = wc_get_account_formatted_address( $name );
+			$edit_url = wc_get_endpoint_url( 'edit-address', $name );
 			?>
 			<div class="em-address-card woocommerce-Address">
-				<header class="em-address-card-header">
-					<h3 class="em-address-card-title"><?php echo esc_html( $title ); ?></h3>
-					<a href="<?php echo esc_url( wc_get_endpoint_url( 'edit-address', $name ) ); ?>" class="em-btn em-btn-secondary em-btn-sm">
-						<?php echo $address ? esc_html__( 'Edit', 'exmart' ) : esc_html__( 'Add', 'exmart' ); ?>
-					</a>
-				</header>
-				<address class="em-address-card-body">
-					<?php
-					echo $address ? wp_kses_post( $address ) : esc_html__( 'You have not set up this type of address yet.', 'exmart' );
-					?>
-				</address>
+				<?php if ( $address ) : ?>
+					<p class="em-address-card-name"><?php echo esc_html( $title ); ?></p>
+					<div class="em-address-card-body"><?php echo wp_kses_post( $address ); ?></div>
+					<div class="em-address-card-actions">
+						<a href="<?php echo esc_url( $edit_url ); ?>" class="em-btn em-btn-secondary em-btn-sm"><?php esc_html_e( 'Edit', 'exmart' ); ?></a>
+					</div>
+				<?php else : ?>
+					<p class="em-address-card-name"><?php echo esc_html( $title ); ?></p>
+					<p class="em-body-s" style="color:var(--ink-500);margin:0 0 var(--s3);"><?php esc_html_e( 'Not set up yet.', 'exmart' ); ?></p>
+					<a href="<?php echo esc_url( $edit_url ); ?>" class="em-btn em-btn-secondary em-btn-sm"><?php esc_html_e( 'Add', 'exmart' ); ?></a>
+				<?php endif; ?>
 			</div>
 		<?php endforeach; ?>
 	</div>
+
+	<p style="margin-top:var(--s5);">
+		<a class="em-btn em-btn-secondary" href="<?php echo esc_url( wc_get_endpoint_url( 'edit-address', 'billing' ) ); ?>">
+			<?php esc_html_e( '+ Add new address', 'exmart' ); ?>
+		</a>
+	</p>
 </div>

@@ -254,7 +254,20 @@
 		} );
 	}
 
-	// ── Wishlist page: fetch product cards for saved IDs ──
+	// ── Wishlist page / account wishlist panel ───────────
+	function showWishlistEl( el, display ) {
+		if ( ! el ) return;
+		el.hidden = false;
+		el.removeAttribute( 'hidden' );
+		el.style.display = display || 'block';
+	}
+
+	function hideWishlistEl( el ) {
+		if ( ! el ) return;
+		el.style.display = 'none';
+		el.hidden = true;
+	}
+
 	function initWishlistPage() {
 		var grid = document.getElementById( 'em-wishlist-grid' );
 		var loading = document.getElementById( 'em-wishlist-loading' );
@@ -265,8 +278,10 @@
 		var ids = getWishlist();
 
 		if ( ids.length === 0 ) {
-			if ( loading ) loading.style.display = 'none';
-			if ( empty ) empty.style.display = 'flex';
+			hideWishlistEl( loading );
+			hideWishlistEl( grid );
+			showWishlistEl( empty, 'flex' );
+			if ( countEl ) countEl.textContent = '';
 			return;
 		}
 
@@ -278,19 +293,23 @@
 		fetch( data.ajaxUrl, { method: 'POST', body: body } )
 			.then( function ( r ) { return r.json(); } )
 			.then( function ( res ) {
-				if ( loading ) loading.style.display = 'none';
+				hideWishlistEl( loading );
 				if ( res.success && res.data.count > 0 ) {
 					grid.innerHTML = res.data.html;
-					grid.style.display = 'grid';
+					showWishlistEl( grid, 'grid' );
+					hideWishlistEl( empty );
 					if ( countEl ) countEl.textContent = '(' + res.data.count + ')';
 					refreshWishlistButtonStates();
-				} else if ( empty ) {
-					empty.style.display = 'flex';
+				} else {
+					hideWishlistEl( grid );
+					showWishlistEl( empty, 'flex' );
+					if ( countEl ) countEl.textContent = '';
 				}
 			} )
 			.catch( function () {
-				if ( loading ) loading.style.display = 'none';
-				if ( empty ) empty.style.display = 'flex';
+				hideWishlistEl( loading );
+				hideWishlistEl( grid );
+				showWishlistEl( empty, 'flex' );
 			} );
 	}
 
