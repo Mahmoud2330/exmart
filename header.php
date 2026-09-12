@@ -11,9 +11,12 @@ $brands_distributed   = array_filter( $product_brands, fn( $t ) => exmart_brand_
 $brands_house         = array_filter( $product_brands, fn( $t ) => exmart_brand_type( $t->term_id ) === 'house' );
 
 $cart_count = ( function_exists( 'WC' ) && WC()->cart ) ? WC()->cart->get_cart_contents_count() : 0;
-$wishlist_url = function_exists( 'wc_get_account_endpoint_url' )
+/* Guests use the public /wishlist/ page (localStorage). Logged-in users
+   stay in the Account shell at /my-account/wishlist/. */
+$wishlist_page = get_page_by_path( 'wishlist' );
+$wishlist_url  = ( is_user_logged_in() && function_exists( 'wc_get_account_endpoint_url' ) )
 	? wc_get_account_endpoint_url( 'wishlist' )
-	: home_url( '/my-account/wishlist/' );
+	: ( $wishlist_page ? get_permalink( $wishlist_page ) : home_url( '/wishlist/' ) );
 $account_url  = is_user_logged_in()
 	? ( function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'myaccount' ) : home_url( '/my-account/' ) )
 	: ( function_exists( 'exmart_login_url' ) ? exmart_login_url() : home_url( '/login/' ) );
@@ -154,7 +157,7 @@ $checkout_url = function_exists( 'wc_get_checkout_url' ) ? wc_get_checkout_url()
 	<div class="em-backdrop" id="em-mobile-nav-backdrop" hidden></div>
 	<nav class="em-drawer em-drawer-l" id="em-mobile-nav" aria-label="<?php esc_attr_e( 'Mobile navigation', 'exmart' ); ?>" hidden>
 		<div class="em-drawer-header">
-			<img src="<?php echo esc_url( EXMART_URI . '/assets/images/logo.png' ); ?>" alt="exMart" height="36" style="width:auto;" />
+			<img class="em-drawer-logo" src="<?php echo esc_url( EXMART_URI . '/assets/images/logo.png' ); ?>" alt="exMart" width="120" height="28" />
 			<button class="em-btn-icon" id="em-mobile-nav-close" aria-label="<?php esc_attr_e( 'Close menu', 'exmart' ); ?>">
 				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
 			</button>

@@ -562,8 +562,11 @@
 	function refreshWishlistButtonStates() {
 		var ids = getWishlist().map( String );
 		document.querySelectorAll( '.em-wishlist-toggle' ).forEach( function ( btn ) {
-			var id = btn.getAttribute( 'data-product-id' );
-			btn.classList.toggle( 'wishlisted', ids.indexOf( id ) !== -1 );
+			var id = String( btn.getAttribute( 'data-product-id' ) || '' );
+			var on = id && ids.indexOf( id ) !== -1;
+			btn.classList.toggle( 'wishlisted', on );
+			btn.setAttribute( 'aria-pressed', on ? 'true' : 'false' );
+			btn.setAttribute( 'aria-label', on ? 'Remove from wishlist' : 'Add to wishlist' );
 		} );
 	}
 
@@ -575,14 +578,20 @@
 			var btn = e.target.closest( '.em-wishlist-toggle' );
 			if ( ! btn ) return;
 			e.preventDefault();
-			var id = btn.getAttribute( 'data-product-id' );
+			e.stopPropagation();
+			var id = String( btn.getAttribute( 'data-product-id' ) || '' );
+			if ( ! id ) return;
 			var ids = getWishlist().map( String );
 			var idx = ids.indexOf( id );
-			if ( idx === -1 ) ids.push( id ); else ids.splice( idx, 1 );
+			var nowOn = idx === -1;
+			if ( nowOn ) ids.push( id ); else ids.splice( idx, 1 );
 			saveWishlist( ids );
+			btn.classList.toggle( 'wishlisted', nowOn );
+			btn.setAttribute( 'aria-pressed', nowOn ? 'true' : 'false' );
+			btn.setAttribute( 'aria-label', nowOn ? 'Remove from wishlist' : 'Add to wishlist' );
 			refreshWishlistDot();
 			refreshWishlistButtonStates();
-		} );
+		}, true );
 	}
 
 	// ── Wishlist page / account wishlist panel ───────────

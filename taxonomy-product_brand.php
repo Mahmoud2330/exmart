@@ -5,9 +5,10 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 get_header();
 
-$term  = get_queried_object();
-$color = exmart_brand_color( $term->term_id );
-$type  = exmart_brand_type( $term->term_id );
+$term     = get_queried_object();
+$color    = exmart_brand_color( $term->term_id );
+$type     = exmart_brand_type( $term->term_id );
+$logo_url = exmart_brand_logo_url( $term->term_id );
 ?>
 
 <div class="em-brand-hero">
@@ -18,8 +19,12 @@ $type  = exmart_brand_type( $term->term_id );
 			array( 'label' => $term->name ),
 		) ); ?>
 		<div class="em-brand-hero-row">
-			<div class="em-brand-hero-avatar" style="background:<?php echo esc_attr( $color ); ?>22;">
-				<span style="color:<?php echo esc_attr( $color ); ?>;"><?php echo esc_html( mb_substr( $term->name, 0, 1 ) ); ?></span>
+			<div class="em-brand-hero-avatar<?php echo $logo_url ? ' has-logo' : ''; ?>" style="background:<?php echo esc_attr( $color ); ?>22;">
+				<?php if ( $logo_url ) : ?>
+					<img src="<?php echo esc_url( $logo_url ); ?>" alt="<?php echo esc_attr( $term->name ); ?>" width="96" height="48" loading="eager" decoding="async" />
+				<?php else : ?>
+					<span style="color:<?php echo esc_attr( $color ); ?>;"><?php echo esc_html( mb_substr( $term->name, 0, 1 ) ); ?></span>
+				<?php endif; ?>
 			</div>
 			<div style="flex:1;min-width:240px;">
 				<h1 class="em-h2" style="margin-bottom:var(--s2);"><?php echo esc_html( $term->name ); ?></h1>

@@ -23,6 +23,14 @@
 .em-header-right { margin-left: auto; }
 .em-header-logo { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; text-decoration: none; }
 .em-header-logo img { height: 48px; width: auto; display: block; }
+/* Mobile nav drawer: global img { height:auto } blows the 1540px logo full-width. */
+.em-drawer-logo {
+	display: block;
+	height: 28px;
+	width: auto;
+	max-width: 140px;
+	object-fit: contain;
+}
 .em-icon-badge { position: relative; }
 .em-icon-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: var(--sale); border: 2px solid var(--paper); }
 .em-icon-count { position: absolute; top: 4px; right: 4px; min-width: 18px; height: 18px; border-radius: var(--r-full); background: var(--accent-600); color: #fff; font-size: .6875rem; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 2px solid var(--paper); padding-inline: 3px; }
@@ -267,9 +275,26 @@
 
 /* ── Brand landing hero ────────────────────────────────── */
 .em-brand-hero { border-bottom: 1px solid var(--ink-200); background: var(--ink-50); padding-block: var(--s12); }
-.em-brand-hero-row { display: flex; align-items: flex-start; gap: var(--s6); flex-wrap: wrap; margin-top: var(--s4); }
-.em-brand-hero-avatar { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.em-brand-hero-row { display: flex; align-items: center; gap: var(--s6); flex-wrap: wrap; margin-top: var(--s4); }
+.em-brand-hero-avatar {
+	width: 88px; height: 88px; border-radius: var(--r-md);
+	display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+	overflow: hidden; padding: var(--s3); box-sizing: border-box;
+	background: var(--paper);
+	border: 1px solid var(--ink-200);
+}
+.em-brand-hero-avatar.has-logo { border-radius: var(--r-md); }
+.em-brand-hero-avatar:not(.has-logo) { border-radius: 50%; border: none; padding: 0; }
 .em-brand-hero-avatar span { font-weight: 700; font-size: 2rem; }
+.em-brand-hero-avatar img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	max-width: 72px;
+	max-height: 48px;
+	object-fit: contain;
+	object-position: center;
+}
 .em-brand-hero-desc { color: var(--ink-500); margin-top: var(--s4); max-width: 72ch; }
 
 /* ── About page ────────────────────────────────────────── */
@@ -590,13 +615,15 @@
 
 /* ── Auth pages (separate Login / Register) ───────────────
    Outer .em-container = same 1280 guideline as header.
-   Inner .em-auth = form column, left-aligned to that guideline. */
+   Inner .em-auth = form column centered in that container;
+   copy/fields stay left-aligned inside the form. */
 .em-auth {
 	width: 100%;
 	max-width: 420px;
 	box-sizing: border-box;
 	padding-block: var(--s8) var(--s16);
-	margin-inline: 0;
+	margin-inline: auto;
+	text-align: left;
 }
 .em-auth-title { margin: var(--s4) 0 var(--s6); }
 .em-auth-form {
@@ -881,14 +908,22 @@ body:not(.logged-in).woocommerce-account .col-2 {
 .woocommerce .woocommerce-ordering select {
 	min-height: 40px;
 	width: auto;
+	max-width: 100%;
 	font-size: .875rem;
 	font-family: var(--font);
-	padding: var(--s2) var(--s3);
+	/* Extra end padding so the native dropdown arrow isn’t clipped. */
+	padding: var(--s2) 2.25rem var(--s2) var(--s3);
 	border: 1px solid var(--ink-200);
 	border-radius: var(--r-sm);
-	background: var(--paper);
+	background-color: var(--paper);
 	color: var(--ink-800);
 	cursor: pointer;
+	appearance: none;
+	-webkit-appearance: none;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%236B6E76' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: right 0.75rem center;
+	background-size: 12px 8px;
 }
 
 /* Fixed column counts (not auto-fill) so every product grid on the site —
@@ -1124,6 +1159,137 @@ table.woocommerce-product-attributes td, table.woocommerce-product-attributes th
 
 .woocommerce-checkout #payment { background: var(--ink-50); border-radius: var(--r-md); padding: var(--s4); }
 .woocommerce-checkout #payment ul.payment_methods { list-style: none; padding: 0; margin: 0; }
+
+/* Guest checkout layout — kill WC float columns that collapse/overlap. */
+.woocommerce-checkout .woocommerce-checkout,
+form.checkout.woocommerce-checkout {
+	display: block;
+	width: 100%;
+	clear: both;
+}
+.woocommerce-checkout .col2-set#customer_details,
+.woocommerce-checkout #customer_details.col2-set {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--s8);
+	width: 100%;
+	margin: 0 0 var(--s8);
+	float: none;
+}
+@media (min-width: 900px) {
+	.woocommerce-checkout .col2-set#customer_details,
+	.woocommerce-checkout #customer_details.col2-set {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		align-items: start;
+	}
+}
+.woocommerce-checkout #customer_details .col-1,
+.woocommerce-checkout #customer_details .col-2 {
+	float: none !important;
+	width: 100% !important;
+	max-width: none !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	clear: none !important;
+}
+.woocommerce-checkout .woocommerce-billing-fields__field-wrapper,
+.woocommerce-checkout .woocommerce-shipping-fields__field-wrapper {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: var(--s3) var(--s4);
+}
+.woocommerce-checkout .woocommerce-billing-fields__field-wrapper::before,
+.woocommerce-checkout .woocommerce-billing-fields__field-wrapper::after,
+.woocommerce-checkout .woocommerce-shipping-fields__field-wrapper::before,
+.woocommerce-checkout .woocommerce-shipping-fields__field-wrapper::after {
+	content: none !important;
+	display: none !important;
+}
+.woocommerce-checkout .woocommerce-billing-fields__field-wrapper .form-row,
+.woocommerce-checkout .woocommerce-shipping-fields__field-wrapper .form-row {
+	float: none !important;
+	width: 100% !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	clear: none !important;
+}
+.woocommerce-checkout .woocommerce-billing-fields__field-wrapper .form-row-wide,
+.woocommerce-checkout .woocommerce-shipping-fields__field-wrapper .form-row-wide,
+.woocommerce-checkout .woocommerce-billing-fields__field-wrapper .form-row-first,
+.woocommerce-checkout .woocommerce-billing-fields__field-wrapper .form-row-last,
+.woocommerce-checkout .woocommerce-shipping-fields__field-wrapper .form-row-first,
+.woocommerce-checkout .woocommerce-shipping-fields__field-wrapper .form-row-last {
+	grid-column: 1 / -1;
+}
+.woocommerce-checkout .woocommerce-billing-fields__field-wrapper .form-row-first,
+.woocommerce-checkout .woocommerce-shipping-fields__field-wrapper .form-row-first {
+	grid-column: 1;
+}
+.woocommerce-checkout .woocommerce-billing-fields__field-wrapper .form-row-last,
+.woocommerce-checkout .woocommerce-shipping-fields__field-wrapper .form-row-last {
+	grid-column: 2;
+}
+@media (max-width: 599px) {
+	.woocommerce-checkout .woocommerce-billing-fields__field-wrapper,
+	.woocommerce-checkout .woocommerce-shipping-fields__field-wrapper {
+		grid-template-columns: 1fr;
+	}
+	.woocommerce-checkout .woocommerce-billing-fields__field-wrapper .form-row-first,
+	.woocommerce-checkout .woocommerce-billing-fields__field-wrapper .form-row-last,
+	.woocommerce-checkout .woocommerce-shipping-fields__field-wrapper .form-row-first,
+	.woocommerce-checkout .woocommerce-shipping-fields__field-wrapper .form-row-last {
+		grid-column: 1;
+	}
+}
+.woocommerce-checkout .woocommerce-account-fields {
+	margin-top: var(--s5);
+	padding-top: var(--s5);
+	border-top: 1px solid var(--ink-200);
+}
+.woocommerce-checkout .woocommerce-account-fields .create-account {
+	margin-top: var(--s3);
+}
+.woocommerce-checkout form.woocommerce-form-login {
+	max-width: 420px;
+	margin: 0 0 var(--s6);
+	padding: var(--s5);
+	border: 1px solid var(--ink-200);
+	border-radius: var(--r-md);
+	background: var(--ink-50);
+	box-sizing: border-box;
+}
+.woocommerce-checkout form.woocommerce-form-login > p:first-of-type {
+	margin: 0 0 var(--s3);
+	color: var(--ink-500);
+	font-size: .875rem;
+}
+.woocommerce-checkout form.woocommerce-form-login .form-row,
+.woocommerce-checkout form.woocommerce-form-login .form-row-first,
+.woocommerce-checkout form.woocommerce-form-login .form-row-last {
+	float: none !important;
+	width: 100% !important;
+	margin: 0 0 var(--s3) !important;
+	clear: both !important;
+}
+.woocommerce-checkout form.woocommerce-form-login .clear {
+	display: none;
+}
+.woocommerce-checkout form.woocommerce-form-login .the_champ_outer_login_container {
+	margin: var(--s3) 0;
+}
+/* Super Socializer dumps a second Google block into guest checkout — hide it;
+   returning customers use “Click here to login”; new customers use billing. */
+.woocommerce-checkout form.checkout > .the_champ_outer_login_container,
+.woocommerce-checkout form.checkout > .the_champ_outer_login_container + div[style*="clear"] {
+	display: none !important;
+}
+.woocommerce-checkout #order_review_heading {
+	margin: var(--s8) 0 var(--s4);
+}
+.woocommerce-checkout #order_review {
+	width: 100%;
+	clear: both;
+}
 .woocommerce form .form-row { margin-bottom: var(--s4); }
 .woocommerce form .form-row label { font-size: .8125rem; font-weight: 500; color: var(--ink-700); display: block; margin-bottom: var(--s1); }
 
