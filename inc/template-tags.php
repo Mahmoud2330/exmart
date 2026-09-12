@@ -647,17 +647,28 @@ function exmart_rail_view_all_url( $rail ) {
 }
 
 /**
- * Bento hero promo tile image, set via the Customizer (Homepage Hero
- * section). Returns null until an image is chosen there.
+ * Find a Media Library attachment by (partial) filename and resolve it
+ * to a usable image array. Used to auto-pick bento hero tile images
+ * that were uploaded with a position-based filename (e.g.
+ * "big-block-image-left-centered.jpg") instead of being wired up
+ * through the Customizer.
  *
- * @param string $mod_key Theme mod key, e.g. 'exmart_promo1_image'.
+ * @param string $needle Filename substring to search for (case-insensitive).
  * @return array{url:string,alt:string}|null
  */
-function exmart_get_promo_image( $mod_key ) {
-	$id = absint( get_theme_mod( $mod_key, 0 ) );
+function exmart_find_media_by_filename( $needle ) {
+	global $wpdb;
+	$like = '%' . $wpdb->esc_like( $needle ) . '%';
+	$id   = $wpdb->get_var(
+		$wpdb->prepare(
+			"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_wp_attached_file' AND meta_value LIKE %s ORDER BY post_id DESC LIMIT 1",
+			$like
+		)
+	);
 	if ( ! $id ) {
 		return null;
 	}
+	$id  = absint( $id );
 	$url = wp_get_attachment_image_url( $id, 'large' );
 	if ( ! $url ) {
 		return null;
@@ -667,6 +678,33 @@ function exmart_get_promo_image( $mod_key ) {
 		'url' => $url,
 		'alt' => $alt ? $alt : get_the_title( $id ),
 	);
+}
+
+/**
+ * Bento hero tile image: a Customizer pick (Homepage Hero section)
+ * takes priority; otherwise falls back to a Media Library filename
+ * search. Returns null if neither resolves to anything yet.
+ *
+ * @param string $mod_key       Theme mod key, e.g. 'exmart_promo1_image'.
+ * @param string $filename_hint Filename substring to fall back to, e.g. 'top-right'.
+ * @return array{url:string,alt:string}|null
+ */
+function exmart_get_promo_image( $mod_key, $filename_hint = '' ) {
+	$id = absint( get_theme_mod( $mod_key, 0 ) );
+	if ( $id ) {
+		$url = wp_get_attachment_image_url( $id, 'large' );
+		if ( $url ) {
+			$alt = get_post_meta( $id, '_wp_attachment_image_alt', true );
+			return array(
+				'url' => $url,
+				'alt' => $alt ? $alt : get_the_title( $id ),
+			);
+		}
+	}
+	if ( $filename_hint ) {
+		return exmart_find_media_by_filename( $filename_hint );
+	}
+	return null;
 }
 
 /**

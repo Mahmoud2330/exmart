@@ -85,6 +85,10 @@ $trust_items = array(
 					<p class="em-body"><?php esc_html_e( 'Official sole distributor of Diversey, Grace, Oview & SureCheck in Egypt. Plus our own exclusive brands — Qualita, Eliv, and Verve.', 'exmart' ); ?></p>
 					<a href="<?php echo esc_url( $shop_url ); ?>" class="em-btn em-btn-primary em-hero-tile-cta"><?php esc_html_e( 'Shop all', 'exmart' ); ?></a>
 				</div>
+				<?php $em_main_image = exmart_get_promo_image( 'exmart_hero_image', 'big-block' ); ?>
+				<?php if ( $em_main_image ) : ?>
+					<img class="em-hero-tile-img em-hero-tile-img--main" src="<?php echo esc_url( $em_main_image['url'] ); ?>" alt="<?php echo esc_attr( $em_main_image['alt'] ); ?>" decoding="async" />
+				<?php endif; ?>
 			</div>
 
 			<?php
@@ -95,7 +99,7 @@ $trust_items = array(
 					'title'    => __( 'Save on your everyday essentials', 'exmart' ),
 					'desc'     => __( 'Real markdowns across the catalog, while stock lasts.', 'exmart' ),
 					'href'     => exmart_rail_view_all_url( 'offers' ),
-					'image'    => exmart_get_promo_image( 'exmart_promo1_image' ),
+					'image'    => exmart_get_promo_image( 'exmart_promo1_image', 'top-right' ),
 				),
 				array(
 					'modifier' => 'new',
@@ -103,7 +107,7 @@ $trust_items = array(
 					'title'    => __( 'Freshly added to the catalog', 'exmart' ),
 					'desc'     => '',
 					'href'     => exmart_rail_view_all_url( 'new_arrivals' ),
-					'image'    => exmart_get_promo_image( 'exmart_promo2_image' ),
+					'image'    => exmart_get_promo_image( 'exmart_promo2_image', 'bottom-left' ),
 				),
 				array(
 					'modifier' => 'best',
@@ -111,7 +115,7 @@ $trust_items = array(
 					'title'    => __( 'Customer favorites', 'exmart' ),
 					'desc'     => '',
 					'href'     => exmart_rail_view_all_url( 'best_sellers' ),
-					'image'    => exmart_get_promo_image( 'exmart_promo3_image' ),
+					'image'    => exmart_get_promo_image( 'exmart_promo3_image', 'bottom-right' ),
 				),
 			);
 			foreach ( $em_promo_tiles as $tile ) :
