@@ -55,6 +55,7 @@
 		initBrandFilter();
 		initCardAtc();
 		initShopFilters();
+		initShopFiltersDrawer();
 	} );
 
 	// ── Product card ATC → quantity stepper ───────────────
@@ -677,6 +678,31 @@
 				form.submit();
 			}
 		} );
+	}
+
+	// ── Shop PLP filters — mobile drawer (same pattern as cart/mobile nav) ──
+	function initShopFiltersDrawer() {
+		var open = document.getElementById( 'em-shop-filters-open' );
+		var close = document.getElementById( 'em-shop-filters-close' );
+		var drawer = document.getElementById( 'em-shop-filters' );
+		var backdrop = document.getElementById( 'em-shop-filters-backdrop' );
+		if ( ! open || ! drawer || ! backdrop ) return;
+
+		function show() {
+			drawer.classList.add( 'is-open' );
+			backdrop.hidden = false;
+			open.setAttribute( 'aria-expanded', 'true' );
+		}
+		function hide() {
+			drawer.classList.remove( 'is-open' );
+			backdrop.hidden = true;
+			open.setAttribute( 'aria-expanded', 'false' );
+		}
+
+		open.addEventListener( 'click', show );
+		if ( close ) close.addEventListener( 'click', hide );
+		backdrop.addEventListener( 'click', hide );
+		document.addEventListener( 'keydown', function ( e ) { if ( e.key === 'Escape' ) hide(); } );
 	}
 
 } )();

@@ -47,7 +47,13 @@ if ( is_product_category() || is_product_tag() ) {
 			<?php echo esc_html( $title ); ?>
 			<span class="em-shop-count">(<?php echo esc_html( (string) $total ); ?>)</span>
 		</h1>
-		<?php woocommerce_catalog_ordering(); ?>
+		<div class="em-shop-toolbar-actions">
+			<button type="button" class="em-btn em-btn-secondary em-shop-filters-toggle" id="em-shop-filters-open" aria-controls="em-shop-filters" aria-expanded="false">
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+				<?php esc_html_e( 'Filters', 'exmart' ); ?>
+			</button>
+			<?php woocommerce_catalog_ordering(); ?>
+		</div>
 	</div>
 
 	<?php woocommerce_output_all_notices(); ?>
@@ -55,8 +61,17 @@ if ( is_product_category() || is_product_tag() ) {
 	<?php exmart_shop_active_filters(); ?>
 
 	<div class="em-shop-layout">
-		<aside class="em-shop-filters" aria-label="<?php esc_attr_e( 'Product filters', 'exmart' ); ?>">
-			<?php exmart_render_shop_filters(); ?>
+		<div class="em-backdrop" id="em-shop-filters-backdrop" hidden></div>
+		<aside class="em-shop-filters" id="em-shop-filters" aria-label="<?php esc_attr_e( 'Product filters', 'exmart' ); ?>">
+			<div class="em-shop-filters-header">
+				<h2 class="em-h4"><?php esc_html_e( 'Filters', 'exmart' ); ?></h2>
+				<button type="button" class="em-btn-icon" id="em-shop-filters-close" aria-label="<?php esc_attr_e( 'Close filters', 'exmart' ); ?>">
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+				</button>
+			</div>
+			<div class="em-shop-filters-body">
+				<?php exmart_render_shop_filters(); ?>
+			</div>
 		</aside>
 
 		<div class="em-shop-main">

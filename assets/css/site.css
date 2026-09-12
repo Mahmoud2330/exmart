@@ -744,6 +744,7 @@ body:not(.logged-in).woocommerce-account .col-2 {
 	margin-bottom: var(--s6);
 }
 .em-shop-toolbar .em-h2 { margin: 0; }
+.em-shop-toolbar-actions { display: flex; align-items: center; gap: var(--s3); margin-inline-start: auto; }
 .em-shop-count {
 	font-size: 1rem;
 	color: var(--ink-400);
@@ -761,10 +762,48 @@ body:not(.logged-in).woocommerce-account .col-2 {
 		grid-template-columns: 220px minmax(0, 1fr);
 	}
 }
+
+/* Filters: a slide-in drawer below 1024px (was rendering as a plain block
+   above the product grid, pushing products off-screen on mobile — this
+   uses the same drawer/backdrop pattern as the cart and mobile nav) —
+   a static sidebar at 1024px+, same as before. */
+.em-shop-filters-toggle { display: inline-flex; }
+.em-shop-filters-header { display: none; }
 .em-shop-filters {
-	display: flex;
+	display: none;
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	width: min(360px, 100vw);
+	background: var(--paper);
+	box-shadow: var(--shadow-modal);
+	z-index: 9050;
 	flex-direction: column;
-	gap: var(--s6);
+	overflow: hidden;
+}
+.em-shop-filters.is-open { display: flex; animation: emSlideInR .25s ease; }
+.em-shop-filters-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: var(--s4) var(--s5);
+	border-bottom: 1px solid var(--ink-200);
+	flex-shrink: 0;
+}
+.em-shop-filters-body { flex: 1; overflow-y: auto; padding: var(--s5); display: flex; flex-direction: column; gap: var(--s6); }
+@media (min-width: 1024px) {
+	.em-shop-filters-toggle { display: none; }
+	.em-shop-filters-header { display: none !important; }
+	.em-shop-filters {
+		display: flex !important;
+		position: static;
+		width: auto;
+		box-shadow: none;
+		z-index: auto;
+		animation: none !important;
+	}
+	.em-shop-filters-body { padding: 0; overflow: visible; }
 }
 .em-shop-filter-form {
 	display: flex;
