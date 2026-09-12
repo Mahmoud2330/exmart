@@ -31,6 +31,10 @@
 		var nonce = data.nonce || '';
 		if ( ! ajaxUrl ) return;
 
+		var desired = {};
+		var timers = {};
+		var inflight = {};
+
 		function applyFragments( fragments ) {
 			if ( ! fragments ) return;
 			Object.keys( fragments ).forEach( function ( selector ) {
@@ -48,6 +52,21 @@
 			} );
 			if ( typeof jQuery !== 'undefined' ) {
 				jQuery( document.body ).trigger( 'wc_fragments_refreshed' );
+			}
+		}
+
+		function bumpCartBadge( delta ) {
+			if ( ! delta ) return;
+			var badge = document.getElementById( 'em-cart-count' );
+			if ( ! badge ) return;
+			var current = parseInt( badge.textContent, 10 ) || 0;
+			var next = Math.max( 0, current + delta );
+			badge.textContent = String( next );
+			if ( next > 0 ) {
+				badge.style.display = '';
+				badge.removeAttribute( 'hidden' );
+			} else {
+				badge.style.display = 'none';
 			}
 		}
 
@@ -78,11 +97,17 @@
 			} );
 		}
 
-		function setQty( wrap, quantity ) {
-			var productId = wrap.getAttribute( 'data-product-id' );
-			if ( ! productId || wrap.classList.contains( 'is-busy' ) ) return;
+		function sendSync( productId ) {
+			var quantity = desired[ productId ];
+			if ( typeof quantity === 'undefined' ) return;
 
-			wrap.classList.add( 'is-busy' );
+			if ( inflight[ productId ] ) {
+				inflight[ productId ].resend = true;
+				return;
+			}
+
+			inflight[ productId ] = { qty: quantity, resend: false };
+
 			var body = new FormData();
 			body.append( 'action', 'exmart_set_cart_qty' );
 			body.append( 'nonce', nonce );
@@ -92,17 +117,55 @@
 			fetch( ajaxUrl, { method: 'POST', body: body, credentials: 'same-origin' } )
 				.then( function ( res ) { return res.json(); } )
 				.then( function ( json ) {
-					wrap.classList.remove( 'is-busy' );
-					if ( ! json || ! json.success || ! json.data ) return;
-					syncUi( json.data.product_id, parseInt( json.data.quantity, 10 ) || 0 );
-					applyFragments( json.data.fragments );
-					if ( typeof jQuery !== 'undefined' ) {
-						jQuery( document.body ).trigger( 'wc_fragment_refresh' );
+					var meta = inflight[ productId ] || {};
+					var sentQty = meta.qty;
+					delete inflight[ productId ];
+
+					if ( json && json.success && json.data ) {
+						var serverQty = parseInt( json.data.quantity, 10 ) || 0;
+						// Keep optimistic UI if user already moved past this response.
+						if ( desired[ productId ] === sentQty ) {
+							syncUi( productId, serverQty );
+							desired[ productId ] = serverQty;
+						}
+						applyFragments( json.data.fragments );
+					}
+
+					if ( ( meta.resend || desired[ productId ] !== sentQty ) && desired[ productId ] !== sentQty ) {
+						sendSync( productId );
 					}
 				} )
 				.catch( function () {
-					wrap.classList.remove( 'is-busy' );
+					delete inflight[ productId ];
+					// Retry once shortly if still out of sync.
+					if ( typeof desired[ productId ] !== 'undefined' ) {
+						window.setTimeout( function () { sendSync( productId ); }, 400 );
+					}
 				} );
+		}
+
+		function scheduleSync( productId ) {
+			if ( timers[ productId ] ) {
+				window.clearTimeout( timers[ productId ] );
+			}
+			// Short debounce so rapid taps feel instant but only one request fires.
+			timers[ productId ] = window.setTimeout( function () {
+				sendSync( productId );
+			}, 220 );
+		}
+
+		function setQty( wrap, quantity ) {
+			var productId = wrap.getAttribute( 'data-product-id' );
+			if ( ! productId ) return;
+
+			var prev = parseInt( wrap.getAttribute( 'data-qty' ) || '0', 10 ) || 0;
+			var next = quantity;
+			if ( next === prev ) return;
+
+			desired[ productId ] = next;
+			syncUi( productId, next );
+			bumpCartBadge( next - prev );
+			scheduleSync( productId );
 		}
 
 		document.addEventListener( 'click', function ( e ) {

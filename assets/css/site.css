@@ -686,10 +686,6 @@ body:not(.logged-in).woocommerce-account .col-2 {
 	display: flex;
 	align-items: stretch;
 }
-.em-card-atc.is-busy {
-	opacity: .65;
-	pointer-events: none;
-}
 .em-card-qty {
 	display: flex;
 	align-items: center;
