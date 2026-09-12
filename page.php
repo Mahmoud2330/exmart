@@ -15,9 +15,15 @@ $is_wc_page = function_exists( 'is_woocommerce' ) && ( is_cart() || is_checkout(
 ?>
 
 <?php if ( $is_wc_page ) : ?>
+	<?php
+	$crumb_label = is_account_page() ? __( 'Account', 'exmart' ) : get_the_title();
+	$page_title  = is_account_page() ? __( 'My Account', 'exmart' ) : get_the_title();
+	?>
 	<div class="em-container" style="padding-block: var(--s8);">
-		<?php exmart_breadcrumb( array( array( 'label' => __( 'Home', 'exmart' ), 'href' => home_url( '/' ) ), array( 'label' => get_the_title() ) ) ); ?>
-		<h1 class="em-h2" style="margin-bottom:var(--s6);"><?php the_title(); ?></h1>
+		<?php exmart_breadcrumb( array( array( 'label' => __( 'Home', 'exmart' ), 'href' => home_url( '/' ) ), array( 'label' => $crumb_label ) ) ); ?>
+		<?php if ( ! is_account_page() || is_user_logged_in() ) : ?>
+			<h1 class="em-h2" style="margin-bottom:var(--s6);"><?php echo esc_html( $page_title ); ?></h1>
+		<?php endif; ?>
 		<div class="<?php echo is_account_page() ? 'em-account-page' : ''; ?>">
 			<?php while ( have_posts() ) : the_post(); the_content(); endwhile; ?>
 		</div>

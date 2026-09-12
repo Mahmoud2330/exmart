@@ -222,6 +222,31 @@ function exmart_whatsapp_icon( $size = 20 ) {
 }
 
 /**
+ * Map WC order status → Figma label + color for account order cards.
+ *
+ * @param string $status Status slug without wc- prefix.
+ * @return array{label: string, color: string}
+ */
+function exmart_account_order_status_meta( $status ) {
+	$map = array(
+		'completed'  => array( 'label' => __( 'Delivered', 'exmart' ), 'color' => 'var(--success)' ),
+		'processing' => array( 'label' => __( 'Shipped', 'exmart' ), 'color' => 'var(--accent-600)' ),
+		'on-hold'    => array( 'label' => __( 'Confirmed', 'exmart' ), 'color' => 'var(--warning)' ),
+		'pending'    => array( 'label' => __( 'Placed', 'exmart' ), 'color' => 'var(--ink-500)' ),
+		'cancelled'  => array( 'label' => __( 'Cancelled', 'exmart' ), 'color' => 'var(--error)' ),
+		'refunded'   => array( 'label' => __( 'Refunded', 'exmart' ), 'color' => 'var(--ink-500)' ),
+		'failed'     => array( 'label' => __( 'Failed', 'exmart' ), 'color' => 'var(--error)' ),
+	);
+	if ( isset( $map[ $status ] ) ) {
+		return $map[ $status ];
+	}
+	return array(
+		'label' => function_exists( 'wc_get_order_status_name' ) ? wc_get_order_status_name( 'wc-' . $status ) : $status,
+		'color' => 'var(--ink-500)',
+	);
+}
+
+/**
  * Category emoji used on the Category Index page tiles (matches the
  * original design's lightweight iconography — swap for real icons any time).
  */

@@ -396,3 +396,62 @@ function exmart_save_register_fields( $customer_id ) {
 	}
 }
 add_action( 'woocommerce_created_customer', 'exmart_save_register_fields' );
+
+/**
+ * Account nav — Figma tabs: Orders · Addresses · Wishlist · Profile.
+ *
+ * @param array $items
+ * @return array
+ */
+function exmart_account_menu_items( $items ) {
+	return array(
+		'orders'       => __( 'Orders', 'exmart' ),
+		'edit-address' => __( 'Addresses', 'exmart' ),
+		'wishlist'     => __( 'Wishlist', 'exmart' ),
+		'edit-account' => __( 'Profile', 'exmart' ),
+	);
+}
+add_filter( 'woocommerce_account_menu_items', 'exmart_account_menu_items' );
+
+/**
+ * Point the custom “wishlist” menu item at the Wishlist page.
+ *
+ * @param string $url
+ * @param string $endpoint
+ * @param string $value
+ * @param string $permalink
+ * @return string
+ */
+function exmart_account_endpoint_url( $url, $endpoint, $value, $permalink ) {
+	if ( 'wishlist' === $endpoint ) {
+		return home_url( '/wishlist/' );
+	}
+	return $url;
+}
+add_filter( 'woocommerce_get_endpoint_url', 'exmart_account_endpoint_url', 10, 4 );
+
+/**
+ * Logged-in users landing on /my-account/ go to Orders (Figma default tab).
+ */
+function exmart_account_default_to_orders() {
+	if ( is_admin() || ! is_user_logged_in() ) {
+		return;
+	}
+	if ( ! function_exists( 'is_account_page' ) || ! is_account_page() ) {
+		return;
+	}
+	if ( function_exists( 'is_wc_endpoint_url' ) && is_wc_endpoint_url() ) {
+		return;
+	}
+	wp_safe_redirect( wc_get_account_endpoint_url( 'orders' ) );
+	exit;
+}
+add_action( 'template_redirect', 'exmart_account_default_to_orders', 20 );
+
+/**
+ * Section titles inside account content panels.
+ */
+function exmart_account_profile_heading() {
+	echo '<h2 class="em-h4 em-account-panel-title">' . esc_html__( 'Profile', 'exmart' ) . '</h2>';
+}
+add_action( 'woocommerce_before_edit_account_form', 'exmart_account_profile_heading', 5 );
