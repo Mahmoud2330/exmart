@@ -11,7 +11,9 @@ $brands_distributed   = array_filter( $product_brands, fn( $t ) => exmart_brand_
 $brands_house         = array_filter( $product_brands, fn( $t ) => exmart_brand_type( $t->term_id ) === 'house' );
 
 $cart_count = ( function_exists( 'WC' ) && WC()->cart ) ? WC()->cart->get_cart_contents_count() : 0;
-$wishlist_url = home_url( '/wishlist/' );
+$wishlist_url = function_exists( 'wc_get_account_endpoint_url' )
+	? wc_get_account_endpoint_url( 'wishlist' )
+	: home_url( '/my-account/wishlist/' );
 $account_url  = is_user_logged_in()
 	? ( function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'myaccount' ) : home_url( '/my-account/' ) )
 	: ( function_exists( 'exmart_login_url' ) ? exmart_login_url() : home_url( '/login/' ) );
