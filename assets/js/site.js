@@ -41,6 +41,7 @@
 	}
 
 	document.addEventListener( 'DOMContentLoaded', function () {
+		initHeroCarousel();
 		initAnnouncement();
 		initMegaMenus();
 		initMobileNav();
@@ -303,6 +304,65 @@
 		} );
 
 		window.exmartRefreshCardAtc = fetchCartQtys;
+	}
+
+	// ── Homepage hero bento: autoplaying carousel on mobile ──
+	// Below 900px the tiles are a horizontal scroll-snap row (CSS); this
+	// just auto-advances it, pausing while the visitor is swiping.
+	function initHeroCarousel() {
+		var track = document.querySelector( '.em-hero-bento-grid' );
+		if ( ! track ) return;
+		var tiles = Array.prototype.slice.call( track.children );
+		if ( tiles.length < 2 ) return;
+
+		if ( window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches ) return;
+
+		var mq = window.matchMedia( '(min-width: 900px)' );
+		var timer = null;
+		var resumeTimer = null;
+
+		function step() {
+			var gap = parseFloat( window.getComputedStyle( track ).columnGap || window.getComputedStyle( track ).gap || '0' ) || 0;
+			var tileWidth = tiles[ 0 ].getBoundingClientRect().width + gap;
+			var atEnd = track.scrollLeft + track.clientWidth >= track.scrollWidth - 4;
+			track.scrollTo( { left: atEnd ? 0 : track.scrollLeft + tileWidth, behavior: 'smooth' } );
+		}
+
+		function stop() {
+			if ( timer ) {
+				window.clearInterval( timer );
+				timer = null;
+			}
+		}
+
+		function start() {
+			stop();
+			if ( mq.matches ) return;
+			timer = window.setInterval( step, 4500 );
+		}
+
+		// A user-initiated swipe pauses autoplay for a bit rather than
+		// fighting it mid-gesture.
+		track.addEventListener( 'scroll', function () {
+			if ( mq.matches ) return;
+			stop();
+			window.clearTimeout( resumeTimer );
+			resumeTimer = window.setTimeout( start, 6000 );
+		}, { passive: true } );
+
+		var onBreakpointChange = function () {
+			if ( mq.matches ) {
+				stop();
+			} else {
+				start();
+			}
+		};
+		if ( mq.addEventListener ) {
+			mq.addEventListener( 'change', onBreakpointChange );
+		} else if ( mq.addListener ) {
+			mq.addListener( onBreakpointChange );
+		}
+		onBreakpointChange();
 	}
 
 	// ── Announcement bar dismiss ──────────────────────────

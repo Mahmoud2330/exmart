@@ -102,15 +102,27 @@
 .elementor-location-footer { display: none !important; }
 
 /* ── Hero (bento grid) ─────────────────────────────────────
-   Single-column stack below 900px, 3-column bento grid above it. ── */
+   Below 900px: a horizontal scroll-snap carousel of uniform blocks
+   (autoplay in site.js). 900px+: the 3-column bento grid. ── */
 .em-hero-bento { padding-block: clamp(16px, 3vw, 28px); }
-.em-hero-bento-grid { display: grid; grid-template-columns: 1fr; gap: var(--s4); }
+.em-hero-bento-grid {
+	display: flex;
+	overflow-x: auto;
+	scroll-snap-type: x mandatory;
+	gap: var(--s4);
+	padding-bottom: var(--s1);
+	scrollbar-width: none;
+}
+.em-hero-bento-grid::-webkit-scrollbar { display: none; }
 @media (min-width: 900px) {
 	.em-hero-bento-grid {
+		display: grid;
+		overflow-x: visible;
 		grid-template-columns: 1.4fr 1fr 1fr;
 		grid-template-rows: 1fr 1fr;
 		grid-template-areas: "main offers offers" "main new best";
 		min-height: 600px;
+		padding-bottom: 0;
 	}
 }
 .em-hero-tile {
@@ -120,15 +132,17 @@
 	border-radius: var(--r-lg);
 	color: var(--paper);
 	text-decoration: none;
-	min-height: 200px;
+	flex: 0 0 clamp(260px, 78vw, 340px);
+	scroll-snap-align: start;
+	min-height: 340px;
 	padding: clamp(20px, 3vw, 40px);
 }
-.em-hero-tile--main { grid-area: main; min-height: 320px; background: linear-gradient(135deg, var(--ink-900) 0%, var(--accent-700) 100%); }
+.em-hero-tile--main { grid-area: main; background: linear-gradient(135deg, var(--ink-900) 0%, var(--accent-700) 100%); }
 .em-hero-tile--offers { grid-area: offers; background: linear-gradient(135deg, #3A0D08 0%, var(--sale) 100%); }
 .em-hero-tile--new { grid-area: new; background: linear-gradient(135deg, #0A2E1C 0%, var(--success) 100%); }
 .em-hero-tile--best { grid-area: best; background: linear-gradient(135deg, #3A2A08 0%, var(--warning) 100%); }
 @media (min-width: 900px) {
-	.em-hero-tile { min-height: 260px; }
+	.em-hero-tile { flex: initial; scroll-snap-align: none; min-height: 260px; }
 	.em-hero-tile--main { min-height: 420px; }
 }
 
