@@ -52,7 +52,6 @@
 		initWishlistButtons();
 		initWishlistPage();
 		initBrandFilter();
-		initHeroSlider();
 		initCardAtc();
 		initShopFilters();
 	} );
@@ -304,24 +303,6 @@
 		} );
 
 		window.exmartRefreshCardAtc = fetchCartQtys;
-	}
-
-	// ── Homepage hero image slot (main-banner carousel, Figma layout) ──
-	function initHeroSlider() {
-		var wrap = document.querySelector( '[data-em-hero-slider]' );
-		if ( ! wrap ) return;
-		var slides = Array.prototype.slice.call( wrap.querySelectorAll( '.em-hero-slide' ) );
-		if ( slides.length < 2 ) return;
-		var index = 0;
-		setInterval( function () {
-			slides[ index ].classList.remove( 'is-active' );
-			index = ( index + 1 ) % slides.length;
-			slides[ index ].classList.add( 'is-active' );
-			var bg = document.querySelector( '.em-hero-bg' );
-			if ( bg && slides[ index ].src ) {
-				bg.style.backgroundImage = 'url("' + slides[ index ].src + '")';
-			}
-		}, 5000 );
 	}
 
 	// ── Announcement bar dismiss ──────────────────────────

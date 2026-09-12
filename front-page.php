@@ -48,8 +48,6 @@ if ( is_wp_error( $product_brands ) ) {
 $best_sellers = exmart_get_best_sellers( 8 );
 $offers       = exmart_get_offers( 8 );
 $new_arrivals = exmart_get_new_arrivals( 8 );
-$hero_images  = exmart_get_hero_images();
-$hero_multi   = count( $hero_images ) > 1;
 
 $trust_items = array(
 	array(
@@ -86,28 +84,6 @@ $trust_items = array(
 					?></h1>
 					<p class="em-body"><?php esc_html_e( 'Official sole distributor of Diversey, Grace, Oview & SureCheck in Egypt. Plus our own exclusive brands — Qualita, Eliv, and Verve.', 'exmart' ); ?></p>
 					<a href="<?php echo esc_url( $shop_url ); ?>" class="em-btn em-btn-primary em-hero-tile-cta"><?php esc_html_e( 'Shop all', 'exmart' ); ?></a>
-				</div>
-				<div class="em-hero-img-wrap<?php echo $hero_multi ? ' em-hero-img-wrap--slider' : ''; ?>"<?php echo $hero_multi ? ' data-em-hero-slider' : ''; ?>>
-					<?php foreach ( $hero_images as $i => $slide ) : ?>
-						<img
-							class="em-hero-slide<?php echo 0 === $i ? ' is-active' : ''; ?>"
-							src="<?php echo esc_url( $slide['url'] ); ?>"
-							alt="<?php echo esc_attr( $slide['alt'] ); ?>"
-							width="800"
-							height="1000"
-							<?php echo 0 === $i ? '' : 'loading="lazy"'; ?>
-							decoding="async"
-						/>
-					<?php endforeach; ?>
-					<div class="em-hero-badge">
-						<div class="em-hero-badge-icon">
-							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 12l2 2 4-4" stroke="var(--success)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" stroke="var(--success)" stroke-width="2"/></svg>
-						</div>
-						<div>
-							<p class="em-hero-badge-title"><?php esc_html_e( '100% Authentic', 'exmart' ); ?></p>
-							<p class="em-hero-badge-sub"><?php esc_html_e( 'Direct from manufacturer', 'exmart' ); ?></p>
-						</div>
-					</div>
 				</div>
 			</div>
 
