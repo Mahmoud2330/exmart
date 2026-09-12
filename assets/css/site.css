@@ -303,31 +303,14 @@
 .em-pdp-info .woocommerce-product-rating { display: flex; align-items: center; gap: var(--s3); }
 .em-pdp-info .woocommerce-product-rating a { color: var(--ink-500); font-size: .875rem; text-decoration: none; }
 .em-pdp-info form.cart { display: flex; gap: var(--s3); flex-wrap: wrap; align-items: center; }
+/* Fallback path only (variable/grouped/external products still use
+   WooCommerce's own form — see exmart_pdp_add_to_cart()). */
 .em-pdp-info form.cart button.single_add_to_cart_button { flex: 1; min-width: 160px; }
-/* Quantity stepper — .em-qty-btn already existed in the design system
-   (style.css) but was never wired to any template; the PDP was showing
-   WooCommerce's bare number input with browser spinner arrows. */
-.em-pdp-info form.cart .quantity {
-	display: inline-flex;
-	align-items: center;
-	margin: 0;
-	border: 1px solid var(--ink-200);
-	border-radius: var(--r-sm);
-	overflow: hidden;
-	height: 48px;
-}
-.em-pdp-info form.cart .quantity .qty {
-	height: 100%;
-	width: 48px;
-	min-height: auto;
-	border: none;
-	border-inline: 1px solid var(--ink-200);
-	border-radius: 0;
-	font-weight: 600;
-	-moz-appearance: textfield;
-}
-.em-pdp-info form.cart .quantity .qty::-webkit-inner-spin-button,
-.em-pdp-info form.cart .quantity .qty::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+/* Simple-product path: the same .em-card-actions/.em-card-atc control
+   used on product cards, just placed in the wider PDP info column
+   instead of a narrow card — undo the card's bottom-pinning margin,
+   which has no meaning here. */
+.em-pdp-atc-row { margin-top: 0; padding-top: 0; }
 .em-pdp-trust-block { border: 1px solid var(--ink-200); border-radius: var(--r-md); padding: var(--s4); display: flex; flex-direction: column; gap: var(--s3); }
 .em-pdp-trust-block-item { display: flex; gap: var(--s2); align-items: flex-start; }
 
@@ -375,7 +358,7 @@
    floating in a mostly-empty box. */
 .woocommerce-product-gallery__wrapper { border-radius: var(--r-md); overflow: hidden; }
 .woocommerce-product-gallery__wrapper img,
-.woocommerce-product-gallery__image img { width: 100%; height: auto; display: block; }
+.woocommerce-product-gallery__image img { width: 100% !important; height: auto !important; display: block; }
 .flex-control-thumbs { display: flex; gap: var(--s2); overflow-x: auto; margin-top: var(--s3); list-style: none; padding: 0; }
 .flex-control-thumbs li { flex-shrink: 0; width: 72px; height: 72px; }
 .flex-control-thumbs img { width: 100%; height: 100%; object-fit: cover; border-radius: var(--r-sm); border: 1px solid var(--ink-200); cursor: pointer; }

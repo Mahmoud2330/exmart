@@ -467,31 +467,34 @@ function exmart_product_brand_row() {
 add_action( 'woocommerce_single_product_summary', 'exmart_product_brand_row', 4 );
 
 /**
- * PDP quantity stepper — wraps WooCommerce's native qty input with real
- * −/+ buttons using the theme's existing .em-qty component (it was fully
- * styled in style.css but never actually wired to any template; the PDP
- * was rendering WooCommerce's bare number input instead).
+ * PDP Add to Cart: reuse the exact same working control as the product
+ * cards (exmart_card_atc_control()) instead of a bespoke PDP stepper —
+ * a from-scratch attempt at this overlapped/misaligned with the rest of
+ * the row. Only for simple, non-variable products: exmart_card_atc_control()
+ * falls back to a "Select options" link to the product's own permalink
+ * for anything else, which would just point back at this same page, so
+ * variable/grouped/external products keep WooCommerce's own form.
  */
-function exmart_pdp_qty_minus_button() {
-	if ( ! is_product() ) {
-		return;
+function exmart_pdp_add_to_cart() {
+	global $product;
+	if ( $product instanceof WC_Product && $product->is_type( 'simple' ) && ! $product->has_child() ) {
+		echo '<div class="em-card-actions em-pdp-atc-row">';
+		exmart_pdp_wishlist_button();
+		exmart_card_atc_control( $product );
+		echo '</div>';
+	} else {
+		woocommerce_template_single_add_to_cart();
 	}
-	echo '<button type="button" class="em-qty-btn" data-em-qty-minus aria-label="' . esc_attr__( 'Decrease quantity', 'exmart' ) . '">&minus;</button>';
 }
-add_action( 'woocommerce_before_add_to_cart_quantity', 'exmart_pdp_qty_minus_button' );
-
-function exmart_pdp_qty_plus_button() {
-	if ( ! is_product() ) {
-		return;
-	}
-	echo '<button type="button" class="em-qty-btn" data-em-qty-plus aria-label="' . esc_attr__( 'Increase quantity', 'exmart' ) . '">+</button>';
-}
-add_action( 'woocommerce_after_add_to_cart_quantity', 'exmart_pdp_qty_plus_button' );
+remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_add_to_cart', 30 );
+add_action( 'woocommerce_single_product_summary', 'exmart_pdp_add_to_cart', 30 );
 
 /**
  * Wishlist heart next to the PDP Add to Cart button — the same
  * .em-wishlist-toggle button/JS already used on product cards, just
- * placed here too (it only ever existed on cards before).
+ * placed here too (it only ever existed on cards before). Also hooked
+ * to woocommerce_after_add_to_cart_button for the variable/grouped/
+ * external fallback path above, which still uses WooCommerce's own form.
  */
 function exmart_pdp_wishlist_button() {
 	global $product;

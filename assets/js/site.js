@@ -55,7 +55,6 @@
 		initBrandFilter();
 		initCardAtc();
 		initShopFilters();
-		initPdpQtyStepper();
 	} );
 
 	// ── Product card ATC → quantity stepper ───────────────
@@ -680,26 +679,4 @@
 		} );
 	}
 
-	// ── PDP quantity stepper (−/+ buttons around the native qty input) ──
-	function initPdpQtyStepper() {
-		document.body.addEventListener( 'click', function ( e ) {
-			var btn = e.target.closest( '[data-em-qty-minus], [data-em-qty-plus]' );
-			if ( ! btn ) return;
-			var wrap = btn.closest( '.quantity' );
-			var input = wrap && wrap.querySelector( 'input.qty' );
-			if ( ! input ) return;
-			e.preventDefault();
-
-			var step = parseFloat( input.step ) || 1;
-			var min = input.min !== '' ? parseFloat( input.min ) : 1;
-			var max = input.max !== '' ? parseFloat( input.max ) : Infinity;
-			var value = parseFloat( input.value ) || min;
-
-			value = btn.hasAttribute( 'data-em-qty-plus' ) ? value + step : value - step;
-			value = Math.min( max, Math.max( min, value ) );
-
-			input.value = value;
-			input.dispatchEvent( new Event( 'change', { bubbles: true } ) );
-		} );
-	}
 } )();
