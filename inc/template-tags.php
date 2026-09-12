@@ -141,9 +141,39 @@ function exmart_email() {
 }
 
 /**
- * Google / social login URL (Nextend Social Login and filter fallback).
+ * Whether Super Socializer (Heateor) social login is available.
  *
- * @return string Empty when no provider is available.
+ * @return bool
+ */
+function exmart_has_super_socializer() {
+	return defined( 'THE_CHAMP_SS_VERSION' )
+		|| function_exists( 'the_champ_login_button' )
+		|| shortcode_exists( 'TheChamp-Login' );
+}
+
+/**
+ * Super Socializer Google OAuth start URL.
+ *
+ * @param string $redirect Post-login redirect.
+ * @return string
+ */
+function exmart_super_socializer_google_url( $redirect ) {
+	return add_query_arg(
+		array(
+			'SuperSocializerAuth'          => 'Google',
+			'super_socializer_redirect_to' => $redirect,
+		),
+		home_url( '/' )
+	);
+}
+
+/**
+ * Google / social login URL.
+ *
+ * Prefers Super Socializer (exMart’s provider), then Nextend. Always returns a
+ * URL so the button can render; override via `exmart_google_login_url`.
+ *
+ * @return string
  */
 function exmart_google_login_url() {
 	$redirect = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'myaccount' ) : home_url( '/' );
@@ -160,7 +190,23 @@ function exmart_google_login_url() {
 		return $filtered;
 	}
 
-	// Nextend Social Login (common on the old Elementor site).
+	// Super Socializer / Heateor — primary on this site.
+	if ( exmart_has_super_socializer() ) {
+		return exmart_super_socializer_google_url( $redirect );
+	}
+
+	// Nextend Social Login fallback.
+	if ( class_exists( 'NextendSocialLogin', false ) && is_callable( array( 'NextendSocialLogin', 'getLoginUrl' ) ) ) {
+		try {
+			$url = NextendSocialLogin::getLoginUrl( 'google' );
+			if ( is_string( $url ) && $url !== '' ) {
+				return add_query_arg( 'redirect', $redirect, $url );
+			}
+		} catch ( Throwable $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+			// Fall through.
+		}
+	}
+
 	if ( class_exists( 'NextendSocialLogin', false ) ) {
 		return add_query_arg(
 			array(
@@ -171,40 +217,19 @@ function exmart_google_login_url() {
 		);
 	}
 
-	return '';
+	// Default to Super Socializer’s Google endpoint.
+	return exmart_super_socializer_google_url( $redirect );
 }
 
 /**
  * Auth-page social login block (Google), styled to match exMart forms.
  *
- * Uses Nextend Social Login when installed; otherwise a filterable URL.
+ * Wired for Super Socializer (Heateor). Nextend remains a fallback.
  *
  * @param string $context 'login' or 'register'.
  */
 function exmart_social_auth_block( $context = 'login' ) {
 	$google_url = exmart_google_login_url();
-
-	// Let a plugin inject markup (optional).
-	ob_start();
-	do_action( 'exmart_social_login_buttons', $context );
-	$plugin_html = trim( ob_get_clean() );
-
-	// Prefer Nextend shortcode only when we don't already have a direct URL button.
-	if ( ! $google_url && ! $plugin_html && shortcode_exists( 'nextend_social_login' ) ) {
-		$redirect = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'myaccount' ) : home_url( '/' );
-		$plugin_html = trim(
-			do_shortcode(
-				sprintf(
-					'[nextend_social_login provider="google" style="fullwidth" redirect="%s"]',
-					esc_url( $redirect )
-				)
-			)
-		);
-	}
-
-	if ( ! $google_url && ! $plugin_html ) {
-		return;
-	}
 
 	$label = ( 'register' === $context )
 		? __( 'Sign up with Google', 'exmart' )
@@ -216,18 +241,12 @@ function exmart_social_auth_block( $context = 'login' ) {
 		</div>
 		<p class="em-auth-social-label"><?php esc_html_e( 'Continue with your Google account', 'exmart' ); ?></p>
 
-		<?php if ( $google_url ) : ?>
-			<a class="em-btn em-btn-google" href="<?php echo esc_url( $google_url ); ?>">
-				<span class="em-btn-google-icon" aria-hidden="true">
-					<svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 01-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
-				</span>
-				<span><?php echo esc_html( $label ); ?></span>
-			</a>
-		<?php elseif ( $plugin_html ) : ?>
-			<div class="em-auth-social-plugin">
-				<?php echo $plugin_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- plugin HTML ?>
-			</div>
-		<?php endif; ?>
+		<a class="em-btn em-btn-google" href="<?php echo esc_url( $google_url ); ?>">
+			<span class="em-btn-google-icon" aria-hidden="true">
+				<svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 01-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
+			</span>
+			<span><?php echo esc_html( $label ); ?></span>
+		</a>
 	</div>
 	<?php
 }

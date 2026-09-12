@@ -275,32 +275,91 @@
 .em-account-panel-title { margin: 0 0 var(--s5); }
 .em-account-wishlist-count { font-size: 1rem; color: var(--ink-400); font-weight: 400; margin-inline-start: var(--s2); }
 .em-account-orders { display: flex; flex-direction: column; gap: var(--s4); }
-.em-form-row { display: grid; grid-template-columns: 1fr; gap: var(--s4); }
-@media (min-width: 600px) { .em-form-row { grid-template-columns: 1fr 1fr; } }
-.em-rule { border: 0; border-top: 1px solid var(--ink-200); margin: var(--s6) 0; }
-.em-profile-form { max-width: 480px; }
-.em-profile-actions { margin: var(--s2) 0 0; }
-
-/* Logged-in: nav + content side-by-side (override WC floats). */
-.woocommerce-account .woocommerce,
-.em-account-page .woocommerce {
-	display: block;
+.em-form-row {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--s4);
 	width: 100%;
-	clear: both;
 }
-.woocommerce-account .woocommerce-MyAccount-navigation,
-.woocommerce-account .woocommerce-MyAccount-content {
+@media (min-width: 600px) {
+	.em-form-row { grid-template-columns: 1fr 1fr; }
+}
+/* Kill WC float/width on name fields inside our grid. */
+.em-form-row > .form-row,
+.em-form-row > .em-input-wrap,
+.em-profile-form .form-row-first,
+.em-profile-form .form-row-last {
 	float: none !important;
 	width: 100% !important;
 	margin: 0 !important;
 	padding: 0 !important;
+	clear: none !important;
+}
+.em-profile-form .em-input,
+.em-profile-form input.input-text,
+.em-profile-form input[type="text"],
+.em-profile-form input[type="email"],
+.em-profile-form input[type="tel"],
+.em-profile-form input[type="password"] {
+	width: 100% !important;
+	max-width: 100% !important;
+	min-width: 0;
+	box-sizing: border-box;
+}
+.em-profile-form .clear { display: none; }
+.em-rule { border: 0; border-top: 1px solid var(--ink-200); margin: var(--s6) 0; }
+.em-profile-form { max-width: 480px; width: 100%; }
+.em-profile-actions { margin: var(--s2) 0 0; }
+
+/*
+ * Logged-in account: sidebar + content.
+ * WooCommerce adds ::before/::after clearfixes on .woocommerce — those become
+ * extra grid/flex items and shatter the layout. Hide them, kill floats, use flex.
+ */
+.woocommerce-account .em-account-page .woocommerce,
+.em-account-page .woocommerce {
+	display: flex !important;
+	flex-direction: column;
+	align-items: stretch;
+	gap: var(--s6);
+	width: 100%;
+	clear: both;
+}
+.woocommerce-account .em-account-page .woocommerce::before,
+.woocommerce-account .em-account-page .woocommerce::after,
+.em-account-page .woocommerce::before,
+.em-account-page .woocommerce::after {
+	content: none !important;
+	display: none !important;
+}
+.woocommerce-account .woocommerce-MyAccount-navigation,
+.woocommerce-account .woocommerce-MyAccount-content,
+.em-account-page .woocommerce-MyAccount-navigation,
+.em-account-page .woocommerce-MyAccount-content {
+	float: none !important;
+	width: 100% !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	clear: none !important;
 }
 @media (min-width: 768px) {
-	body.logged-in.woocommerce-account .woocommerce {
-		display: grid !important;
-		grid-template-columns: 200px minmax(0, 1fr);
-		gap: var(--s6);
-		align-items: start;
+	.woocommerce-account .em-account-page .woocommerce,
+	.em-account-page .woocommerce {
+		flex-direction: row !important;
+		align-items: flex-start;
+	}
+	.woocommerce-account .em-account-page .woocommerce-MyAccount-navigation,
+	.em-account-page .woocommerce-MyAccount-navigation {
+		flex: 0 0 200px;
+		width: 200px !important;
+		max-width: 200px;
+	}
+	.woocommerce-account .em-account-page .woocommerce-MyAccount-content,
+	.em-account-page .woocommerce-MyAccount-content {
+		flex: 1 1 auto;
+		min-width: 0;
+		width: auto !important;
+		max-width: none !important;
 	}
 }
 .woocommerce-MyAccount-navigation ul,
@@ -389,6 +448,7 @@
 .woocommerce-Address-fields,
 .em-profile-form {
 	max-width: 480px;
+	width: 100%;
 	display: flex;
 	flex-direction: column;
 	gap: var(--s4);
@@ -397,6 +457,8 @@
 .woocommerce-Address-fields .form-row,
 .em-profile-form .form-row {
 	margin-bottom: 0;
+	float: none !important;
+	width: 100% !important;
 }
 
 /* ── Auth pages (separate Login / Register) ─────────────── */
