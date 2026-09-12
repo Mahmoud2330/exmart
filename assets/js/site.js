@@ -26,6 +26,12 @@
 	} );
 
 	// ── Product card ATC → quantity stepper ───────────────
+	// Contract:
+	// 1) UI updates instantly on the card (optimistic).
+	// 2) Server sync is quiet in the background.
+	// 3) Never open the mini-cart drawer from card taps.
+	// 4) Never rewrite mini-cart HTML from card taps.
+	// 5) Reconcile cards only after external cart changes / return to page.
 	function initCardAtc() {
 		var ajaxUrl = data.ajaxUrl || '';
 		var nonce = data.nonce || '';
@@ -35,38 +41,35 @@
 		var timers = {};
 		var inflight = {};
 
-		function applyFragments( fragments ) {
-			if ( ! fragments ) return;
-			Object.keys( fragments ).forEach( function ( selector ) {
-				var html = fragments[ selector ];
-				document.querySelectorAll( selector ).forEach( function ( el ) {
-					var tmp = document.createElement( 'div' );
-					tmp.innerHTML = html;
-					var next = tmp.firstElementChild;
-					if ( next ) {
-						el.replaceWith( next );
-					} else {
-						el.outerHTML = html;
-					}
-				} );
-			} );
-			if ( typeof jQuery !== 'undefined' ) {
-				jQuery( document.body ).trigger( 'wc_fragments_refreshed' );
-			}
+		function setBadgeCount( count ) {
+			var badge = document.getElementById( 'em-cart-count' );
+			if ( ! badge ) return;
+			count = Math.max( 0, parseInt( count, 10 ) || 0 );
+			badge.textContent = String( count );
+			badge.style.display = count > 0 ? '' : 'none';
 		}
 
 		function bumpCartBadge( delta ) {
 			if ( ! delta ) return;
 			var badge = document.getElementById( 'em-cart-count' );
 			if ( ! badge ) return;
-			var current = parseInt( badge.textContent, 10 ) || 0;
-			var next = Math.max( 0, current + delta );
-			badge.textContent = String( next );
-			if ( next > 0 ) {
-				badge.style.display = '';
-				badge.removeAttribute( 'hidden' );
-			} else {
-				badge.style.display = 'none';
+			setBadgeCount( ( parseInt( badge.textContent, 10 ) || 0 ) + delta );
+		}
+
+		function writeQtyMap( map ) {
+			var el = document.getElementById( 'exmart-cart-qty-map' );
+			if ( ! el ) return;
+			el.textContent = JSON.stringify( map && typeof map === 'object' ? map : {} );
+		}
+
+		function readQtyMap() {
+			var el = document.getElementById( 'exmart-cart-qty-map' );
+			if ( ! el ) return {};
+			try {
+				var parsed = JSON.parse( el.textContent || '{}' );
+				return parsed && typeof parsed === 'object' ? parsed : {};
+			} catch ( err ) {
+				return {};
 			}
 		}
 
@@ -97,16 +100,48 @@
 			} );
 		}
 
+		function isPending( productId ) {
+			return !!( timers[ productId ] || inflight[ productId ] );
+		}
+
+		function applyQtyMap( map, force ) {
+			if ( ! map || typeof map !== 'object' ) map = {};
+			writeQtyMap( map );
+			document.querySelectorAll( '[data-em-card-atc]' ).forEach( function ( wrap ) {
+				var id = wrap.getAttribute( 'data-product-id' );
+				if ( ! id ) return;
+				if ( ! force && isPending( id ) ) return;
+				var qty = parseInt( map[ id ] != null ? map[ id ] : 0, 10 ) || 0;
+				desired[ id ] = qty;
+				syncUi( id, qty );
+			} );
+		}
+
+		function fetchCartQtys() {
+			var body = new FormData();
+			body.append( 'action', 'exmart_get_cart_qtys' );
+			body.append( 'nonce', nonce );
+			return fetch( ajaxUrl, { method: 'POST', body: body, credentials: 'same-origin' } )
+				.then( function ( res ) { return res.json(); } )
+				.then( function ( json ) {
+					if ( ! json || ! json.success || ! json.data ) return;
+					applyQtyMap( json.data.quantities || {}, true );
+					if ( typeof json.data.count !== 'undefined' ) {
+						setBadgeCount( json.data.count );
+					}
+				} )
+				.catch( function () { /* ignore network blips */ } );
+		}
+
 		function sendSync( productId ) {
 			var quantity = desired[ productId ];
 			if ( typeof quantity === 'undefined' ) return;
-
 			if ( inflight[ productId ] ) {
-				inflight[ productId ].resend = true;
+				inflight[ productId ].dirty = true;
 				return;
 			}
 
-			inflight[ productId ] = { qty: quantity, resend: false };
+			inflight[ productId ] = { qty: quantity, dirty: false };
 
 			var body = new FormData();
 			body.append( 'action', 'exmart_set_cart_qty' );
@@ -118,46 +153,48 @@
 				.then( function ( res ) { return res.json(); } )
 				.then( function ( json ) {
 					var meta = inflight[ productId ] || {};
-					var sentQty = meta.qty;
+					var sent = meta.qty;
 					delete inflight[ productId ];
 
 					if ( json && json.success && json.data ) {
-						var serverQty = parseInt( json.data.quantity, 10 ) || 0;
-						// Keep optimistic UI if user already moved past this response.
-						if ( desired[ productId ] === sentQty ) {
-							syncUi( productId, serverQty );
-							desired[ productId ] = serverQty;
+						// Persist server truth into the qty map / badge, but do not
+						// touch card UI if the shopper already tapped ahead.
+						if ( json.data.quantities ) {
+							writeQtyMap( json.data.quantities );
 						}
-						applyFragments( json.data.fragments );
+						if ( typeof json.data.count !== 'undefined' ) {
+							setBadgeCount( json.data.count );
+						}
+						if ( desired[ productId ] === sent ) {
+							var serverQty = parseInt( json.data.quantity, 10 ) || 0;
+							desired[ productId ] = serverQty;
+							syncUi( productId, serverQty );
+						}
 					}
 
-					if ( ( meta.resend || desired[ productId ] !== sentQty ) && desired[ productId ] !== sentQty ) {
+					if ( desired[ productId ] !== sent || meta.dirty ) {
 						sendSync( productId );
 					}
 				} )
 				.catch( function () {
 					delete inflight[ productId ];
-					// Retry once shortly if still out of sync.
-					if ( typeof desired[ productId ] !== 'undefined' ) {
-						window.setTimeout( function () { sendSync( productId ); }, 400 );
-					}
+					window.setTimeout( function () {
+						if ( typeof desired[ productId ] !== 'undefined' ) sendSync( productId );
+					}, 500 );
 				} );
 		}
 
 		function scheduleSync( productId ) {
-			if ( timers[ productId ] ) {
-				window.clearTimeout( timers[ productId ] );
-			}
-			// Short debounce so rapid taps feel instant but only one request fires.
+			if ( timers[ productId ] ) window.clearTimeout( timers[ productId ] );
 			timers[ productId ] = window.setTimeout( function () {
+				delete timers[ productId ];
 				sendSync( productId );
-			}, 220 );
+			}, 200 );
 		}
 
 		function setQty( wrap, quantity ) {
 			var productId = wrap.getAttribute( 'data-product-id' );
 			if ( ! productId ) return;
-
 			var prev = parseInt( wrap.getAttribute( 'data-qty' ) || '0', 10 ) || 0;
 			var next = quantity;
 			if ( next === prev ) return;
@@ -197,6 +234,31 @@
 				setQty( wrapPlus, Math.min( max, qPlus + 1 ) );
 			}
 		} );
+
+		// Mini-cart / cart-page AJAX removals while cards are on screen.
+		if ( typeof jQuery !== 'undefined' ) {
+			jQuery( document.body ).on( 'removed_from_cart updated_cart_totals', function () {
+				window.setTimeout( fetchCartQtys, 50 );
+			} );
+		}
+
+		// Browser back after editing cart on another page.
+		window.addEventListener( 'pageshow', function ( e ) {
+			if ( e.persisted ) fetchCartQtys();
+		} );
+
+		// Returning to this tab after editing cart elsewhere.
+		var visibilityTimer = null;
+		document.addEventListener( 'visibilitychange', function () {
+			if ( document.visibilityState !== 'visible' ) return;
+			if ( visibilityTimer ) window.clearTimeout( visibilityTimer );
+			visibilityTimer = window.setTimeout( function () {
+				var anyPending = Object.keys( timers ).length > 0 || Object.keys( inflight ).length > 0;
+				if ( ! anyPending ) fetchCartQtys();
+			}, 300 );
+		} );
+
+		window.exmartRefreshCardAtc = fetchCartQtys;
 	}
 
 	// ── Homepage hero image slot (main-banner carousel, Figma layout) ──
@@ -292,19 +354,25 @@
 		var backdrop = document.getElementById( 'em-cart-backdrop' );
 		if ( ! drawer || ! backdrop ) return;
 
-		function show() { drawer.hidden = false; backdrop.hidden = false; }
-		function hide() { drawer.hidden = true; backdrop.hidden = true; }
+		function show() {
+			drawer.hidden = false;
+			backdrop.hidden = false;
+			// Refresh mini-cart contents only when the shopper opens it.
+			if ( typeof jQuery !== 'undefined' ) {
+				jQuery( document.body ).trigger( 'wc_fragment_refresh' );
+			}
+		}
+		function hide() {
+			drawer.hidden = true;
+			backdrop.hidden = true;
+		}
 
 		toggles.forEach( function ( btn ) { btn.addEventListener( 'click', show ); } );
 		if ( close ) close.addEventListener( 'click', hide );
 		backdrop.addEventListener( 'click', hide );
 		document.addEventListener( 'keydown', function ( e ) { if ( e.key === 'Escape' ) hide(); } );
 
-		// Open the drawer automatically after a WooCommerce AJAX add-to-cart,
-		// mirroring the original app's "add to cart opens the drawer" UX.
-		document.body.addEventListener( 'added_to_cart', function () {
-			show();
-		} );
+		// Card ATC uses an inline stepper — do not auto-open the drawer on add.
 	}
 
 	// ── Header search overlay (desktop) ───────────────────

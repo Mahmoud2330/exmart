@@ -213,7 +213,7 @@ function exmart_loop_brand_label() {
 }
 
 /**
- * Extend the cart fragments so our header cart-count badge updates on AJAX add-to-cart.
+ * Extend cart fragments: header count badge + product-card qty map.
  */
 function exmart_cart_count_fragment( $fragments ) {
 	ob_start();
@@ -222,15 +222,10 @@ function exmart_cart_count_fragment( $fragments ) {
 	<span class="em-icon-count" id="em-cart-count" style="<?php echo $count > 0 ? '' : 'display:none;'; ?>"><?php echo esc_html( $count ); ?></span>
 	<?php
 	$fragments['#em-cart-count'] = ob_get_clean();
+	$fragments['#exmart-cart-qty-map'] = '<script type="application/json" id="exmart-cart-qty-map">' . wp_json_encode( exmart_get_cart_qty_map() ) . '</script>';
 	return $fragments;
 }
 add_filter( 'woocommerce_add_to_cart_fragments', 'exmart_cart_count_fragment' );
-
-/**
- * Open the mini-cart drawer automatically after an AJAX add-to-cart
- * (mirrors the original app's "add to cart opens the drawer" behavior).
- * Handled in assets/js/site.js by listening for the added_to_cart event.
- */
 
 /**
  * Support ?on_sale=1 on the Shop archive so homepage Offers "View all"
@@ -523,6 +518,44 @@ function exmart_cart_qty_for_product( $product_id ) {
 }
 
 /**
+ * Simple product_id => qty map for card steppers.
+ *
+ * @return array<string, int>
+ */
+function exmart_get_cart_qty_map() {
+	$map = array();
+	if ( ! function_exists( 'WC' ) || ! WC()->cart ) {
+		return $map;
+	}
+	foreach ( WC()->cart->get_cart() as $item ) {
+		if ( ! empty( $item['variation_id'] ) ) {
+			continue;
+		}
+		$pid = (string) absint( $item['product_id'] );
+		if ( ! $pid ) {
+			continue;
+		}
+		$map[ $pid ] = ( isset( $map[ $pid ] ) ? (int) $map[ $pid ] : 0 ) + (int) $item['quantity'];
+	}
+	return $map;
+}
+
+/**
+ * AJAX: cart qty map for reconciling product cards after external cart changes.
+ */
+function exmart_ajax_get_cart_qtys() {
+	check_ajax_referer( 'exmart_ajax', 'nonce' );
+	wp_send_json_success(
+		array(
+			'quantities' => exmart_get_cart_qty_map(),
+			'count'      => ( function_exists( 'WC' ) && WC()->cart ) ? (int) WC()->cart->get_cart_contents_count() : 0,
+		)
+	);
+}
+add_action( 'wp_ajax_exmart_get_cart_qtys', 'exmart_ajax_get_cart_qtys' );
+add_action( 'wp_ajax_nopriv_exmart_get_cart_qtys', 'exmart_ajax_get_cart_qtys' );
+
+/**
  * Product card add-to-cart / quantity stepper (Figma ProductCard behaviour).
  *
  * @param WC_Product $product
@@ -650,23 +683,13 @@ function exmart_ajax_set_cart_qty() {
 
 	$final_qty = exmart_cart_qty_for_product( $product_id );
 
-	// Refresh standard WC cart fragments (mini-cart + our count badge).
-	ob_start();
-	woocommerce_mini_cart();
-	$mini_cart = ob_get_clean();
-
-	$fragments = apply_filters(
-		'woocommerce_add_to_cart_fragments',
-		array(
-			'div.widget_shopping_cart_content' => '<div class="widget_shopping_cart_content">' . $mini_cart . '</div>',
-		)
-	);
-
+	// Lightweight response only — never rewrite mini-cart HTML from card taps.
 	wp_send_json_success(
 		array(
 			'product_id' => $product_id,
 			'quantity'   => $final_qty,
-			'fragments'  => $fragments,
+			'count'      => (int) $cart->get_cart_contents_count(),
+			'quantities' => exmart_get_cart_qty_map(),
 			'cart_hash'  => $cart->get_cart_hash(),
 		)
 	);

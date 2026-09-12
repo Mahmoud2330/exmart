@@ -191,8 +191,10 @@ $checkout_url = function_exists( 'wc_get_checkout_url' ) ? wc_get_checkout_url()
 				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
 			</button>
 		</div>
-		<div class="em-drawer-body widget_shopping_cart_content">
-			<?php if ( function_exists( 'woocommerce_mini_cart' ) ) woocommerce_mini_cart(); ?>
+		<div class="em-drawer-body">
+			<div class="widget_shopping_cart_content">
+				<?php if ( function_exists( 'woocommerce_mini_cart' ) ) { woocommerce_mini_cart(); } ?>
+			</div>
 		</div>
 	</aside>
 
