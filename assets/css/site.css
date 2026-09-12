@@ -812,26 +812,39 @@ body:not(.logged-in).woocommerce-account .col-2 {
 	cursor: pointer;
 }
 
-.woocommerce ul.products,
-.woocommerce ul.products.columns-4,
-.em-shop-main ul.products {
+/* Fixed column counts (not auto-fill) so every product grid on the site —
+   Shop, category/tag archives, Related products, Upsells — lands on the
+   same column count at a given breakpoint. Auto-fill sized columns purely
+   by available width, so a full-width grid (Related products) landed on 5
+   while the Shop page's grid (narrower, sidebar takes space) landed on 4. */
+/* Deliberately not scoped under .woocommerce — WooCommerce only adds that
+   body class on its own core pages (shop/product/cart/checkout/account),
+   not on a generic search-results page or every custom product taxonomy
+   archive, and this ul.products markup shows up on both. */
+ul.products,
+ul.products.columns-4 {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+	grid-template-columns: repeat(2, 1fr);
 	gap: clamp(16px, 2vw, 24px);
 	margin: 0;
 	padding: 0;
 	list-style: none;
 	width: 100%;
 }
-.woocommerce ul.products::before,
-.woocommerce ul.products::after,
-.em-shop-main ul.products::before,
-.em-shop-main ul.products::after {
+@media (min-width: 640px) {
+	ul.products,
+	ul.products.columns-4 { grid-template-columns: repeat(3, 1fr); }
+}
+@media (min-width: 1024px) {
+	ul.products,
+	ul.products.columns-4 { grid-template-columns: repeat(4, 1fr); }
+}
+ul.products::before,
+ul.products::after {
 	content: none !important;
 	display: none !important;
 }
-.woocommerce ul.products li.product,
-.em-shop-main ul.products li.product {
+ul.products li.product {
 	float: none !important;
 	width: auto !important;
 	max-width: none !important;
@@ -840,7 +853,7 @@ body:not(.logged-in).woocommerce-account .col-2 {
 	height: 100%;
 	display: flex;
 }
-.woocommerce ul.products li.product > .em-card { width: 100%; }
+ul.products li.product > .em-card { width: 100%; }
 
 /* Product card ATC — outline button + qty stepper (Figma). */
 .em-card-actions .em-card-atc,

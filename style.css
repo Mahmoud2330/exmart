@@ -3,7 +3,7 @@ Theme Name: exMart
 Theme URI: https://exmart.eg
 Author: exMart
 Description: Authentic health & hygiene storefront theme for WooCommerce. Ported from the exMart React storefront design system.
-Version: 1.0.53
+Version: 1.0.54
 Requires at least: 6.0
 Tested up to: 6.6
 Requires PHP: 7.4
@@ -89,11 +89,15 @@ ul.em-reset, .em-reset { list-style: none; margin: 0; padding: 0; }
   margin-inline: auto;
   padding-inline: clamp(16px, 4vw, 32px);
 }
+/* Only used for the wishlist product grids — fixed columns (not auto-fill)
+   so they land on the same count as every other product grid on the site. */
 .em-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: clamp(16px, 2vw, 24px);
 }
+@media (min-width: 640px) { .em-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1024px) { .em-grid { grid-template-columns: repeat(4, 1fr); } }
 .em-rail-track {
   display: flex;
   overflow-x: auto;
