@@ -459,10 +459,11 @@ function exmart_product_tag_exists( $slug ) {
 }
 
 /**
- * Best Sellers — products ranked by real WooCommerce sales.
+ * Best Sellers — Figma: products flagged isBestSeller.
  *
- * Only includes valid storefront products: published, catalog-visible,
- * in stock, purchasable, and with at least one recorded sale.
+ * WP mapping:
+ * 1. product_tag `best-sellers` (or `best-seller`)
+ * 2. fallback: highest total sales (WooCommerce popularity)
  *
  * @param int $limit
  * @return WC_Product[]
@@ -472,50 +473,40 @@ function exmart_get_best_sellers( $limit = 8 ) {
 		return array();
 	}
 
-	$limit = max( 1, (int) $limit );
-
-	// Over-fetch by popularity, then keep only products with real sales + valid for purchase.
-	$candidates = wc_get_products(
-		array(
-			'status'       => 'publish',
-			'limit'        => max( $limit * 5, 40 ),
-			'visibility'   => 'visible',
-			'stock_status' => 'instock',
-			'orderby'      => 'popularity',
-			'order'        => 'DESC',
-			'return'       => 'objects',
-		)
-	);
-
-	$out = array();
-	foreach ( $candidates as $product ) {
-		if ( ! $product instanceof WC_Product ) {
-			continue;
-		}
-		if ( (int) $product->get_total_sales() < 1 ) {
-			continue;
-		}
-		if ( ! $product->is_visible() || ! $product->is_purchasable() || ! $product->is_in_stock() ) {
-			continue;
-		}
-		// Skip draft-like catalog edge cases (e.g. hidden parent variations).
-		if ( $product->get_catalog_visibility() === 'hidden' ) {
-			continue;
-		}
-
-		$out[] = $product;
-		if ( count( $out ) >= $limit ) {
+	$defaults = exmart_product_query_defaults( $limit );
+	$tag_slug = null;
+	foreach ( array( 'best-sellers', 'best-seller' ) as $candidate ) {
+		if ( exmart_product_tag_exists( $candidate ) ) {
+			$tag_slug = $candidate;
 			break;
 		}
 	}
 
-	/**
-	 * Filter Best Sellers product list.
-	 *
-	 * @param WC_Product[] $out
-	 * @param int          $limit
-	 */
-	return apply_filters( 'exmart_best_sellers', $out, $limit );
+	if ( $tag_slug ) {
+		$tagged = wc_get_products(
+			array_merge(
+				$defaults,
+				array(
+					'tag'     => array( $tag_slug ),
+					'orderby' => 'popularity',
+					'order'   => 'DESC',
+				)
+			)
+		);
+		if ( ! empty( $tagged ) ) {
+			return $tagged;
+		}
+	}
+
+	return wc_get_products(
+		array_merge(
+			$defaults,
+			array(
+				'orderby' => 'popularity',
+				'order'   => 'DESC',
+			)
+		)
+	);
 }
 
 /**
@@ -625,6 +616,15 @@ function exmart_rail_view_all_url( $rail ) {
 
 	switch ( $rail ) {
 		case 'best_sellers':
+			foreach ( array( 'best-sellers', 'best-seller' ) as $slug ) {
+				$term = get_term_by( 'slug', $slug, 'product_tag' );
+				if ( $term && ! is_wp_error( $term ) ) {
+					$link = get_term_link( $term );
+					if ( ! is_wp_error( $link ) ) {
+						return $link;
+					}
+				}
+			}
 			return add_query_arg( 'orderby', 'popularity', $shop );
 
 		case 'offers':

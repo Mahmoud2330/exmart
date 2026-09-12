@@ -185,7 +185,7 @@ $trust_items = array(
 			__( 'Best Sellers', 'exmart' ),
 			$best_sellers,
 			exmart_rail_view_all_url( 'best_sellers' ),
-			__( 'No best sellers yet — completed orders will fill this rail automatically.', 'exmart' )
+			__( 'Tag products with “best-sellers”, or wait until orders generate popularity data.', 'exmart' )
 		);
 		?>
 	</div>
