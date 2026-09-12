@@ -18,13 +18,9 @@ $is_wc_page = function_exists( 'is_woocommerce' ) && ( is_cart() || is_checkout(
 	<div class="em-container" style="padding-block: var(--s8);">
 		<?php exmart_breadcrumb( array( array( 'label' => __( 'Home', 'exmart' ), 'href' => home_url( '/' ) ), array( 'label' => get_the_title() ) ) ); ?>
 		<h1 class="em-h2" style="margin-bottom:var(--s6);"><?php the_title(); ?></h1>
-		<?php if ( is_account_page() ) : ?>
-			<div class="em-account-grid">
-				<?php while ( have_posts() ) : the_post(); the_content(); endwhile; ?>
-			</div>
-		<?php else : ?>
+		<div class="<?php echo is_account_page() ? 'em-account-page' : ''; ?>">
 			<?php while ( have_posts() ) : the_post(); the_content(); endwhile; ?>
-		<?php endif; ?>
+		</div>
 	</div>
 <?php else : ?>
 	<div class="em-container em-page-narrow" style="padding-block: var(--s12);">
