@@ -119,7 +119,7 @@ $trust_items = array(
 
 <?php if ( ! empty( $product_brands ) ) : ?>
 <div class="em-brands-strip">
-	<div class="em-brands-strip-row">
+	<div class="em-container em-brands-strip-row">
 		<span class="em-overline em-brands-strip-label"><?php esc_html_e( 'Our Brands', 'exmart' ); ?></span>
 		<div class="em-brands-strip-divider" aria-hidden="true"></div>
 		<?php foreach ( $product_brands as $brand ) :
@@ -159,15 +159,17 @@ $trust_items = array(
 		<h2 class="em-h2"><?php esc_html_e( 'Shop by Category', 'exmart' ); ?></h2>
 	</div>
 	<?php if ( ! empty( $product_cats ) ) : ?>
-		<div class="em-cat-track">
-			<?php foreach ( $product_cats as $cat ) : ?>
-				<a href="<?php echo esc_url( get_term_link( $cat ) ); ?>" class="em-cat-item">
-					<div class="em-cat-circle">
-						<img src="<?php echo esc_url( exmart_category_image_url( $cat, 200 ) ); ?>" alt="<?php echo esc_attr( $cat->name ); ?>" width="200" height="200" loading="lazy" decoding="async" />
-					</div>
-					<span class="em-cat-label"><?php echo esc_html( $cat->name ); ?></span>
-				</a>
-			<?php endforeach; ?>
+		<div class="em-container">
+			<div class="em-cat-track">
+				<?php foreach ( $product_cats as $cat ) : ?>
+					<a href="<?php echo esc_url( get_term_link( $cat ) ); ?>" class="em-cat-item">
+						<div class="em-cat-circle">
+							<img src="<?php echo esc_url( exmart_category_image_url( $cat, 200 ) ); ?>" alt="<?php echo esc_attr( $cat->name ); ?>" width="200" height="200" loading="lazy" decoding="async" />
+						</div>
+						<span class="em-cat-label"><?php echo esc_html( $cat->name ); ?></span>
+					</a>
+				<?php endforeach; ?>
+			</div>
 		</div>
 	<?php else : ?>
 		<div class="em-container">
