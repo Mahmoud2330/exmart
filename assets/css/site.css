@@ -291,11 +291,18 @@
 @media (min-width: 900px) { .em-pdp-grid { grid-template-columns: 1fr 1fr; } }
 .em-pdp-gallery { display: flex; flex-direction: column; gap: var(--s3); }
 .em-pdp-info { display: flex; flex-direction: column; gap: var(--s5); }
+/* WooCommerce's own stylesheet puts `margin-bottom: 1.618em` on every
+   direct child of .summary (this div is also .summary/.entry-summary)
+   — since that's an em value it scales with each child's own font-size,
+   stacking on top of the flex gap above and blowing the title/price/
+   button rows apart unevenly. The flex gap is the only spacing this
+   column needs. */
+.em-pdp-info > * { margin: 0; }
 .em-pdp-brand-row { display: flex; align-items: center; gap: var(--s3); flex-wrap: wrap; }
 .em-pdp-brand-link { font-weight: 700; font-size: .9375rem; color: var(--ink-700); text-decoration: none; }
-.em-pdp-info .woocommerce-product-rating { display: flex; align-items: center; gap: var(--s3); margin: 0; }
+.em-pdp-info .woocommerce-product-rating { display: flex; align-items: center; gap: var(--s3); }
 .em-pdp-info .woocommerce-product-rating a { color: var(--ink-500); font-size: .875rem; text-decoration: none; }
-.em-pdp-info form.cart { display: flex; gap: var(--s3); flex-wrap: wrap; align-items: center; margin: 0; }
+.em-pdp-info form.cart { display: flex; gap: var(--s3); flex-wrap: wrap; align-items: center; }
 .em-pdp-info form.cart .quantity { margin: 0; }
 .em-pdp-trust-block { border: 1px solid var(--ink-200); border-radius: var(--r-md); padding: var(--s4); display: flex; flex-direction: column; gap: var(--s3); }
 .em-pdp-trust-block-item { display: flex; gap: var(--s2); align-items: flex-start; }
@@ -337,8 +344,14 @@
 	margin: 0 0 var(--s6);
 }
 
-/* Native WooCommerce gallery thumbnails (wc-product-gallery-slider) */
+/* Native WooCommerce gallery (wc-product-gallery-slider). The main photo
+   has no width rule by default, so it renders at its uploaded file's
+   native pixel size instead of filling the gallery column — this is
+   what makes a normal-sized product photo look like a tiny thumbnail
+   floating in a mostly-empty box. */
 .woocommerce-product-gallery__wrapper { border-radius: var(--r-md); overflow: hidden; }
+.woocommerce-product-gallery__wrapper img,
+.woocommerce-product-gallery__image img { width: 100%; height: auto; display: block; }
 .flex-control-thumbs { display: flex; gap: var(--s2); overflow-x: auto; margin-top: var(--s3); list-style: none; padding: 0; }
 .flex-control-thumbs li { flex-shrink: 0; width: 72px; height: 72px; }
 .flex-control-thumbs img { width: 100%; height: 100%; object-fit: cover; border-radius: var(--r-sm); border: 1px solid var(--ink-200); cursor: pointer; }
