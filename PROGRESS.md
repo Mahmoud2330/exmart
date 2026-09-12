@@ -130,3 +130,11 @@ Theme was at **1.0.17** when this doc was written. Always bump `EXMART_VERSION` 
 - After finishing a page/phase, mark its row **Done** and add a short bullet under that phase.  
 - Keep Home leftovers checked off when you return.  
 - Don’t delete history — append dated notes if something changes.
+- Every push to this branch gets a dated entry in the Changelog below, added in the same commit as the change (or the next one). Don't delete or rewrite prior entries — append only.
+
+---
+
+## Changelog
+
+- **2026-09-12 — v1.0.26** — Bumped `EXMART_VERSION` (`functions.php`) and `Version` (`style.css`) from 1.0.25 → 1.0.26 to bust the WP Pusher/browser cache after the CTA color revert below (nothing else changed).
+- **2026-09-12 — v1.0.25 (reverted same day)** — Changed the CTA buttons (`.em-btn-primary`, `.em-btn-accent` in `style.css`; WooCommerce's native cart/checkout/place-order buttons in `assets/css/site.css`) from the blue `--accent-600`/`--accent-700` tokens to new red `--cta`/`--cta-hover` tokens (`#E5341C` / `#C62818`), then reverted on request — buttons are back on `--accent-600`/`--accent-700` blue, and the `--cta`/`--cta-hover` tokens were removed again.
