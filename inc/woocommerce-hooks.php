@@ -253,3 +253,146 @@ function exmart_on_sale_product_query( $q ) {
 	$q->set( 'post__in', $ids );
 }
 add_action( 'woocommerce_product_query', 'exmart_on_sale_product_query' );
+
+/**
+ * Login / Register page URLs (separate Figma pages).
+ */
+function exmart_login_url() {
+	$page = get_page_by_path( 'login' );
+	if ( $page ) {
+		return get_permalink( $page );
+	}
+	return function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'myaccount' ) : home_url( '/my-account/' );
+}
+
+function exmart_register_url() {
+	$page = get_page_by_path( 'register' );
+	if ( $page ) {
+		return get_permalink( $page );
+	}
+	return exmart_login_url();
+}
+
+/**
+ * Ensure Login + Register pages exist and WooCommerce registration is usable.
+ */
+function exmart_ensure_auth_pages() {
+	$pages = array(
+		'login'    => array(
+			'title'    => 'Login',
+			'template' => 'template-login.php',
+		),
+		'register' => array(
+			'title'    => 'Register',
+			'template' => 'template-register.php',
+		),
+	);
+
+	foreach ( $pages as $slug => $data ) {
+		$existing = get_page_by_path( $slug );
+		if ( $existing ) {
+			$tpl = get_post_meta( $existing->ID, '_wp_page_template', true );
+			if ( $data['template'] !== $tpl ) {
+				update_post_meta( $existing->ID, '_wp_page_template', $data['template'] );
+			}
+			continue;
+		}
+		$id = wp_insert_post(
+			array(
+				'post_title'  => $data['title'],
+				'post_name'   => $slug,
+				'post_status' => 'publish',
+				'post_type'   => 'page',
+			)
+		);
+		if ( $id && ! is_wp_error( $id ) ) {
+			update_post_meta( $id, '_wp_page_template', $data['template'] );
+		}
+	}
+
+	update_option( 'woocommerce_enable_myaccount_registration', 'yes' );
+	update_option( 'woocommerce_registration_generate_username', 'yes' );
+	update_option( 'woocommerce_registration_generate_password', 'no' );
+}
+add_action( 'init', 'exmart_ensure_auth_pages', 25 );
+
+/**
+ * Guests hitting My Account (not lost-password etc.) go to the Login page.
+ */
+function exmart_redirect_account_guests_to_login() {
+	if ( is_admin() || is_user_logged_in() ) {
+		return;
+	}
+	if ( ! function_exists( 'is_account_page' ) || ! is_account_page() ) {
+		return;
+	}
+	if ( function_exists( 'is_wc_endpoint_url' ) && is_wc_endpoint_url() ) {
+		return;
+	}
+	$login = get_page_by_path( 'login' );
+	if ( ! $login ) {
+		return;
+	}
+	wp_safe_redirect( get_permalink( $login ) );
+	exit;
+}
+add_action( 'template_redirect', 'exmart_redirect_account_guests_to_login', 5 );
+
+/**
+ * Validate extra register fields (name + phone) before WC creates the user.
+ *
+ * @param WP_Error $errors
+ * @param string   $username
+ * @param string   $email
+ * @return WP_Error
+ */
+function exmart_validate_register_fields( $errors, $username, $email ) {
+	$name  = isset( $_POST['exmart_full_name'] ) ? sanitize_text_field( wp_unslash( $_POST['exmart_full_name'] ) ) : '';
+	$phone = isset( $_POST['exmart_phone'] ) ? sanitize_text_field( wp_unslash( $_POST['exmart_phone'] ) ) : '';
+	$pass  = isset( $_POST['password'] ) ? (string) wp_unslash( $_POST['password'] ) : '';
+
+	if ( '' === $name ) {
+		$errors->add( 'exmart_full_name', __( 'Please enter your full name.', 'exmart' ) );
+	}
+	if ( '' === $phone ) {
+		$errors->add( 'exmart_phone', __( 'Please enter your phone number.', 'exmart' ) );
+	}
+	if ( strlen( $pass ) > 0 && strlen( $pass ) < 8 ) {
+		$errors->add( 'exmart_password', __( 'Password must be at least 8 characters.', 'exmart' ) );
+	}
+
+	return $errors;
+}
+add_filter( 'woocommerce_registration_errors', 'exmart_validate_register_fields', 10, 3 );
+
+/**
+ * Save name + phone after customer is created.
+ *
+ * @param int $customer_id
+ */
+function exmart_save_register_fields( $customer_id ) {
+	$name  = isset( $_POST['exmart_full_name'] ) ? sanitize_text_field( wp_unslash( $_POST['exmart_full_name'] ) ) : '';
+	$phone = isset( $_POST['exmart_phone'] ) ? sanitize_text_field( wp_unslash( $_POST['exmart_phone'] ) ) : '';
+
+	if ( $name ) {
+		$parts = preg_split( '/\s+/', $name, 2 );
+		$first = $parts[0];
+		$last  = isset( $parts[1] ) ? $parts[1] : '';
+		wp_update_user(
+			array(
+				'ID'           => $customer_id,
+				'first_name'   => $first,
+				'last_name'    => $last,
+				'display_name' => $name,
+			)
+		);
+		update_user_meta( $customer_id, 'billing_first_name', $first );
+		if ( $last ) {
+			update_user_meta( $customer_id, 'billing_last_name', $last );
+		}
+	}
+	if ( $phone ) {
+		update_user_meta( $customer_id, 'billing_phone', $phone );
+	}
+}
+add_action( 'woocommerce_created_customer', 'exmart_save_register_fields' );

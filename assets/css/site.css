@@ -308,45 +308,55 @@
 .woocommerce-MyAccount-content { max-width: 720px; }
 .woocommerce-MyAccount-content > p:first-child { margin-top: 0; }
 
-/* Logged-out: Login | Register two columns. */
-.woocommerce-account .u-columns.col2-set,
-.woocommerce .u-columns.col2-set,
-.em-account-page .u-columns.col2-set {
-	display: grid !important;
-	grid-template-columns: 1fr;
-	gap: var(--s8);
-	width: 100% !important;
-	float: none !important;
-}
-@media (min-width: 768px) {
-	.woocommerce-account .u-columns.col2-set,
-	.woocommerce .u-columns.col2-set,
-	.em-account-page .u-columns.col2-set {
-		grid-template-columns: 1fr 1fr;
-	}
-}
-.woocommerce-account .u-columns .u-column1,
-.woocommerce-account .u-columns .u-column2,
-.woocommerce-account .col2-set .col-1,
-.woocommerce-account .col2-set .col-2,
-.woocommerce .u-columns .u-column1,
-.woocommerce .u-columns .u-column2 {
-	float: none !important;
-	width: 100% !important;
-	max-width: none !important;
-}
-.woocommerce-form-login,
-.woocommerce-form-register {
+/* ── Auth pages (separate Login / Register) ─────────────── */
+.em-auth {
 	max-width: 420px;
+	padding-block: var(--s10) var(--s16);
+	margin-inline: 0;
+}
+.em-auth-title { margin: var(--s4) 0 var(--s6); }
+.em-auth-form {
 	display: flex;
 	flex-direction: column;
 	gap: var(--s4);
-	width: 100%;
+	margin: 0;
+	max-width: 100%;
 }
-.woocommerce-form-login .form-row,
-.woocommerce-form-register .form-row,
-.woocommerce-account .woocommerce-form-row {
-	margin-bottom: 0;
+.em-auth-form .em-input-wrap { margin: 0; }
+.em-auth-form .em-input { width: 100%; }
+.em-auth-submit {
+	width: 100%;
+	margin-top: var(--s2);
+}
+.em-auth-switch {
+	margin: var(--s5) 0 0;
+	font-size: .875rem;
+	color: var(--ink-500);
+}
+.em-auth-switch a {
+	color: var(--accent-600);
+	font-weight: 600;
+	text-decoration: none;
+}
+.em-auth-switch a:hover { text-decoration: underline; }
+.em-auth-switch--muted { margin-top: var(--s3); }
+.em-auth-switch--muted a {
+	color: var(--ink-500);
+	font-weight: 500;
+}
+.em-auth .woocommerce-error,
+.em-auth .woocommerce-message,
+.em-auth .woocommerce-info {
+	margin-bottom: var(--s5);
+}
+
+/* Logged-out My Account fallback (should redirect to /login/). */
+body:not(.logged-in).woocommerce-account .u-columns.col2-set {
+	display: block !important;
+}
+body:not(.logged-in).woocommerce-account .u-column2,
+body:not(.logged-in).woocommerce-account .col-2 {
+	display: none !important;
 }
 .em-order-card { border: 1px solid var(--ink-200); border-radius: var(--r-md); padding: var(--s4); display: flex; flex-wrap: wrap; gap: var(--s4); align-items: center; justify-content: space-between; margin-bottom: var(--s4); }
 .em-address-card { border: 1px solid var(--ink-200); border-radius: var(--r-md); padding: var(--s4); margin-bottom: var(--s4); }

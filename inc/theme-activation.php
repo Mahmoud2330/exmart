@@ -66,6 +66,8 @@ function exmart_seed_pages() {
 		'privacy'  => array( 'title' => 'Privacy & Terms', 'template' => 'template-privacy.php' ),
 		'brands'   => array( 'title' => 'Brands', 'template' => 'template-brands.php' ),
 		'wishlist' => array( 'title' => 'Wishlist', 'template' => 'template-wishlist.php' ),
+		'login'    => array( 'title' => 'Login', 'template' => 'template-login.php' ),
+		'register' => array( 'title' => 'Register', 'template' => 'template-register.php' ),
 	);
 
 	$ids = array();

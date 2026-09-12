@@ -12,7 +12,9 @@ $brands_house         = array_filter( $product_brands, fn( $t ) => exmart_brand_
 
 $cart_count = ( function_exists( 'WC' ) && WC()->cart ) ? WC()->cart->get_cart_contents_count() : 0;
 $wishlist_url = home_url( '/wishlist/' );
-$account_url  = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'myaccount' ) : home_url( '/my-account/' );
+$account_url  = is_user_logged_in()
+	? ( function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'myaccount' ) : home_url( '/my-account/' ) )
+	: ( function_exists( 'exmart_login_url' ) ? exmart_login_url() : home_url( '/login/' ) );
 $cart_url     = function_exists( 'wc_get_cart_url' ) ? wc_get_cart_url() : home_url( '/cart/' );
 $checkout_url = function_exists( 'wc_get_checkout_url' ) ? wc_get_checkout_url() : home_url( '/checkout/' );
 ?><!DOCTYPE html>
