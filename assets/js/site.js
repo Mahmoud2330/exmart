@@ -22,7 +22,119 @@
 		initWishlistPage();
 		initBrandFilter();
 		initHeroSlider();
+		initCardAtc();
 	} );
+
+	// ── Product card ATC → quantity stepper ───────────────
+	function initCardAtc() {
+		var ajaxUrl = data.ajaxUrl || '';
+		var nonce = data.nonce || '';
+		if ( ! ajaxUrl ) return;
+
+		function applyFragments( fragments ) {
+			if ( ! fragments ) return;
+			Object.keys( fragments ).forEach( function ( selector ) {
+				var html = fragments[ selector ];
+				document.querySelectorAll( selector ).forEach( function ( el ) {
+					var tmp = document.createElement( 'div' );
+					tmp.innerHTML = html;
+					var next = tmp.firstElementChild;
+					if ( next ) {
+						el.replaceWith( next );
+					} else {
+						el.outerHTML = html;
+					}
+				} );
+			} );
+			if ( typeof jQuery !== 'undefined' ) {
+				jQuery( document.body ).trigger( 'wc_fragments_refreshed' );
+			}
+		}
+
+		function syncUi( productId, qty ) {
+			document.querySelectorAll( '[data-em-card-atc][data-product-id="' + productId + '"]' ).forEach( function ( wrap ) {
+				wrap.setAttribute( 'data-qty', String( qty ) );
+				var addBtn = wrap.querySelector( '[data-em-atc-add]' );
+				var stepper = wrap.querySelector( '[data-em-atc-stepper]' );
+				var val = wrap.querySelector( '[data-em-qty-val]' );
+				var minus = wrap.querySelector( '[data-em-qty-minus]' );
+				if ( qty > 0 ) {
+					if ( addBtn ) addBtn.hidden = true;
+					if ( stepper ) stepper.hidden = false;
+					if ( val ) val.textContent = String( qty );
+					if ( minus ) {
+						minus.classList.toggle( 'is-remove', qty === 1 );
+						minus.setAttribute( 'aria-label', qty === 1 ? 'Remove from cart' : 'Decrease quantity' );
+					}
+				} else {
+					if ( addBtn ) addBtn.hidden = false;
+					if ( stepper ) stepper.hidden = true;
+					if ( val ) val.textContent = '1';
+					if ( minus ) {
+						minus.classList.add( 'is-remove' );
+						minus.setAttribute( 'aria-label', 'Remove from cart' );
+					}
+				}
+			} );
+		}
+
+		function setQty( wrap, quantity ) {
+			var productId = wrap.getAttribute( 'data-product-id' );
+			if ( ! productId || wrap.classList.contains( 'is-busy' ) ) return;
+
+			wrap.classList.add( 'is-busy' );
+			var body = new FormData();
+			body.append( 'action', 'exmart_set_cart_qty' );
+			body.append( 'nonce', nonce );
+			body.append( 'product_id', productId );
+			body.append( 'quantity', String( quantity ) );
+
+			fetch( ajaxUrl, { method: 'POST', body: body, credentials: 'same-origin' } )
+				.then( function ( res ) { return res.json(); } )
+				.then( function ( json ) {
+					wrap.classList.remove( 'is-busy' );
+					if ( ! json || ! json.success || ! json.data ) return;
+					syncUi( json.data.product_id, parseInt( json.data.quantity, 10 ) || 0 );
+					applyFragments( json.data.fragments );
+					if ( typeof jQuery !== 'undefined' ) {
+						jQuery( document.body ).trigger( 'wc_fragment_refresh' );
+					}
+				} )
+				.catch( function () {
+					wrap.classList.remove( 'is-busy' );
+				} );
+		}
+
+		document.addEventListener( 'click', function ( e ) {
+			var addBtn = e.target.closest( '[data-em-atc-add]' );
+			if ( addBtn ) {
+				e.preventDefault();
+				var wrapAdd = addBtn.closest( '[data-em-card-atc]' );
+				if ( wrapAdd ) setQty( wrapAdd, 1 );
+				return;
+			}
+
+			var minus = e.target.closest( '[data-em-qty-minus]' );
+			if ( minus ) {
+				e.preventDefault();
+				var wrapMinus = minus.closest( '[data-em-card-atc]' );
+				if ( ! wrapMinus ) return;
+				var qMinus = parseInt( wrapMinus.getAttribute( 'data-qty' ) || '0', 10 ) || 0;
+				setQty( wrapMinus, Math.max( 0, qMinus - 1 ) );
+				return;
+			}
+
+			var plus = e.target.closest( '[data-em-qty-plus]' );
+			if ( plus ) {
+				e.preventDefault();
+				var wrapPlus = plus.closest( '[data-em-card-atc]' );
+				if ( ! wrapPlus ) return;
+				var qPlus = parseInt( wrapPlus.getAttribute( 'data-qty' ) || '0', 10 ) || 0;
+				var max = parseInt( wrapPlus.getAttribute( 'data-max' ) || '9999', 10 ) || 9999;
+				setQty( wrapPlus, Math.min( max, qPlus + 1 ) );
+			}
+		} );
+	}
 
 	// ── Homepage hero image slot (main-banner carousel, Figma layout) ──
 	function initHeroSlider() {

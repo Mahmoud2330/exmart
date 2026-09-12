@@ -498,3 +498,178 @@ function exmart_save_account_phone( $user_id ) {
 	}
 }
 add_action( 'woocommerce_save_account_details', 'exmart_save_account_phone' );
+
+/**
+ * How many units of a product are already in the cart (simple product id).
+ *
+ * @param int $product_id
+ * @return int
+ */
+function exmart_cart_qty_for_product( $product_id ) {
+	$product_id = absint( $product_id );
+	if ( ! $product_id || ! function_exists( 'WC' ) || ! WC()->cart ) {
+		return 0;
+	}
+
+	$qty = 0;
+	foreach ( WC()->cart->get_cart() as $item ) {
+		if ( (int) $item['product_id'] === $product_id && empty( $item['variation_id'] ) ) {
+			$qty += (int) $item['quantity'];
+		} elseif ( (int) $item['variation_id'] === $product_id ) {
+			$qty += (int) $item['quantity'];
+		}
+	}
+	return $qty;
+}
+
+/**
+ * Product card add-to-cart / quantity stepper (Figma ProductCard behaviour).
+ *
+ * @param WC_Product $product
+ */
+function exmart_card_atc_control( $product ) {
+	if ( ! $product instanceof WC_Product ) {
+		return;
+	}
+
+	if ( ! $product->is_purchasable() || ! $product->is_in_stock() ) {
+		printf(
+			'<button type="button" class="em-btn em-card-atc-btn" disabled>%s</button>',
+			esc_html__( 'Out of stock', 'exmart' )
+		);
+		return;
+	}
+
+	// Variable / grouped / external → product page.
+	if ( ! $product->is_type( 'simple' ) || $product->has_child() ) {
+		printf(
+			'<a href="%1$s" class="em-btn em-btn-secondary em-card-atc-btn">%2$s</a>',
+			esc_url( $product->get_permalink() ),
+			esc_html__( 'Select options', 'exmart' )
+		);
+		return;
+	}
+
+	$product_id = $product->get_id();
+	$qty        = exmart_cart_qty_for_product( $product_id );
+	$max        = $product->get_max_purchase_quantity();
+	if ( $max < 1 ) {
+		$max = 9999;
+	}
+	?>
+	<div
+		class="em-card-atc"
+		data-em-card-atc
+		data-product-id="<?php echo esc_attr( (string) $product_id ); ?>"
+		data-qty="<?php echo esc_attr( (string) $qty ); ?>"
+		data-max="<?php echo esc_attr( (string) $max ); ?>"
+	>
+		<button
+			type="button"
+			class="em-btn em-btn-secondary em-card-atc-btn"
+			data-em-atc-add
+			<?php echo $qty > 0 ? 'hidden' : ''; ?>
+			aria-label="<?php echo esc_attr( sprintf( __( 'Add %s to cart', 'exmart' ), $product->get_name() ) ); ?>"
+		>
+			<?php esc_html_e( 'Add to cart', 'exmart' ); ?>
+		</button>
+		<div class="em-card-qty" data-em-atc-stepper <?php echo $qty > 0 ? '' : 'hidden'; ?>>
+			<button
+				type="button"
+				class="em-card-qty-btn<?php echo 1 === (int) $qty ? ' is-remove' : ''; ?>"
+				data-em-qty-minus
+				aria-label="<?php echo 1 === (int) $qty ? esc_attr__( 'Remove from cart', 'exmart' ) : esc_attr__( 'Decrease quantity', 'exmart' ); ?>"
+			>
+				<span class="em-card-qty-minus" aria-hidden="true">−</span>
+				<span class="em-card-qty-bin" aria-hidden="true">
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14zM10 11v6M14 11v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+				</span>
+			</button>
+			<span class="em-card-qty-val" data-em-qty-val><?php echo esc_html( (string) max( 1, $qty ) ); ?></span>
+			<button type="button" class="em-card-qty-btn" data-em-qty-plus aria-label="<?php esc_attr_e( 'Increase quantity', 'exmart' ); ?>">+</button>
+		</div>
+	</div>
+	<?php
+}
+
+/**
+ * AJAX: set cart quantity for a simple product (0 removes; creates line if needed).
+ */
+function exmart_ajax_set_cart_qty() {
+	check_ajax_referer( 'exmart_ajax', 'nonce' );
+
+	if ( ! function_exists( 'WC' ) || ! WC()->cart ) {
+		wp_send_json_error( array( 'message' => 'Cart unavailable' ), 400 );
+	}
+
+	$product_id = isset( $_POST['product_id'] ) ? absint( $_POST['product_id'] ) : 0;
+	$quantity   = isset( $_POST['quantity'] ) ? (int) $_POST['quantity'] : 0;
+
+	if ( ! $product_id ) {
+		wp_send_json_error( array( 'message' => 'Invalid product' ), 400 );
+	}
+
+	$product = wc_get_product( $product_id );
+	if ( ! $product || ! $product->is_purchasable() ) {
+		wp_send_json_error( array( 'message' => 'Product unavailable' ), 400 );
+	}
+
+	if ( $quantity < 0 ) {
+		$quantity = 0;
+	}
+
+	$max = $product->get_max_purchase_quantity();
+	if ( $max > 0 && $quantity > $max ) {
+		$quantity = $max;
+	}
+
+	$cart     = WC()->cart;
+	$found_key = null;
+	foreach ( $cart->get_cart() as $key => $item ) {
+		if ( (int) $item['product_id'] === $product_id && empty( $item['variation_id'] ) ) {
+			$found_key = $key;
+			break;
+		}
+	}
+
+	if ( 0 === $quantity ) {
+		if ( $found_key ) {
+			$cart->remove_cart_item( $found_key );
+		}
+	} elseif ( $found_key ) {
+		$cart->set_quantity( $found_key, $quantity, true );
+	} else {
+		if ( ! $product->is_in_stock() ) {
+			wp_send_json_error( array( 'message' => 'Out of stock' ), 400 );
+		}
+		$added = $cart->add_to_cart( $product_id, $quantity );
+		if ( ! $added ) {
+			wp_send_json_error( array( 'message' => 'Could not add to cart' ), 400 );
+		}
+	}
+
+	$final_qty = exmart_cart_qty_for_product( $product_id );
+
+	// Refresh standard WC cart fragments (mini-cart + our count badge).
+	ob_start();
+	woocommerce_mini_cart();
+	$mini_cart = ob_get_clean();
+
+	$fragments = apply_filters(
+		'woocommerce_add_to_cart_fragments',
+		array(
+			'div.widget_shopping_cart_content' => '<div class="widget_shopping_cart_content">' . $mini_cart . '</div>',
+		)
+	);
+
+	wp_send_json_success(
+		array(
+			'product_id' => $product_id,
+			'quantity'   => $final_qty,
+			'fragments'  => $fragments,
+			'cart_hash'  => $cart->get_cart_hash(),
+		)
+	);
+}
+add_action( 'wp_ajax_exmart_set_cart_qty', 'exmart_ajax_set_cart_qty' );
+add_action( 'wp_ajax_nopriv_exmart_set_cart_qty', 'exmart_ajax_set_cart_qty' );

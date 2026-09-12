@@ -624,11 +624,18 @@ body:not(.logged-in).woocommerce-account .col-2 {
 .woocommerce ul.products li.product { margin: 0; height: 100%; display: flex; }
 .woocommerce ul.products li.product > .em-card { width: 100%; }
 
-/* Product card ATC — outline + centered label (Figma), override global WC primary buttons. */
+/* Product card ATC — outline button + qty stepper (Figma). */
+.em-card-actions .em-card-atc,
+.em-card-actions .em-card-atc-btn,
+.em-card-actions .em-card-qty {
+	flex: 1;
+	min-width: 0;
+}
 .em-card-actions a.button,
 .em-card-actions button.button,
 .em-card-actions a.add_to_cart_button,
 .em-card-actions a.product_type_simple,
+.em-card-actions .em-card-atc-btn,
 .woocommerce ul.products .em-card-actions a.button,
 .woocommerce .em-card .em-card-actions a.button,
 .woocommerce .em-card .em-card-actions a.add_to_cart_button {
@@ -646,19 +653,96 @@ body:not(.logged-in).woocommerce-account .col-2 {
 	border-radius: var(--r-sm);
 	box-shadow: none !important;
 	font-family: var(--font);
-	font-size: .875rem;
+	font-size: .8125rem;
 	font-weight: 600;
 	line-height: 1;
 	text-decoration: none !important;
 	white-space: nowrap;
+	cursor: pointer;
 }
 .em-card-actions a.button:hover,
 .em-card-actions a.add_to_cart_button:hover,
+.em-card-actions .em-card-atc-btn:hover:not(:disabled),
 .woocommerce ul.products .em-card-actions a.button:hover,
 .woocommerce .em-card .em-card-actions a.button:hover {
 	background: var(--ink-50) !important;
 	color: var(--ink-900) !important;
 	border-color: var(--ink-300) !important;
+}
+.em-card-actions .em-card-atc-btn:disabled {
+	opacity: .55;
+	cursor: not-allowed;
+}
+
+/* Hide WC “View cart” after AJAX add — stepper replaces it. */
+.em-card-actions .added_to_cart,
+.em-card .added_to_cart,
+.woocommerce ul.products .added_to_cart,
+.woocommerce a.added_to_cart.wc-forward {
+	display: none !important;
+}
+
+.em-card-atc {
+	display: flex;
+	align-items: stretch;
+}
+.em-card-atc.is-busy {
+	opacity: .65;
+	pointer-events: none;
+}
+.em-card-qty {
+	display: flex;
+	align-items: center;
+	height: 44px;
+	border: 1px solid var(--ink-900);
+	border-radius: var(--r-sm);
+	overflow: hidden;
+	background: var(--paper);
+}
+.em-card-qty[hidden],
+.em-card-atc-btn[hidden] {
+	display: none !important;
+}
+.em-card-qty-btn {
+	flex: 1;
+	height: 100%;
+	min-width: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	background: none;
+	border: none;
+	cursor: pointer;
+	font-family: var(--font);
+	font-size: 1.25rem;
+	font-weight: 400;
+	color: var(--ink-700);
+	line-height: 1;
+	transition: background .12s;
+}
+.em-card-qty-btn:hover {
+	background: var(--ink-50);
+}
+.em-card-qty-minus,
+.em-card-qty-bin {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	pointer-events: none;
+}
+.em-card-qty-bin { display: none; }
+.em-card-qty-btn.is-remove .em-card-qty-minus { display: none; }
+.em-card-qty-btn.is-remove .em-card-qty-bin { display: inline-flex; }
+.em-card-qty-val {
+	min-width: 32px;
+	padding-inline: 4px;
+	text-align: center;
+	font-size: .9375rem;
+	font-weight: 700;
+	color: var(--ink-900);
+	font-variant-numeric: tabular-nums;
+	border-inline: 1px solid var(--ink-200);
+	line-height: 1;
 }
 
 /* Sale price — explicit card class (not WC <ins>). */
