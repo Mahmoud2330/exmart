@@ -288,7 +288,7 @@
 
 /* ── PDP ───────────────────────────────────────────────── */
 .em-pdp-grid { display: grid; grid-template-columns: 1fr; gap: var(--s8); }
-@media (min-width: 768px) { .em-pdp-grid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 900px) { .em-pdp-grid { grid-template-columns: 1fr 1fr; } }
 .em-pdp-gallery { display: flex; flex-direction: column; gap: var(--s3); }
 .em-pdp-info { display: flex; flex-direction: column; gap: var(--s5); }
 .em-pdp-brand-row { display: flex; align-items: center; gap: var(--s3); flex-wrap: wrap; }
@@ -299,6 +299,43 @@
 .em-pdp-info form.cart .quantity { margin: 0; }
 .em-pdp-trust-block { border: 1px solid var(--ink-200); border-radius: var(--r-md); padding: var(--s4); display: flex; flex-direction: column; gap: var(--s3); }
 .em-pdp-trust-block-item { display: flex; gap: var(--s2); align-items: flex-start; }
+
+/* Stock status — was falling back to unstyled default WooCommerce text. */
+.em-pdp-info .stock { font-size: .875rem; font-weight: 600; margin: 0; }
+.em-pdp-info .stock.in-stock { color: var(--success); }
+.em-pdp-info .stock.out-of-stock { color: var(--error); }
+
+/* SKU / Categories / Tags — was plain unstyled WooCommerce paragraph text
+   dropped under the trust block with no visual relationship to it. */
+.em-pdp-info .product_meta {
+	display: flex;
+	flex-direction: column;
+	gap: var(--s1);
+	padding-top: var(--s4);
+	border-top: 1px solid var(--ink-200);
+	font-size: .8125rem;
+	color: var(--ink-500);
+}
+.em-pdp-info .product_meta > span { display: block; }
+.em-pdp-info .product_meta a { color: var(--ink-700); text-decoration: none; }
+.em-pdp-info .product_meta a:hover { text-decoration: underline; }
+
+/* Related products / upsells — was a bare default <h2> with browser UA
+   margins/font-size, jarring next to the rest of the page's typography. */
+.related.products,
+.upsells.products {
+	margin-top: var(--s16);
+	padding-top: var(--s10);
+	border-top: 1px solid var(--ink-200);
+}
+.related.products > h2,
+.upsells.products > h2 {
+	font-size: clamp(1.5rem, 1.2rem + 1.4vw, 1.75rem);
+	line-height: 1.15;
+	letter-spacing: -.01em;
+	font-weight: 600;
+	margin: 0 0 var(--s6);
+}
 
 /* Native WooCommerce gallery thumbnails (wc-product-gallery-slider) */
 .woocommerce-product-gallery__wrapper { border-radius: var(--r-md); overflow: hidden; }
@@ -926,7 +963,7 @@ body:not(.logged-in).woocommerce-account .col-2 {
 .woocommerce nav.woocommerce-pagination ul li span.current { background: var(--accent-600); color: var(--paper); border-color: var(--accent-600); }
 
 .woocommerce div.product .woocommerce-product-gallery { max-width: 100%; }
-.woocommerce div.product div.images { border-radius: var(--r-md); overflow: hidden; border: 1px solid var(--ink-200); }
+.woocommerce div.product div.images { position: relative; border-radius: var(--r-md); overflow: hidden; border: 1px solid var(--ink-200); }
 .woocommerce div.product p.price, .woocommerce div.product span.price { font-size: 1.5rem; font-weight: 700; color: var(--ink-900); }
 .woocommerce div.product p.price ins, .woocommerce div.product span.price ins { text-decoration: none; color: var(--sale); }
 .woocommerce div.product p.price del, .woocommerce div.product span.price del { color: var(--ink-400); font-size: .875rem; opacity: 1; }
@@ -943,7 +980,9 @@ body:not(.logged-in).woocommerce-account .col-2 {
 }
 .woocommerce a.button:hover, .woocommerce button.button:hover, .woocommerce input.button:hover,
 .woocommerce div.product form.cart .button:hover { background: var(--accent-700); }
-.woocommerce span.onsale { background: var(--sale-bg); color: var(--sale); border-radius: var(--r-full); font-size: .75rem; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; padding: 2px 8px; min-height: 0; min-width: 0; line-height: 1.3; position: absolute; top: var(--s2); left: var(--s2); }
+/* Match the 48px quantity stepper next to it so the row has one clean baseline. */
+.woocommerce div.product form.cart .button { min-height: 48px; }
+.woocommerce span.onsale { background: var(--sale-bg); color: var(--sale); border-radius: var(--r-full); font-size: .75rem; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; padding: 2px 8px; min-height: 0; min-width: 0; line-height: 1.3; position: absolute; top: var(--s2); left: var(--s2); z-index: 1; }
 
 .woocommerce-tabs ul.tabs { display: flex; border-bottom: 1px solid var(--ink-200); list-style: none; padding: 0; margin: 0; overflow-x: auto; }
 .woocommerce-tabs ul.tabs li { margin: 0; }
