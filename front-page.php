@@ -49,7 +49,6 @@ $best_sellers = exmart_get_best_sellers( 8 );
 $offers       = exmart_get_offers( 8 );
 $new_arrivals = exmart_get_new_arrivals( 8 );
 $hero_images  = exmart_get_hero_images();
-$hero_primary = $hero_images[0];
 $hero_multi   = count( $hero_images ) > 1;
 
 $trust_items = array(
@@ -72,47 +71,90 @@ $trust_items = array(
 );
 ?>
 
-<section class="em-hero">
-	<div class="em-hero-bg" style="background-image:url('<?php echo esc_url( $hero_primary['url'] ); ?>');" aria-hidden="true"></div>
-	<div class="em-hero-overlay" aria-hidden="true"></div>
-	<div class="em-container em-hero-grid">
-		<div class="em-hero-copy">
-			<p class="em-overline"><?php esc_html_e( 'Authentic health & hygiene — Egypt', 'exmart' ); ?></p>
-			<h1 class="em-h1"><?php
-				echo wp_kses(
-					__( 'Professional-grade<br />health products,<br />delivered to your door.', 'exmart' ),
-					array( 'br' => array() )
-				);
-			?></h1>
-			<p class="em-body"><?php esc_html_e( 'Official sole distributor of Diversey, Grace, Oview & SureCheck in Egypt. Plus our own exclusive brands — Qualita, Eliv, and Verve.', 'exmart' ); ?></p>
-			<div class="em-hero-ctas">
-				<a href="<?php echo esc_url( $shop_url ); ?>" class="em-btn em-btn-lg em-btn-primary"><?php esc_html_e( 'Shop all products', 'exmart' ); ?></a>
-				<a href="<?php echo esc_url( home_url( '/about/' ) ); ?>" class="em-btn em-btn-lg em-btn-ghost em-hero-ghost"><?php esc_html_e( 'Our story', 'exmart' ); ?></a>
-			</div>
-		</div>
-		<div class="em-hero-img-col">
-			<div class="em-hero-img-wrap<?php echo $hero_multi ? ' em-hero-img-wrap--slider' : ''; ?>"<?php echo $hero_multi ? ' data-em-hero-slider' : ''; ?>>
-				<?php foreach ( $hero_images as $i => $slide ) : ?>
-					<img
-						class="em-hero-slide<?php echo 0 === $i ? ' is-active' : ''; ?>"
-						src="<?php echo esc_url( $slide['url'] ); ?>"
-						alt="<?php echo esc_attr( $slide['alt'] ); ?>"
-						width="800"
-						height="1000"
-						<?php echo 0 === $i ? '' : 'loading="lazy"'; ?>
-						decoding="async"
-					/>
-				<?php endforeach; ?>
-				<div class="em-hero-badge">
-					<div class="em-hero-badge-icon">
-						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 12l2 2 4-4" stroke="var(--success)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" stroke="var(--success)" stroke-width="2"/></svg>
-					</div>
-					<div>
-						<p class="em-hero-badge-title"><?php esc_html_e( '100% Authentic', 'exmart' ); ?></p>
-						<p class="em-hero-badge-sub"><?php esc_html_e( 'Direct from manufacturer', 'exmart' ); ?></p>
+<section class="em-hero-bento">
+	<div class="em-container">
+		<div class="em-hero-bento-grid">
+
+			<div class="em-hero-tile em-hero-tile--main">
+				<div class="em-hero-tile-content">
+					<p class="em-overline"><?php esc_html_e( 'Authentic health & hygiene — Egypt', 'exmart' ); ?></p>
+					<h1 class="em-h1"><?php
+						echo wp_kses(
+							__( 'Professional-grade<br />health products,<br />delivered to your door.', 'exmart' ),
+							array( 'br' => array() )
+						);
+					?></h1>
+					<p class="em-body"><?php esc_html_e( 'Official sole distributor of Diversey, Grace, Oview & SureCheck in Egypt. Plus our own exclusive brands — Qualita, Eliv, and Verve.', 'exmart' ); ?></p>
+					<a href="<?php echo esc_url( $shop_url ); ?>" class="em-btn em-btn-primary em-hero-tile-cta"><?php esc_html_e( 'Shop all', 'exmart' ); ?></a>
+				</div>
+				<div class="em-hero-img-wrap<?php echo $hero_multi ? ' em-hero-img-wrap--slider' : ''; ?>"<?php echo $hero_multi ? ' data-em-hero-slider' : ''; ?>>
+					<?php foreach ( $hero_images as $i => $slide ) : ?>
+						<img
+							class="em-hero-slide<?php echo 0 === $i ? ' is-active' : ''; ?>"
+							src="<?php echo esc_url( $slide['url'] ); ?>"
+							alt="<?php echo esc_attr( $slide['alt'] ); ?>"
+							width="800"
+							height="1000"
+							<?php echo 0 === $i ? '' : 'loading="lazy"'; ?>
+							decoding="async"
+						/>
+					<?php endforeach; ?>
+					<div class="em-hero-badge">
+						<div class="em-hero-badge-icon">
+							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 12l2 2 4-4" stroke="var(--success)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" stroke="var(--success)" stroke-width="2"/></svg>
+						</div>
+						<div>
+							<p class="em-hero-badge-title"><?php esc_html_e( '100% Authentic', 'exmart' ); ?></p>
+							<p class="em-hero-badge-sub"><?php esc_html_e( 'Direct from manufacturer', 'exmart' ); ?></p>
+						</div>
 					</div>
 				</div>
 			</div>
+
+			<?php
+			$em_promo_tiles = array(
+				array(
+					'modifier' => 'offers',
+					'kicker'   => __( 'Offers', 'exmart' ),
+					'title'    => __( 'Save on your everyday essentials', 'exmart' ),
+					'desc'     => __( 'Real markdowns across the catalog, while stock lasts.', 'exmart' ),
+					'href'     => exmart_rail_view_all_url( 'offers' ),
+					'image'    => exmart_get_promo_image( 'exmart_promo1_image' ),
+				),
+				array(
+					'modifier' => 'new',
+					'kicker'   => __( 'New in', 'exmart' ),
+					'title'    => __( 'Freshly added to the catalog', 'exmart' ),
+					'desc'     => '',
+					'href'     => exmart_rail_view_all_url( 'new_arrivals' ),
+					'image'    => exmart_get_promo_image( 'exmart_promo2_image' ),
+				),
+				array(
+					'modifier' => 'best',
+					'kicker'   => __( 'Best sellers', 'exmart' ),
+					'title'    => __( 'Customer favorites', 'exmart' ),
+					'desc'     => '',
+					'href'     => exmart_rail_view_all_url( 'best_sellers' ),
+					'image'    => exmart_get_promo_image( 'exmart_promo3_image' ),
+				),
+			);
+			foreach ( $em_promo_tiles as $tile ) :
+				?>
+				<a href="<?php echo esc_url( $tile['href'] ); ?>" class="em-hero-tile em-hero-tile--<?php echo esc_attr( $tile['modifier'] ); ?>">
+					<div class="em-hero-tile-content">
+						<span class="em-overline"><?php echo esc_html( $tile['kicker'] ); ?></span>
+						<h2 class="em-h3 em-hero-tile-title"><?php echo esc_html( $tile['title'] ); ?></h2>
+						<?php if ( $tile['desc'] ) : ?>
+							<p class="em-body-s em-hero-tile-desc"><?php echo esc_html( $tile['desc'] ); ?></p>
+						<?php endif; ?>
+						<span class="em-btn em-btn-sm em-btn-primary em-hero-tile-cta"><?php esc_html_e( 'Shop all', 'exmart' ); ?></span>
+					</div>
+					<?php if ( $tile['image'] ) : ?>
+						<img class="em-hero-tile-img" src="<?php echo esc_url( $tile['image']['url'] ); ?>" alt="<?php echo esc_attr( $tile['image']['alt'] ); ?>" loading="lazy" decoding="async" />
+					<?php endif; ?>
+				</a>
+			<?php endforeach; ?>
+
 		</div>
 	</div>
 </section>

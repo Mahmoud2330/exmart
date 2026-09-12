@@ -196,5 +196,32 @@ function exmart_customize_register( $wp_customize ) {
 			'type'        => 'text',
 		)
 	);
+
+	/* Bento hero: three secondary promo tiles (Offers / New in / Best sellers). */
+	$promo_tiles = array(
+		'exmart_promo1_image' => __( 'Promo tile 1 image (Offers)', 'exmart' ),
+		'exmart_promo2_image' => __( 'Promo tile 2 image (New in)', 'exmart' ),
+		'exmart_promo3_image' => __( 'Promo tile 3 image (Best sellers)', 'exmart' ),
+	);
+	foreach ( $promo_tiles as $setting_id => $label ) {
+		$wp_customize->add_setting(
+			$setting_id,
+			array(
+				'default'           => 0,
+				'sanitize_callback' => 'absint',
+			)
+		);
+		$wp_customize->add_control(
+			new WP_Customize_Media_Control(
+				$wp_customize,
+				$setting_id,
+				array(
+					'label'     => $label,
+					'section'   => 'exmart_hero',
+					'mime_type' => 'image',
+				)
+			)
+		);
+	}
 }
 add_action( 'customize_register', 'exmart_customize_register' );

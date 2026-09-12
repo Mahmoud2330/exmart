@@ -647,6 +647,29 @@ function exmart_rail_view_all_url( $rail ) {
 }
 
 /**
+ * Bento hero promo tile image, set via the Customizer (Homepage Hero
+ * section). Returns null until an image is chosen there.
+ *
+ * @param string $mod_key Theme mod key, e.g. 'exmart_promo1_image'.
+ * @return array{url:string,alt:string}|null
+ */
+function exmart_get_promo_image( $mod_key ) {
+	$id = absint( get_theme_mod( $mod_key, 0 ) );
+	if ( ! $id ) {
+		return null;
+	}
+	$url = wp_get_attachment_image_url( $id, 'large' );
+	if ( ! $url ) {
+		return null;
+	}
+	$alt = get_post_meta( $id, '_wp_attachment_image_alt', true );
+	return array(
+		'url' => $url,
+		'alt' => $alt ? $alt : get_the_title( $id ),
+	);
+}
+
+/**
  * Category image: WooCommerce thumbnail, else Unsplash placeholder.
  *
  * @param WP_Term $term
