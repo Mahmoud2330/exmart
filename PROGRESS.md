@@ -11,15 +11,15 @@ Living tracker for the Figma → WordPress/WooCommerce rebuild.
 
 | Phase | Focus | Status |
 |---|---|---|
-| 0 | Inventory & decisions | Partially done (checkout/ATC still deferred) |
+| 0 | Inventory & decisions | Mostly settled (ATC steppers shipped; checkout is Figma 4-step) |
 | 1 | Design system | Partial (cards/prices improved during Home) |
 | 2 | Header / footer chrome | Mostly done (footer contacts + payment logos) |
 | **3** | **Home** | **Done — polish left (images + mobile)** |
-| 4 | Shop / PLP / Search / Collections | **Shop PLP shell (1.0.42):** filters left + multi-col grid in 1280 container; Search/Collections still open |
-| 5 | Product detail (PDP) | Not started as a focused pass |
+| 4 | Shop / PLP / Search / Collections | **Shop PLP shell (1.0.42):** filters left + multi-col grid; mobile filters drawer (1.0.55); Search/Collections still open |
+| 5 | Product detail (PDP) | Partial (1.0.49–1.0.53 reconstruction; polish left) |
 | 6 | Brands index + brand landing | Partial (brand sync / logos work; Figma polish left) |
-| 7 | Cart + mini-cart | Not started as a focused pass |
-| 8 | Checkout · thank-you · account | **Account shell rebuilt to Figma (1.0.21):** Orders / Addresses / Wishlist / Profile stay in one shell; wishlist is `/my-account/wishlist/` (not a separate page jump); Track uses order pipeline. Checkout still deferred. |
+| 7 | Cart + mini-cart | **Done (1.0.60–1.0.66):** Figma cart + mini-cart drawer; mobile cart fixed |
+| 8 | Checkout · thank-you · account | **Checkout 4-step (1.0.67–1.0.70)** + Account shell (1.0.21). Thank-you still open. |
 | 9 | Content pages (About, FAQ, …) | Templates exist; need real content + Figma polish |
 | 10 | Full responsive / a11y QA | Later (Home mobile still open) |
 | 11 | Deploy / versioning habit | In use |
@@ -35,9 +35,9 @@ Treat **Home as done** (aside from small polish). What’s left to “tackle dow
 1. **Shop / category PLP** — layout + Brand/Category/Availability filters shipped (1.0.42); polish/edge cases left  
 2. **Search results** — same grid language as PLP  
 3. **Collections** — Offers / New / Best Sellers / tag archives  
-4. **Product detail (PDP)** — gallery, trust, tabs, related  
-5. **Cart page** + **mini-cart drawer** visual parity  
-6. **Checkout + thank-you + My Account** — restyle WC (decision: keep one-page)
+4. **Product detail (PDP)** — gallery/ATC pass done (1.0.49–53); polish left  
+5. ~~**Cart page** + **mini-cart drawer**~~ — **done (1.0.60–1.0.66)**  
+6. **Checkout + thank-you + My Account** — checkout 4-step done (1.0.67–70); thank-you still open; account shell already done  
 
 ### B. Brand surfaces — **~2**
 
@@ -60,9 +60,9 @@ Treat **Home as done** (aside from small polish). What’s left to “tackle dow
 17. 404  
 18. Cross-site mobile QA pass  
 
-**Rough count: ~15–18 surfaces left** after Home, depending how you group Cart/Checkout/Account.
+**Rough count: ~12–14 surfaces left** after Home + Cart + Checkout.
 
-Suggested next sprint order: **Shop/PLP → PDP → Brands → Cart → content pages → Checkout restyle → full mobile QA**.
+Suggested next sprint order: **Search/Collections → PDP polish → Brands → thank-you → content pages → full mobile QA**.
 
 ---
 
@@ -112,16 +112,16 @@ Module stack (live):
 
 ## Open decisions (still deferred)
 
-1. **Checkout:** keep WooCommerce one-page (recommended) vs Figma 4-step  
-2. **Product cards:** keep WC Add to cart (current) vs qty stepper  
+1. ~~**Checkout:** keep WooCommerce one-page vs Figma 4-step~~ — **shipped Figma 4-step (1.0.67+)**  
+2. ~~**Product cards:** keep WC Add to cart vs qty stepper~~ — **stepper shipped**  
 3. **Reviews band on Home:** keep static quotes vs real WC reviews only  
-4. **Payments live:** COD only for now vs Paymob/Fawaterak/etc. later  
+4. **Payments live:** COD + FawryPay (`fawry_pay`) enabled; theme presents Fawry as one Visa|MC|Meeza|Fawry option  
 
 ---
 
 ## Version note
 
-Theme was at **1.0.17** when this doc was written. Always bump `EXMART_VERSION` in `functions.php` and `Version` in `style.css` together when shipping CSS/JS.
+Theme was at **1.0.17** when this doc was written; current head is **1.0.70**. Always bump `EXMART_VERSION` in `functions.php` and `Version` in `style.css` together when shipping CSS/JS.
 
 ---
 
@@ -136,6 +136,17 @@ Theme was at **1.0.17** when this doc was written. Always bump `EXMART_VERSION` 
 
 ## Changelog
 
+- **2026-09-13 — v1.0.70** — Removed blue focus outline on checkout payment radios (global `input:focus` accent ring).
+- **2026-09-13 — v1.0.69** — Payment cards rebuilt; Fawry option uses Media Library Visa/MC + Meeza + Fawry logos instead of plugin sprite icons.
+- **2026-09-13 — v1.0.68** — Checkout polish: pipeline current-dot blue ring; hide coupon strip; remove phone SMS helper; COD + grouped `fawry_pay` as “Visa | Mastercard | Meeza | Fawry”.
+- **2026-09-13 — v1.0.67** — Figma 4-step checkout (Contact → Address → Shipping → Payment) with sticky Order Summary; mobile stacks form then summary.
+- **2026-09-13 — v1.0.66** — Cart row dividers continuous again (border on `tr`, not per-cell).
+- **2026-09-13 — v1.0.65** — Cart column align (Product/Qty/Price) + tighter Continue shopping spacing.
+- **2026-09-13 — v1.0.62–1.0.64** — Cart: drop items outer border; normal checkout-button height; mobile cart card layout (kill WC responsive labels).
+- **2026-09-13 — v1.0.61** — Cart page rebuilt to Figma (items + Order Summary / coupon / COD note / checkout CTA).
+- **2026-09-13 — v1.0.60** — Mini-cart drawer: stable View cart + Checkout buttons; header/pill cart count badges.
+- **2026-09-13 — v1.0.59** — Batch: centered login/register; mobile drawer logo; guest checkout layout; sort arrow; brand landing logos; wishlist mobile + guest `/wishlist/`.
+- **2026-09-13 — v1.0.58** — Login/Register: stop collapsing page width (auth form max-width no longer on `.em-container`).
 - **2026-09-12 — v1.0.57** — Fixed "Shop by Category" circles on mobile: `.em-cat-circle` was a fixed `64px` regardless of screen size — tiny next to everything else on the page, which all scales with viewport width. Replaced the fixed value and the separate desktop-only `clamp()` with one continuous `clamp(80px, 22vw, 112px)` spanning mobile through desktop, so there's no size jump at the 640px breakpoint (circles already reach their 112px max by the time the layout switches from horizontal-scroll to evenly-spaced). Bumped the label font-size to a matching continuous clamp and `.em-cat-item`'s `min-width` from 72px to 88px so labels don't feel cramped next to the now-larger circles.
 - **2026-09-12 — v1.0.56** — Removed the drop shadow (`box-shadow: 0 1px 24px rgba(11,11,12,.06)`) from the sticky navbar's glassmorphism treatment, on request. The translucent blurred background and soft bottom border stay; just the shadow is gone.
 - **2026-09-12 — v1.0.55** — Fixed the Shop/PLP filters on mobile: they were rendering as a plain block above the product grid (checkbox lists for Brand + Category + Availability), pushing products off-screen and forcing a scroll just to see any results — flagged in the earlier UI/UX audit as the single biggest mobile issue found. Turned it into a real slide-in drawer below 1024px, reusing the exact same drawer/backdrop pattern already used for the cart and mobile nav (same CSS shape, same open/close/backdrop-click/Escape-key JS behavior) — added a "Filters" button in the shop toolbar (`#em-shop-filters-open`) and a close button in a new drawer header, wired via `initShopFiltersDrawer()` in `site.js`. At 1024px+ the same `<aside>` reverts to exactly the static sidebar it already was (no markup duplication — one filter form, shown as a sidebar or a drawer depending on viewport). Filter-on-checkbox-change auto-submit (already in place) is untouched, so picking a filter still reloads with results applied, drawer closed on the fresh page load.
