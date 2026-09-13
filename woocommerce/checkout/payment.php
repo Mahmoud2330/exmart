@@ -48,6 +48,14 @@ if ( ! wp_doing_ajax() ) {
 			$btn_classes .= ' ' . wc_wp_theme_get_element_class_name( 'button' );
 		}
 		$order_button_text = isset( $order_button_text ) ? $order_button_text : __( 'Place order', 'woocommerce' );
+		$total_html        = WC()->cart ? wp_strip_all_tags( wc_price( WC()->cart->get_total( 'edit' ) ) ) : '';
+		if ( $total_html ) {
+			$order_button_text = sprintf(
+				/* translators: %s: order total */
+				__( 'Place Order — %s', 'exmart' ),
+				$total_html
+			);
+		}
 		echo apply_filters( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			'woocommerce_order_button_html',
 			'<button type="submit" class="' . esc_attr( $btn_classes ) . '" name="woocommerce_checkout_place_order" id="place_order" value="' . esc_attr( $order_button_text ) . '" data-value="' . esc_attr( $order_button_text ) . '">' . esc_html( $order_button_text ) . '</button>'

@@ -1174,8 +1174,64 @@ function exmart_checkout_shipping_fragment( $fragments ) {
 add_filter( 'woocommerce_update_order_review_fragments', 'exmart_checkout_shipping_fragment' );
 
 /**
- * Soften the default coupon info strip; keep it usable.
+ * Checkout coupon notice is noisy and not in Figma — remove it.
+ * Coupons remain available on the cart page.
  */
-add_filter( 'woocommerce_checkout_coupon_message', function ( $message ) {
-	return esc_html__( 'Have a coupon?', 'woocommerce' ) . ' <a href="#" class="showcoupon">' . esc_html__( 'Click here to enter your code', 'woocommerce' ) . '</a>';
-} );
+remove_action( 'woocommerce_before_checkout_form', 'woocommerce_checkout_coupon_form', 10 );
+
+/**
+ * Present gateways as Figma cards:
+ * - COD: Cash on Delivery
+ * - fawry_pay (live FawryPay plugin): one grouped Visa | Mastercard | Meeza | Fawry option
+ *
+ * @param WC_Payment_Gateway[] $gateways Available gateways.
+ * @return WC_Payment_Gateway[]
+ */
+function exmart_checkout_gateway_presentation( $gateways ) {
+	if ( empty( $gateways ) || ! is_array( $gateways ) ) {
+		return $gateways;
+	}
+
+	foreach ( $gateways as $id => $gateway ) {
+		if ( ! is_object( $gateway ) ) {
+			continue;
+		}
+
+		if ( 'cod' === $id ) {
+			$gateway->title       = __( 'Cash on Delivery', 'exmart' );
+			$gateway->description = __( 'Pay when your order arrives. No additional fee.', 'exmart' );
+		}
+
+		// Confirmed on live site analytics: payment_options includes "fawry_pay".
+		if ( 'fawry_pay' === $id || false !== stripos( (string) $id, 'fawry' ) ) {
+			$gateway->title       = __( 'Visa | Mastercard | Meeza | Fawry', 'exmart' );
+			$gateway->description = __( 'Pay securely with card, Meeza, or at any Fawry point via FawryPay.', 'exmart' );
+		}
+	}
+
+	return $gateways;
+}
+add_filter( 'woocommerce_available_payment_gateways', 'exmart_checkout_gateway_presentation', 30 );
+
+/**
+ * Put COD first, then FawryPay / other gateways.
+ *
+ * @param WC_Payment_Gateway[] $gateways Available gateways.
+ * @return WC_Payment_Gateway[]
+ */
+function exmart_checkout_gateway_order( $gateways ) {
+	if ( empty( $gateways ) || ! is_array( $gateways ) ) {
+		return $gateways;
+	}
+
+	$ordered = array();
+	if ( isset( $gateways['cod'] ) ) {
+		$ordered['cod'] = $gateways['cod'];
+		unset( $gateways['cod'] );
+	}
+	foreach ( $gateways as $id => $gateway ) {
+		$ordered[ $id ] = $gateway;
+	}
+	return $ordered;
+}
+add_filter( 'woocommerce_available_payment_gateways', 'exmart_checkout_gateway_order', 40 );

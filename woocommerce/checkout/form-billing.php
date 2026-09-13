@@ -4,7 +4,7 @@
  *
  * @see     https://woocommerce.com/document/template-structure/
  * @package exMart
- * @version 1.0.67
+ * @version 1.0.68
  * @global WC_Checkout $checkout
  */
 
@@ -34,8 +34,9 @@ $login_url = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink(
 		<div class="woocommerce-billing-fields__field-wrapper em-checkout-fields">
 			<?php
 			foreach ( $contact_fields as $key => $field ) {
-				if ( 'billing_phone' === $key && empty( $field['description'] ) ) {
-					$field['description'] = __( 'For delivery updates via SMS.', 'exmart' );
+				// No helper text under phone — keep the contact step clean.
+				if ( isset( $field['description'] ) ) {
+					unset( $field['description'] );
 				}
 				woocommerce_form_field( $key, $field, $checkout->get_value( $key ) );
 			}
