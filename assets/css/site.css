@@ -868,6 +868,12 @@ table.woocommerce-product-attributes th {
 .em-pdp-review-form-wrap .must-log-in {
 	display: none !important;
 }
+/* WooCommerce injects a second outline star row when it finds #rating — hide it. */
+.em-pdp-review-form-wrap p.stars,
+.em-pdp-review-form-wrap .comment-form-rating,
+.em-pdp-review-form-wrap select[name="rating"] {
+	display: none !important;
+}
 /* Hide Super Socializer compact icons — we render the long Google button. */
 .em-pdp-review-form-wrap .the_champ_login_container,
 .em-pdp-review-form-wrap .the_champ_outer_login_container,

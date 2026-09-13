@@ -168,14 +168,17 @@
 				wrap.setAttribute( 'data-cart-qty', String( qty ) );
 				var idle = wrap.querySelector( '[data-em-pdp-idle]' );
 				var incart = wrap.querySelector( '[data-em-pdp-incart]' );
+				var pick = wrap.querySelector( '[data-em-pdp-pick]' );
 				var val = wrap.querySelector( '[data-em-pdp-cart-val]' );
 				if ( qty > 0 ) {
 					if ( idle ) idle.hidden = true;
 					if ( incart ) incart.hidden = false;
+					if ( pick ) pick.hidden = true;
 					if ( val ) val.textContent = String( qty );
 				} else {
 					if ( idle ) idle.hidden = false;
 					if ( incart ) incart.hidden = true;
+					if ( pick ) pick.hidden = false;
 				}
 			} );
 		}

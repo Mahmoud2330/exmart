@@ -723,7 +723,7 @@ function exmart_pdp_add_to_cart() {
 			data-cart-qty="<?php echo esc_attr( (string) $cart_qty ); ?>"
 			data-max="<?php echo esc_attr( (string) $max ); ?>"
 		>
-			<div class="em-qty" data-em-pdp-pick role="group" aria-label="<?php esc_attr_e( 'Quantity', 'exmart' ); ?>">
+			<div class="em-qty" data-em-pdp-pick role="group" aria-label="<?php esc_attr_e( 'Quantity', 'exmart' ); ?>" <?php echo $cart_qty > 0 ? 'hidden' : ''; ?>>
 				<button type="button" class="em-qty-btn" data-em-pdp-pick-minus disabled aria-label="<?php esc_attr_e( 'Decrease', 'exmart' ); ?>">−</button>
 				<span class="em-qty-val" data-em-pdp-pick-val aria-live="polite">1</span>
 				<button type="button" class="em-qty-btn" data-em-pdp-pick-plus aria-label="<?php esc_attr_e( 'Increase', 'exmart' ); ?>">+</button>
@@ -1042,7 +1042,7 @@ function exmart_pdp_reviews_section() {
 								$rating_field .= '</button>';
 							}
 							$rating_field .= '</div>';
-							$rating_field .= '<input type="hidden" name="rating" id="rating" value=""' . ( wc_review_ratings_required() ? ' required' : '' ) . ' />';
+							$rating_field .= '<input type="hidden" name="rating" id="em-rating" value=""' . ( wc_review_ratings_required() ? ' required' : '' ) . ' />';
 							$rating_field .= '</div>';
 						}
 

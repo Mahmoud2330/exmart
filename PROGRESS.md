@@ -136,6 +136,7 @@ Theme was at **1.0.17** when this doc was written; current head is **1.0.70**. A
 
 ## Changelog
 
+- **2026-09-14 — v1.0.77** — PDP: hide pick-qty when in-cart (only cart stepper + Buy now); single star picker in reviews (no WC duplicate).
 - **2026-09-14 — v1.0.76** — PDP: wider info column (kill WC 48% float); review form gets clickable stars, no “logged in as”/notes/website field; long Google button for guests.
 - **2026-09-14 — v1.0.75** — PDP matches Figma screenshots: qty + primary Add to cart + wishlist; EGP price lockup; variant pills; Customer Reviews summary+list (outside tabs); “You may also like” horizontal rail.
 - **2026-09-14 — v1.0.74** — PDP Figma pass (desktop + mobile): square gallery + thumbs, brand/trust/ATC/wishlist/trust block, −% sale badge, stock copy, tabs (incl. Shipping & Returns), “You might also like” (brand → category). Hide short description/SKU meta.
