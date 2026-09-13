@@ -1172,8 +1172,10 @@ table.woocommerce-product-attributes td, table.woocommerce-product-attributes th
 	float: none;
 }
 .woocommerce-cart .em-cart-table {
-	border: none;
+	border: none !important;
 	margin: 0;
+	box-shadow: none !important;
+	outline: none;
 }
 .woocommerce-cart .em-cart-table thead th {
 	font-size: .75rem;
@@ -1181,15 +1183,16 @@ table.woocommerce-product-attributes td, table.woocommerce-product-attributes th
 	letter-spacing: .08em;
 	text-transform: uppercase;
 	color: var(--ink-500);
-	border-bottom: 1px solid var(--ink-200);
+	border: none !important;
+	border-bottom: 1px solid var(--ink-200) !important;
 	padding: 0 0 var(--s3);
 	background: transparent;
 }
 .woocommerce-cart .em-cart-table td {
-	border-bottom: 1px solid var(--ink-100);
+	border: none !important;
+	border-bottom: 1px solid var(--ink-100) !important;
 	padding: var(--s5) 0;
 	background: transparent;
-	border-top: none;
 }
 .woocommerce-cart .em-cart-table .product-quantity { width: 140px; }
 .woocommerce-cart .em-cart-table .product-subtotal {
@@ -1285,8 +1288,15 @@ table.woocommerce-product-attributes td, table.woocommerce-product-attributes th
 	margin: 0;
 }
 .woocommerce-cart .em-cart-actions-row td {
-	border-bottom: none;
+	border: none !important;
+	border-bottom: none !important;
 	padding-top: var(--s4);
+}
+.woocommerce-cart .em-cart-main,
+.woocommerce-cart form.woocommerce-cart-form {
+	border: none !important;
+	box-shadow: none !important;
+	background: transparent;
 }
 .woocommerce-cart .em-cart-update-btn {
 	/* Visually hidden but present for WC update / our JS click. */
@@ -1380,12 +1390,18 @@ table.woocommerce-product-attributes td, table.woocommerce-product-attributes th
 	align-items: center;
 	justify-content: center;
 	width: 100%;
-	min-height: 52px;
+	min-height: 44px !important;
+	height: auto !important;
+	padding: var(--s3) var(--s5) !important;
 	background: var(--accent-600) !important;
 	color: #fff !important;
 	border: none !important;
 	border-radius: var(--r-sm);
-	font-weight: 600;
+	font-family: var(--font);
+	font-size: .9375rem !important;
+	font-weight: 600 !important;
+	line-height: 1 !important;
+	letter-spacing: .01em;
 	text-decoration: none !important;
 	box-shadow: none !important;
 }
@@ -1405,37 +1421,151 @@ table.woocommerce-product-attributes td, table.woocommerce-product-attributes th
 .woocommerce-cart .em-cart-continue:hover { color: var(--ink-900); }
 .woocommerce-cart .em-cart-empty { padding-block: var(--s16); }
 
+/* Mobile cart — one card per item (not WC’s labeled responsive-table boxes). */
 @media (max-width: 767px) {
-	.woocommerce-cart .em-cart-table thead { display: none; }
+	.woocommerce-cart .em-cart-layout {
+		gap: var(--s6);
+	}
+	.woocommerce-cart .em-cart-aside {
+		position: static;
+	}
+	.woocommerce-cart .em-cart-table thead {
+		display: none;
+	}
 	.woocommerce-cart .em-cart-table,
-	.woocommerce-cart .em-cart-table tbody,
-	.woocommerce-cart .em-cart-table tr,
-	.woocommerce-cart .em-cart-table td {
+	.woocommerce-cart .em-cart-table tbody {
 		display: block;
-		width: 100% !important;
+		width: 100%;
 	}
 	.woocommerce-cart .em-cart-table tr.cart_item {
-		position: relative;
+		display: grid;
+		grid-template-columns: 1fr auto;
+		grid-template-areas:
+			"product remove"
+			"qty price";
+		gap: var(--s3) var(--s2);
+		align-items: center;
 		padding: var(--s4) 0;
-		border-bottom: 1px solid var(--ink-100);
+		margin: 0;
+		border: none !important;
+		border-bottom: 1px solid var(--ink-100) !important;
+		background: transparent;
+		box-shadow: none;
+	}
+	.woocommerce-cart .em-cart-table tr.cart_item:last-of-type {
+		border-bottom: 1px solid var(--ink-200) !important;
 	}
 	.woocommerce-cart .em-cart-table td {
-		border: none;
-		padding: var(--s2) 0;
+		display: block;
+		width: auto !important;
+		max-width: none !important;
+		padding: 0 !important;
+		margin: 0 !important;
+		border: none !important;
+		background: transparent !important;
+		text-align: left !important;
+		float: none !important;
+		clear: none !important;
+	}
+	/* Kill WC shop_table_responsive “Product:” / “Quantity:” labels. */
+	.woocommerce-cart .em-cart-table td::before,
+	.woocommerce-cart table.cart td::before,
+	.woocommerce-cart .shop_table_responsive tr td::before {
+		content: none !important;
+		display: none !important;
+	}
+	.woocommerce-cart .em-cart-table td.product-name {
+		grid-area: product;
+		min-width: 0;
+		padding-inline-end: var(--s2) !important;
 	}
 	.woocommerce-cart .em-cart-table td.product-remove {
-		position: absolute;
-		top: var(--s3);
-		right: 0;
+		grid-area: remove;
+		justify-self: end;
+		align-self: start;
 		width: auto !important;
 	}
-	.woocommerce-cart .em-cart-table td.product-quantity,
+	.woocommerce-cart .em-cart-table td.product-quantity {
+		grid-area: qty;
+		justify-self: start;
+	}
 	.woocommerce-cart .em-cart-table td.product-subtotal {
-		display: inline-block;
-		width: auto !important;
-		margin-inline-end: var(--s4);
+		grid-area: price;
+		justify-self: end;
+		align-self: center;
+		font-size: .9375rem;
+		white-space: nowrap;
 	}
-	.woocommerce-cart .em-cart-aside { position: static; }
+	.woocommerce-cart .em-cart-product {
+		align-items: flex-start;
+		gap: var(--s3);
+	}
+	.woocommerce-cart .em-cart-thumb,
+	.woocommerce-cart .em-cart-thumb img {
+		width: 56px !important;
+		height: 56px !important;
+	}
+	.woocommerce-cart .em-cart-product-title {
+		padding-inline-end: 0;
+		-webkit-line-clamp: 3;
+	}
+	.woocommerce-cart .em-cart-remove {
+		color: var(--ink-400) !important;
+		width: 40px;
+		height: 40px;
+	}
+	.woocommerce-cart .em-cart-qty {
+		height: 36px;
+	}
+	.woocommerce-cart .em-cart-qty .em-qty-btn {
+		width: 36px;
+	}
+	.woocommerce-cart .em-cart-qty .qty,
+	.woocommerce-cart .em-cart-qty input.qty {
+		width: 36px !important;
+		min-width: 36px;
+		font-size: .875rem;
+	}
+	.woocommerce-cart .em-cart-actions-row {
+		display: block;
+		border: none !important;
+		padding: 0;
+	}
+	.woocommerce-cart .em-cart-actions-row td {
+		padding: 0 !important;
+		border: none !important;
+	}
+	/* Shipping destination / method list — keep tidy on small screens. */
+	.woocommerce-cart .em-cart-shipping-table ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		text-align: right;
+	}
+	.woocommerce-cart .em-cart-shipping-table .woocommerce-shipping-destination {
+		display: block;
+		margin-top: var(--s1);
+		font-size: .75rem;
+		font-weight: 400;
+		color: var(--ink-500);
+		line-height: 1.35;
+		max-width: 18ch;
+		margin-inline-start: auto;
+		word-break: break-word;
+	}
+	.woocommerce-cart .em-summary-card {
+		overflow: hidden;
+	}
+	/* Clearance above floating mobile pill + WhatsApp. */
+	.woocommerce-cart .em-cart-aside {
+		padding-bottom: 120px;
+	}
+}
+
+@media (min-width: 768px) {
+	.woocommerce-cart .em-cart-aside {
+		padding-bottom: 0;
+	}
 }
 
 .woocommerce-cart table.cart img { width: 64px; height: 64px; object-fit: cover; border-radius: var(--r-sm); border: 1px solid var(--ink-200); }
