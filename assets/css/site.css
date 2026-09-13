@@ -2113,6 +2113,10 @@ ul.products li.product > .em-card { width: 100%; }
 .em-cart-page-empty .return-to-shop {
 	display: none !important;
 }
+/* Hide the page “Your Cart” H1 when the Figma empty state is on screen. */
+.woocommerce-cart:has(.em-cart-empty) .em-container > h1.em-h2 {
+	display: none !important;
+}
 
 /* Mobile cart — one card per item (not WC’s labeled responsive-table boxes). */
 @media (max-width: 767px) {

@@ -1017,15 +1017,53 @@
 
 	// After the last cart item is removed via AJAX, force a full reload
 	// so cart-empty.php (Figma empty state) renders instead of a blank table.
+	// Important: when the cart empties, Woo often *removes* form.woocommerce-cart-form
+	// entirely — do not require the form to still exist.
 	function initCartEmptyReload() {
 		if ( ! document.body.classList.contains( 'woocommerce-cart' ) ) return;
-		if ( ! window.jQuery ) return;
-		window.jQuery( document.body ).on( 'updated_wc_div updated_cart_totals', function () {
-			var form = document.querySelector( 'form.woocommerce-cart-form' );
-			if ( ! form ) return;
-			if ( form.querySelector( '.cart_item, tr.cart_item, .em-cart-product' ) ) return;
+
+		var reloading = false;
+
+		function badgeCount() {
+			var badge = document.querySelector( '.em-cart-count-badge' );
+			if ( ! badge ) return null;
+			if ( badge.hidden || badge.getAttribute( 'hidden' ) !== null ) return 0;
+			if ( badge.style && badge.style.display === 'none' ) return 0;
+			return parseInt( badge.textContent, 10 ) || 0;
+		}
+
+		function hasLineItems() {
+			return !! document.querySelector(
+				'.woocommerce-cart-form__cart-item, tr.cart_item, .em-cart-layout .em-cart-product'
+			);
+		}
+
+		function maybeReload() {
+			if ( reloading ) return;
 			if ( document.querySelector( '.em-cart-empty' ) ) return;
+			if ( hasLineItems() ) return;
+
+			var count = badgeCount();
+			// If badge still shows items, wait for the next fragment update.
+			if ( count !== null && count > 0 ) return;
+
+			reloading = true;
 			window.location.reload();
+		}
+
+		if ( window.jQuery ) {
+			window.jQuery( document.body ).on(
+				'updated_wc_div updated_cart_totals removed_from_cart wc_fragments_refreshed wc_fragments_loaded',
+				function () {
+					window.setTimeout( maybeReload, 120 );
+				}
+			);
+		}
+
+		// Qty → 0 / remove can also clear the table without those events in some WC builds.
+		document.addEventListener( 'click', function ( e ) {
+			if ( ! e.target.closest( '.product-remove a, a.remove, [data-em-cart-qty-minus]' ) ) return;
+			window.setTimeout( maybeReload, 600 );
 		} );
 	}
 
