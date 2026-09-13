@@ -85,6 +85,18 @@ add_filter( 'loop_shop_columns', function () {
 } );
 
 /**
+ * Free-shipping message threshold (matches announcement bar copy).
+ *
+ * @return float
+ */
+function exmart_free_shipping_threshold() {
+	return (float) apply_filters( 'exmart_free_shipping_threshold', 300 );
+}
+
+/* Cart page: keep Order Summary clean — cross-sells go below if needed later. */
+remove_action( 'woocommerce_cart_collaterals', 'woocommerce_cross_sell_display' );
+
+/**
  * Apply Brand / Category / In-stock filters from the PLP sidebar.
  *
  * Query args: filter_brand[], filter_cat[], in_stock=1

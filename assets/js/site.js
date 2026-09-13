@@ -84,6 +84,7 @@
 		initCardAtc();
 		initShopFilters();
 		initShopFiltersDrawer();
+		initCartPageQty();
 	} );
 
 	// ── Product card ATC → quantity stepper ───────────────
@@ -736,6 +737,56 @@
 		if ( close ) close.addEventListener( 'click', hide );
 		backdrop.addEventListener( 'click', hide );
 		document.addEventListener( 'keydown', function ( e ) { if ( e.key === 'Escape' ) hide(); } );
+	}
+
+	// ── Cart page qty steppers → update cart form ─────────
+	function initCartPageQty() {
+		var form = document.querySelector( 'form.woocommerce-cart-form' );
+		if ( ! form ) return;
+
+		var updateBtn = form.querySelector( 'button[name="update_cart"]' );
+		var timer = null;
+
+		function queueUpdate() {
+			if ( ! updateBtn ) return;
+			updateBtn.disabled = false;
+			updateBtn.removeAttribute( 'disabled' );
+			clearTimeout( timer );
+			timer = setTimeout( function () {
+				// WC enables the button on qty change; click to refresh totals.
+				updateBtn.click();
+			}, 450 );
+		}
+
+		form.addEventListener( 'click', function ( e ) {
+			var minus = e.target.closest( '[data-em-cart-qty-minus]' );
+			var plus = e.target.closest( '[data-em-cart-qty-plus]' );
+			if ( ! minus && ! plus ) return;
+			e.preventDefault();
+			var wrap = e.target.closest( '[data-em-cart-qty]' );
+			if ( ! wrap ) return;
+			var input = wrap.querySelector( 'input.qty' );
+			if ( ! input ) return;
+			var step = parseFloat( input.getAttribute( 'step' ) ) || 1;
+			var min = input.getAttribute( 'min' ) !== '' && input.getAttribute( 'min' ) != null
+				? parseFloat( input.getAttribute( 'min' ) ) : 0;
+			var maxAttr = input.getAttribute( 'max' );
+			var max = maxAttr !== '' && maxAttr != null ? parseFloat( maxAttr ) : NaN;
+			var val = parseFloat( input.value ) || 0;
+			if ( plus ) val += step;
+			if ( minus ) val -= step;
+			if ( ! isNaN( max ) ) val = Math.min( val, max );
+			val = Math.max( val, min );
+			input.value = String( val );
+			input.dispatchEvent( new Event( 'change', { bubbles: true } ) );
+			queueUpdate();
+		} );
+
+		form.addEventListener( 'change', function ( e ) {
+			if ( e.target && e.target.matches( 'input.qty' ) ) {
+				queueUpdate();
+			}
+		} );
 	}
 
 } )();
