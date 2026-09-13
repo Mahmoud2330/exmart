@@ -504,7 +504,7 @@ function exmart_related_products_args( $args ) {
 add_filter( 'woocommerce_output_related_products_args', 'exmart_related_products_args' );
 
 add_filter( 'woocommerce_product_related_products_heading', function () {
-	return __( 'You might also like', 'exmart' );
+	return __( 'You may also like', 'exmart' );
 } );
 
 /**
@@ -534,12 +534,15 @@ add_action( 'woocommerce_process_product_meta', 'exmart_save_how_to_use_field' )
 
 /**
  * Add the "How to Use", "Accuracy", and "Shipping & Returns" tabs.
+ * Reviews move to a dedicated Figma section below the tabs.
  */
 function exmart_custom_product_tabs( $tabs ) {
 	global $product;
 	if ( ! $product ) {
 		return $tabs;
 	}
+
+	unset( $tabs['reviews'] );
 
 	if ( isset( $tabs['additional_information'] ) ) {
 		$tabs['additional_information']['title'] = __( 'Specifications', 'exmart' );
@@ -644,26 +647,117 @@ function exmart_product_brand_row() {
 add_action( 'woocommerce_single_product_summary', 'exmart_product_brand_row', 4 );
 
 /**
- * PDP Add to Cart: reuse the exact same working control as the product
- * cards (exmart_card_atc_control()) instead of a bespoke PDP stepper —
- * a from-scratch attempt at this overlapped/misaligned with the rest of
- * the row. Only for simple, non-variable products: exmart_card_atc_control()
- * falls back to a "Select options" link to the product's own permalink
- * for anything else, which would just point back at this same page, so
- * variable/grouped/external products keep WooCommerce's own form.
+ * PDP price — Figma EGP lockup (large).
+ */
+function exmart_pdp_price() {
+	global $product;
+	if ( ! $product instanceof WC_Product ) {
+		return;
+	}
+	echo '<div class="em-pdp-price">';
+	exmart_card_price_html( $product, true );
+	echo '</div>';
+}
+remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_price', 10 );
+add_action( 'woocommerce_single_product_summary', 'exmart_pdp_price', 10 );
+
+/**
+ * PDP rating — stars + “4.4 (87 reviews)”.
+ */
+function exmart_pdp_rating() {
+	global $product;
+	if ( ! $product instanceof WC_Product || ! wc_review_ratings_enabled() ) {
+		return;
+	}
+	$count  = (int) $product->get_review_count();
+	$rating = (float) $product->get_average_rating();
+	if ( $count < 1 && $rating <= 0 ) {
+		return;
+	}
+	?>
+	<div class="em-pdp-rating">
+		<?php exmart_stars( $rating, 16 ); ?>
+		<a href="#reviews">
+			<?php
+			printf(
+				/* translators: 1: average rating, 2: review count */
+				esc_html__( '%1$s (%2$d reviews)', 'exmart' ),
+				esc_html( number_format_i18n( $rating, 1 ) ),
+				$count
+			);
+			?>
+		</a>
+	</div>
+	<?php
+}
+remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_rating', 10 );
+add_action( 'woocommerce_single_product_summary', 'exmart_pdp_rating', 8 );
+
+/**
+ * PDP Add to Cart — Figma: qty stepper + primary “Add to cart” + wishlist.
+ * When the item is already in the cart: cart stepper + Buy now (still keeps pick-qty).
+ * Variable / grouped / external keep WooCommerce’s form (with wishlist hooked after the button).
  */
 function exmart_pdp_add_to_cart() {
 	global $product;
-	if ( $product instanceof WC_Product && $product->is_type( 'simple' ) && ! $product->has_child() ) {
-		// Stock lives in WC’s cart form — print it ourselves for the card ATC path.
-		echo wc_get_stock_html( $product ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo '<div class="em-card-actions em-pdp-atc-row">';
-		exmart_card_atc_control( $product );
-		exmart_pdp_wishlist_button();
-		echo '</div>';
-	} else {
-		woocommerce_template_single_add_to_cart();
+	if ( ! $product instanceof WC_Product ) {
+		return;
 	}
+
+	if ( $product->is_type( 'simple' ) && ! $product->has_child() ) {
+		echo wc_get_stock_html( $product ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+
+		$product_id  = $product->get_id();
+		$cart_qty    = function_exists( 'exmart_cart_qty_for_product' ) ? exmart_cart_qty_for_product( $product_id ) : 0;
+		$max         = $product->get_max_purchase_quantity();
+		if ( $max < 1 ) {
+			$max = 99;
+		}
+		$purchasable = $product->is_purchasable() && $product->is_in_stock();
+		$checkout    = function_exists( 'wc_get_checkout_url' ) ? wc_get_checkout_url() : home_url( '/checkout/' );
+		?>
+		<div
+			class="em-pdp-atc-row"
+			data-em-pdp-atc
+			data-product-id="<?php echo esc_attr( (string) $product_id ); ?>"
+			data-cart-qty="<?php echo esc_attr( (string) $cart_qty ); ?>"
+			data-max="<?php echo esc_attr( (string) $max ); ?>"
+		>
+			<div class="em-qty" data-em-pdp-pick role="group" aria-label="<?php esc_attr_e( 'Quantity', 'exmart' ); ?>">
+				<button type="button" class="em-qty-btn" data-em-pdp-pick-minus disabled aria-label="<?php esc_attr_e( 'Decrease', 'exmart' ); ?>">−</button>
+				<span class="em-qty-val" data-em-pdp-pick-val aria-live="polite">1</span>
+				<button type="button" class="em-qty-btn" data-em-pdp-pick-plus aria-label="<?php esc_attr_e( 'Increase', 'exmart' ); ?>">+</button>
+			</div>
+
+			<div class="em-pdp-cta-stack" data-em-pdp-idle <?php echo $cart_qty > 0 ? 'hidden' : ''; ?>>
+				<button
+					type="button"
+					class="em-btn em-btn-lg em-btn-primary em-pdp-add-btn"
+					data-em-pdp-add
+					<?php disabled( ! $purchasable ); ?>
+				>
+					<?php echo $purchasable ? esc_html__( 'Add to cart', 'exmart' ) : esc_html__( 'Out of stock', 'exmart' ); ?>
+				</button>
+			</div>
+
+			<div class="em-pdp-cta-stack" data-em-pdp-incart <?php echo $cart_qty > 0 ? '' : 'hidden'; ?>>
+				<div class="em-pdp-cart-stepper" role="group" aria-label="<?php esc_attr_e( 'Cart quantity', 'exmart' ); ?>">
+					<button type="button" class="em-pdp-cart-stepper-btn" data-em-pdp-cart-minus aria-label="<?php esc_attr_e( 'Decrease quantity', 'exmart' ); ?>">−</button>
+					<span class="em-pdp-cart-stepper-val" data-em-pdp-cart-val><?php echo esc_html( (string) max( 1, $cart_qty ) ); ?></span>
+					<button type="button" class="em-pdp-cart-stepper-btn" data-em-pdp-cart-plus aria-label="<?php esc_attr_e( 'Increase quantity', 'exmart' ); ?>">+</button>
+				</div>
+				<a class="em-btn em-btn-lg em-btn-primary em-pdp-buy-now" href="<?php echo esc_url( $checkout ); ?>">
+					<?php esc_html_e( 'Buy now', 'exmart' ); ?>
+				</a>
+			</div>
+
+			<?php exmart_pdp_wishlist_button(); ?>
+		</div>
+		<?php
+		return;
+	}
+
+	woocommerce_template_single_add_to_cart();
 }
 remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_add_to_cart', 30 );
 add_action( 'woocommerce_single_product_summary', 'exmart_pdp_add_to_cart', 30 );
@@ -810,6 +904,149 @@ add_action( 'woocommerce_before_single_product', 'exmart_pdp_breadcrumb', 5 );
 /* Figma PDP info column does not show short description or SKU meta. */
 remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_excerpt', 20 );
 remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_meta', 40 );
+
+/**
+ * Star-rating histogram counts for the PDP reviews summary.
+ *
+ * @param int $product_id Product ID.
+ * @return int[] Keys 1–5 → counts.
+ */
+function exmart_pdp_rating_histogram( $product_id ) {
+	$counts = array( 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0 );
+	$comments = get_comments(
+		array(
+			'post_id' => absint( $product_id ),
+			'status'  => 'approve',
+			'type'    => 'review',
+		)
+	);
+	foreach ( $comments as $comment ) {
+		$r = (int) get_comment_meta( $comment->comment_ID, 'rating', true );
+		if ( $r >= 1 && $r <= 5 ) {
+			$counts[ $r ]++;
+		}
+	}
+	return $counts;
+}
+
+/**
+ * Figma “Customer Reviews” block (summary + list) — outside tabs.
+ */
+function exmart_pdp_reviews_section() {
+	if ( ! is_product() ) {
+		return;
+	}
+	if ( ! comments_open() && ! get_comments_number() ) {
+		return;
+	}
+	if ( ! wc_review_ratings_enabled() && ! get_comments_number() ) {
+		return;
+	}
+
+	global $product;
+	if ( ! $product instanceof WC_Product ) {
+		$product = wc_get_product( get_the_ID() );
+	}
+	if ( ! $product ) {
+		return;
+	}
+
+	$avg      = (float) $product->get_average_rating();
+	$count    = (int) $product->get_review_count();
+	$histogram = exmart_pdp_rating_histogram( $product->get_id() );
+	$total_for_pct = max( 1, array_sum( $histogram ) );
+
+	$comments = get_comments(
+		array(
+			'post_id' => $product->get_id(),
+			'status'  => 'approve',
+			'type'    => 'review',
+			'orderby' => 'comment_date_gmt',
+			'order'   => 'DESC',
+			'number'  => 20,
+		)
+	);
+	?>
+	<section id="reviews" class="em-pdp-reviews">
+		<hr class="em-rule" />
+		<h2 class="em-h3 em-pdp-reviews-title"><?php esc_html_e( 'Customer Reviews', 'exmart' ); ?></h2>
+		<div class="em-pdp-reviews-grid">
+			<div class="em-pdp-reviews-summary">
+				<div class="em-pdp-reviews-score">
+					<span class="em-pdp-reviews-avg"><?php echo esc_html( number_format_i18n( $avg, 1 ) ); ?></span>
+					<span class="em-pdp-reviews-of"><?php esc_html_e( '/ 5', 'exmart' ); ?></span>
+				</div>
+				<?php exmart_stars( $avg, 18 ); ?>
+				<p class="em-caption em-pdp-reviews-based">
+					<?php
+					printf(
+						/* translators: %d: review count */
+						esc_html( _n( 'Based on %d review', 'Based on %d reviews', $count, 'exmart' ) ),
+						$count
+					);
+					?>
+				</p>
+				<div class="em-pdp-reviews-bars">
+					<?php for ( $n = 5; $n >= 1; $n-- ) : ?>
+						<?php
+						$pct = (int) round( ( $histogram[ $n ] / $total_for_pct ) * 100 );
+						if ( 0 === $count ) {
+							$pct = 0;
+						}
+						?>
+						<div class="em-review-bar">
+							<span class="em-caption"><?php echo esc_html( (string) $n ); ?></span>
+							<div class="em-review-bar-track"><div class="em-review-bar-fill" style="width:<?php echo esc_attr( (string) $pct ); ?>%"></div></div>
+							<span class="em-caption" style="color:var(--ink-400)"><?php echo esc_html( (string) $pct ); ?>%</span>
+						</div>
+					<?php endfor; ?>
+				</div>
+			</div>
+
+			<div class="em-pdp-reviews-list">
+				<?php if ( empty( $comments ) ) : ?>
+					<p class="em-body" style="color:var(--ink-500)"><?php esc_html_e( 'No reviews yet. Be the first to share your experience.', 'exmart' ); ?></p>
+				<?php else : ?>
+					<?php foreach ( $comments as $comment ) : ?>
+						<?php
+						$r = (int) get_comment_meta( $comment->comment_ID, 'rating', true );
+						?>
+						<article class="em-pdp-review">
+							<div class="em-pdp-review-meta">
+								<?php if ( $r ) : ?>
+									<?php exmart_stars( (float) $r, 14 ); ?>
+								<?php endif; ?>
+								<span class="em-caption em-pdp-review-author"><?php echo esc_html( $comment->comment_author ); ?></span>
+								<span class="em-caption em-pdp-review-date"><?php echo esc_html( date_i18n( 'Y-m-d', strtotime( $comment->comment_date ) ) ); ?></span>
+							</div>
+							<div class="em-body-s em-pdp-review-text"><?php echo wp_kses_post( wpautop( $comment->comment_content ) ); ?></div>
+						</article>
+					<?php endforeach; ?>
+				<?php endif; ?>
+
+				<?php if ( comments_open( $product->get_id() ) ) : ?>
+					<div class="em-pdp-review-form-wrap">
+						<?php
+						comment_form(
+							array(
+								'title_reply'         => __( 'Write a review', 'exmart' ),
+								'title_reply_before'  => '<h3 id="reply-title" class="em-h3 comment-reply-title">',
+								'title_reply_after'   => '</h3>',
+								'label_submit'        => __( 'Submit review', 'exmart' ),
+								'class_submit'        => 'em-btn em-btn-primary',
+								'comment_field'       => '<p class="comment-form-comment"><label for="comment">' . esc_html__( 'Your review', 'exmart' ) . '&nbsp;<span class="required">*</span></label><textarea id="comment" name="comment" cols="45" rows="5" required></textarea></p>',
+							),
+							$product->get_id()
+						);
+						?>
+					</div>
+				<?php endif; ?>
+			</div>
+		</div>
+	</section>
+	<?php
+}
+add_action( 'woocommerce_after_single_product_summary', 'exmart_pdp_reviews_section', 15 );
 
 /**
  * Small brand label shown above each product card title. Called

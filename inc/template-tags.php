@@ -76,9 +76,10 @@ function exmart_format_card_price( $amount ) {
  * Product-card price lockup (Figma): EGP + sale in red + struck regular.
  * Avoids WooCommerce <ins>/<del> markup that theme/plugin CSS often overrides.
  *
- * @param WC_Product $product
+ * @param WC_Product $product Product.
+ * @param bool       $large   Larger number (PDP).
  */
-function exmart_card_price_html( $product ) {
+function exmart_card_price_html( $product, $large = false ) {
 	if ( ! $product || ! is_a( $product, 'WC_Product' ) ) {
 		return;
 	}
@@ -103,14 +104,22 @@ function exmart_card_price_html( $product ) {
 		$on_sale = $on_sale && null !== $regular && (float) $current < (float) $regular;
 	}
 
+	$num_class = 'em-price-number';
+	if ( $large ) {
+		$num_class .= ' em-price-number-lg';
+	}
+	if ( $on_sale && null !== $regular ) {
+		$num_class .= ' sale';
+	}
+
 	echo '<span class="em-price-lockup">';
 	echo '<span class="em-price-currency">' . esc_html( $label ) . '</span>';
 
 	if ( $on_sale && null !== $regular ) {
-		echo '<span class="em-price-number sale">' . esc_html( exmart_format_card_price( $current ) ) . '</span>';
+		echo '<span class="' . esc_attr( $num_class ) . '">' . esc_html( exmart_format_card_price( $current ) ) . '</span>';
 		echo '<span class="em-price-compare">' . esc_html( exmart_format_card_price( $regular ) ) . '</span>';
 	} else {
-		echo '<span class="em-price-number">' . esc_html( exmart_format_card_price( $current ) ) . '</span>';
+		echo '<span class="' . esc_attr( $num_class ) . '">' . esc_html( exmart_format_card_price( $current ) ) . '</span>';
 	}
 
 	echo '</span>';

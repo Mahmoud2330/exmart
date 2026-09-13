@@ -82,6 +82,7 @@
 		initWishlistPage();
 		initBrandFilter();
 		initCardAtc();
+		initPdpVariationPills();
 		initShopFilters();
 		initShopFiltersDrawer();
 		initCartPageQty();
@@ -158,6 +159,42 @@
 					}
 				}
 			} );
+			syncPdpUi( productId, qty );
+		}
+
+		function syncPdpUi( productId, qty ) {
+			document.querySelectorAll( '[data-em-pdp-atc][data-product-id="' + productId + '"]' ).forEach( function ( wrap ) {
+				wrap.setAttribute( 'data-cart-qty', String( qty ) );
+				var idle = wrap.querySelector( '[data-em-pdp-idle]' );
+				var incart = wrap.querySelector( '[data-em-pdp-incart]' );
+				var val = wrap.querySelector( '[data-em-pdp-cart-val]' );
+				if ( qty > 0 ) {
+					if ( idle ) idle.hidden = true;
+					if ( incart ) incart.hidden = false;
+					if ( val ) val.textContent = String( qty );
+				} else {
+					if ( idle ) idle.hidden = false;
+					if ( incart ) incart.hidden = true;
+				}
+			} );
+		}
+
+		function setProductQty( productId, quantity, max ) {
+			if ( ! productId ) return;
+			var prev = typeof desired[ productId ] !== 'undefined'
+				? desired[ productId ]
+				: ( parseInt( ( readQtyMap()[ productId ] || 0 ), 10 ) || 0 );
+			var next = quantity;
+			if ( typeof max === 'number' && max > 0 ) next = Math.min( max, next );
+			next = Math.max( 0, next );
+			if ( next === prev ) {
+				syncUi( productId, next );
+				return;
+			}
+			desired[ productId ] = next;
+			syncUi( productId, next );
+			bumpCartBadge( next - prev );
+			scheduleSync( productId );
 		}
 
 		function isPending( productId ) {
@@ -174,6 +211,14 @@
 				var qty = parseInt( map[ id ] != null ? map[ id ] : 0, 10 ) || 0;
 				desired[ id ] = qty;
 				syncUi( id, qty );
+			} );
+			document.querySelectorAll( '[data-em-pdp-atc]' ).forEach( function ( wrap ) {
+				var id = wrap.getAttribute( 'data-product-id' );
+				if ( ! id ) return;
+				if ( ! force && isPending( id ) ) return;
+				var qty = parseInt( map[ id ] != null ? map[ id ] : 0, 10 ) || 0;
+				desired[ id ] = qty;
+				syncPdpUi( id, qty );
 			} );
 		}
 
@@ -268,17 +313,72 @@
 		function setQty( wrap, quantity ) {
 			var productId = wrap.getAttribute( 'data-product-id' );
 			if ( ! productId ) return;
-			var prev = parseInt( wrap.getAttribute( 'data-qty' ) || '0', 10 ) || 0;
-			var next = quantity;
-			if ( next === prev ) return;
-
-			desired[ productId ] = next;
-			syncUi( productId, next );
-			bumpCartBadge( next - prev );
-			scheduleSync( productId );
+			var max = parseInt( wrap.getAttribute( 'data-max' ) || '9999', 10 ) || 9999;
+			setProductQty( productId, quantity, max );
 		}
 
 		document.addEventListener( 'click', function ( e ) {
+			/* PDP: local pick qty (does not touch cart until Add). */
+			var pickMinus = e.target.closest( '[data-em-pdp-pick-minus]' );
+			if ( pickMinus ) {
+				e.preventDefault();
+				var pickWrapM = pickMinus.closest( '[data-em-pdp-atc]' );
+				if ( ! pickWrapM ) return;
+				var pickValM = pickWrapM.querySelector( '[data-em-pdp-pick-val]' );
+				var pickCurM = parseInt( ( pickValM && pickValM.textContent ) || '1', 10 ) || 1;
+				var nextM = Math.max( 1, pickCurM - 1 );
+				if ( pickValM ) pickValM.textContent = String( nextM );
+				pickMinus.disabled = nextM <= 1;
+				return;
+			}
+			var pickPlus = e.target.closest( '[data-em-pdp-pick-plus]' );
+			if ( pickPlus ) {
+				e.preventDefault();
+				var pickWrapP = pickPlus.closest( '[data-em-pdp-atc]' );
+				if ( ! pickWrapP ) return;
+				var pickValP = pickWrapP.querySelector( '[data-em-pdp-pick-val]' );
+				var pickMax = parseInt( pickWrapP.getAttribute( 'data-max' ) || '99', 10 ) || 99;
+				var pickCurP = parseInt( ( pickValP && pickValP.textContent ) || '1', 10 ) || 1;
+				var nextP = Math.min( pickMax, pickCurP + 1 );
+				if ( pickValP ) pickValP.textContent = String( nextP );
+				var minusBtn = pickWrapP.querySelector( '[data-em-pdp-pick-minus]' );
+				if ( minusBtn ) minusBtn.disabled = nextP <= 1;
+				return;
+			}
+			var pdpAdd = e.target.closest( '[data-em-pdp-add]' );
+			if ( pdpAdd ) {
+				e.preventDefault();
+				if ( pdpAdd.disabled ) return;
+				var pdpWrap = pdpAdd.closest( '[data-em-pdp-atc]' );
+				if ( ! pdpWrap ) return;
+				var pid = pdpWrap.getAttribute( 'data-product-id' );
+				var pickEl = pdpWrap.querySelector( '[data-em-pdp-pick-val]' );
+				var pickQty = parseInt( ( pickEl && pickEl.textContent ) || '1', 10 ) || 1;
+				var cartQty = parseInt( pdpWrap.getAttribute( 'data-cart-qty' ) || '0', 10 ) || 0;
+				var pMax = parseInt( pdpWrap.getAttribute( 'data-max' ) || '99', 10 ) || 99;
+				setProductQty( pid, cartQty + pickQty, pMax );
+				return;
+			}
+			var cartMinus = e.target.closest( '[data-em-pdp-cart-minus]' );
+			if ( cartMinus ) {
+				e.preventDefault();
+				var cWrapM = cartMinus.closest( '[data-em-pdp-atc]' );
+				if ( ! cWrapM ) return;
+				var cQtyM = parseInt( cWrapM.getAttribute( 'data-cart-qty' ) || '0', 10 ) || 0;
+				setProductQty( cWrapM.getAttribute( 'data-product-id' ), Math.max( 0, cQtyM - 1 ), parseInt( cWrapM.getAttribute( 'data-max' ) || '99', 10 ) || 99 );
+				return;
+			}
+			var cartPlus = e.target.closest( '[data-em-pdp-cart-plus]' );
+			if ( cartPlus ) {
+				e.preventDefault();
+				var cWrapP = cartPlus.closest( '[data-em-pdp-atc]' );
+				if ( ! cWrapP ) return;
+				var cQtyP = parseInt( cWrapP.getAttribute( 'data-cart-qty' ) || '0', 10 ) || 0;
+				var cMax = parseInt( cWrapP.getAttribute( 'data-max' ) || '99', 10 ) || 99;
+				setProductQty( cWrapP.getAttribute( 'data-product-id' ), Math.min( cMax, cQtyP + 1 ), cMax );
+				return;
+			}
+
 			var addBtn = e.target.closest( '[data-em-atc-add]' );
 			if ( addBtn ) {
 				e.preventDefault();
@@ -332,6 +432,77 @@
 		} );
 
 		window.exmartRefreshCardAtc = fetchCartQtys;
+	}
+
+	/**
+	 * Turn WooCommerce variation <select>s into Figma pill buttons on the PDP.
+	 */
+	function initPdpVariationPills() {
+		var form = document.querySelector( '.em-pdp-info form.variations_form' );
+		if ( ! form ) return;
+
+		form.querySelectorAll( 'table.variations tr' ).forEach( function ( row ) {
+			var select = row.querySelector( 'select' );
+			if ( ! select || select.dataset.emPills === '1' ) return;
+			select.dataset.emPills = '1';
+			select.classList.add( 'em-pdp-select-hidden' );
+
+			var labelCell = row.querySelector( '.label label' );
+			var attrLabel = labelCell ? labelCell.textContent.replace( /[:\s]+$/, '' ) : '';
+			var valueCell = row.querySelector( '.value' );
+			if ( ! valueCell ) return;
+
+			var labelEl = document.createElement( 'p' );
+			labelEl.className = 'em-pdp-variant-label em-caption';
+			function refreshLabel() {
+				var opt = select.options[ select.selectedIndex ];
+				var name = opt && opt.value ? opt.textContent.trim() : '';
+				labelEl.textContent = '';
+				if ( attrLabel ) {
+					labelEl.appendChild( document.createTextNode( attrLabel + ': ' ) );
+				}
+				var strong = document.createElement( 'strong' );
+				strong.textContent = name || '—';
+				labelEl.appendChild( strong );
+			}
+
+			var pills = document.createElement( 'div' );
+			pills.className = 'em-pdp-variant-pills';
+			Array.prototype.forEach.call( select.options, function ( opt ) {
+				if ( ! opt.value ) return;
+				var btn = document.createElement( 'button' );
+				btn.type = 'button';
+				btn.className = 'em-variant-pill' + ( select.value === opt.value ? ' active' : '' );
+				btn.textContent = opt.textContent.trim();
+				btn.setAttribute( 'data-value', opt.value );
+				btn.addEventListener( 'click', function () {
+					select.value = opt.value;
+					pills.querySelectorAll( '.em-variant-pill' ).forEach( function ( b ) {
+						b.classList.toggle( 'active', b.getAttribute( 'data-value' ) === opt.value );
+					} );
+					refreshLabel();
+					if ( typeof jQuery !== 'undefined' ) {
+						jQuery( select ).trigger( 'change' );
+					} else {
+						select.dispatchEvent( new Event( 'change', { bubbles: true } ) );
+					}
+				} );
+				pills.appendChild( btn );
+			} );
+
+			valueCell.insertBefore( labelEl, select );
+			valueCell.insertBefore( pills, select );
+			if ( labelCell && labelCell.parentNode ) {
+				labelCell.parentNode.style.display = 'none';
+			}
+			refreshLabel();
+			select.addEventListener( 'change', function () {
+				pills.querySelectorAll( '.em-variant-pill' ).forEach( function ( b ) {
+					b.classList.toggle( 'active', b.getAttribute( 'data-value' ) === select.value );
+				} );
+				refreshLabel();
+			} );
+		} );
 	}
 
 	// ── Homepage hero bento: autoplaying carousel on mobile ──
