@@ -23,7 +23,7 @@ if ( ! wp_doing_ajax() ) {
 				}
 			} else {
 				echo '<li class="em-checkout-payment-empty">';
-				wc_print_notice( apply_filters( 'woocommerce_no_available_payment_methods_message', WC()->customer->get_billing_country() ? esc_html__( 'Sorry, it seems that there are no available payment methods. Please contact us if you require assistance or wish to make alternate arrangements.', 'woocommerce' ) : esc_html__( 'Please fill in your details above to see available payment methods.', 'woocommerce' ) ), 'notice' ); // phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingHookComment
+				wc_print_notice( apply_filters( 'woocommerce_no_available_payment_methods_message', WC()->customer->get_billing_country() ? esc_html__( 'Sorry, it seems that there are no available payment methods. Please contact us if you require assistance or wish to make alternate arrangements.', 'exmart' ) : esc_html__( 'Please fill in your details above to see available payment methods.', 'exmart' ) ), 'notice' ); // phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingHookComment
 				echo '</li>';
 			}
 			?>
@@ -33,9 +33,9 @@ if ( ! wp_doing_ajax() ) {
 	<div class="form-row place-order em-checkout-place-order">
 		<noscript>
 			<?php
-			printf( esc_html__( 'Since your browser does not support JavaScript, or it is disabled, please ensure you click the %1$sUpdate Totals%2$s button before placing your order. You may be charged more than the amount stated above if you fail to do so.', 'woocommerce' ), '<em>', '</em>' );
+			printf( esc_html__( 'Since your browser does not support JavaScript, or it is disabled, please ensure you click the %1$sUpdate Totals%2$s button before placing your order. You may be charged more than the amount stated above if you fail to do so.', 'exmart' ), '<em>', '</em>' );
 			?>
-			<br/><button type="submit" class="button alt<?php echo esc_attr( wc_wp_theme_get_element_class_name( 'button' ) ? ' ' . wc_wp_theme_get_element_class_name( 'button' ) : '' ); ?>" name="woocommerce_checkout_update_totals" value="<?php esc_attr_e( 'Update totals', 'woocommerce' ); ?>"><?php esc_html_e( 'Update totals', 'woocommerce' ); ?></button>
+			<br/><button type="submit" class="button alt<?php echo esc_attr( wc_wp_theme_get_element_class_name( 'button' ) ? ' ' . wc_wp_theme_get_element_class_name( 'button' ) : '' ); ?>" name="woocommerce_checkout_update_totals" value="<?php esc_attr_e( 'Update totals', 'exmart' ); ?>"><?php esc_html_e( 'Update totals', 'exmart' ); ?></button>
 		</noscript>
 
 		<?php wc_get_template( 'checkout/terms.php' ); ?>
@@ -47,7 +47,7 @@ if ( ! wp_doing_ajax() ) {
 		if ( function_exists( 'wc_wp_theme_get_element_class_name' ) && wc_wp_theme_get_element_class_name( 'button' ) ) {
 			$btn_classes .= ' ' . wc_wp_theme_get_element_class_name( 'button' );
 		}
-		$order_button_text = isset( $order_button_text ) ? $order_button_text : __( 'Place order', 'woocommerce' );
+		$order_button_text = isset( $order_button_text ) ? $order_button_text : __( 'Place order', 'exmart' );
 		$total_html        = WC()->cart ? wp_strip_all_tags( wc_price( WC()->cart->get_total( 'edit' ) ) ) : '';
 		if ( $total_html ) {
 			$order_button_text = sprintf(

@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 do_action( 'woocommerce_before_checkout_form', $checkout );
 
 if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_required() && ! is_user_logged_in() ) {
-	echo esc_html( apply_filters( 'woocommerce_checkout_must_be_logged_in_message', __( 'You must be logged in to checkout.', 'woocommerce' ) ) );
+	echo esc_html( apply_filters( 'woocommerce_checkout_must_be_logged_in_message', __( 'You must be logged in to checkout.', 'exmart' ) ) );
 	return;
 }
 
@@ -27,7 +27,7 @@ $steps = array(
 );
 ?>
 
-<form name="checkout" method="post" class="checkout woocommerce-checkout em-checkout" action="<?php echo esc_url( wc_get_checkout_url() ); ?>" enctype="multipart/form-data" aria-label="<?php echo esc_attr__( 'Checkout', 'woocommerce' ); ?>" data-em-checkout-steps>
+<form name="checkout" method="post" class="checkout woocommerce-checkout em-checkout" action="<?php echo esc_url( wc_get_checkout_url() ); ?>" enctype="multipart/form-data" aria-label="<?php echo esc_attr__( 'Checkout', 'exmart' ); ?>" data-em-checkout-steps>
 
 	<div class="em-pipeline em-checkout-pipeline" role="list" aria-label="<?php esc_attr_e( 'Checkout steps', 'exmart' ); ?>">
 		<?php

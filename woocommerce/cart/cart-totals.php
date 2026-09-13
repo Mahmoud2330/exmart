@@ -50,7 +50,7 @@ $shop_url   = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink
 			<?php do_action( 'woocommerce_cart_totals_after_shipping' ); ?>
 		<?php elseif ( WC()->cart->needs_shipping() && 'yes' === get_option( 'woocommerce_enable_shipping_calc' ) ) : ?>
 			<div class="em-summary-row shipping">
-				<span class="em-summary-label"><?php esc_html_e( 'Shipping', 'woocommerce' ); ?></span>
+				<span class="em-summary-label"><?php esc_html_e( 'Shipping', 'exmart' ); ?></span>
 				<span class="em-summary-value"><?php woocommerce_shipping_calculator(); ?></span>
 			</div>
 		<?php endif; ?>
@@ -100,7 +100,7 @@ $shop_url   = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink
 
 		<?php do_action( 'woocommerce_cart_totals_before_order_total' ); ?>
 		<div class="em-summary-row em-summary-total order-total">
-			<span class="em-summary-label"><?php esc_html_e( 'Total', 'woocommerce' ); ?></span>
+			<span class="em-summary-label"><?php esc_html_e( 'Total', 'exmart' ); ?></span>
 			<span class="em-summary-value"><?php wc_cart_totals_order_total_html(); ?></span>
 		</div>
 		<?php do_action( 'woocommerce_cart_totals_after_order_total' ); ?>
@@ -108,8 +108,8 @@ $shop_url   = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink
 
 	<?php if ( wc_coupons_enabled() ) : ?>
 		<form class="em-cart-coupon" action="<?php echo esc_url( wc_get_cart_url() ); ?>" method="post">
-			<input type="text" name="coupon_code" class="em-input input-text" id="coupon_code" value="" placeholder="<?php esc_attr_e( 'Coupon code', 'woocommerce' ); ?>" aria-label="<?php esc_attr_e( 'Coupon code', 'woocommerce' ); ?>" />
-			<button type="submit" class="em-btn em-btn-secondary" name="apply_coupon" value="<?php esc_attr_e( 'Apply coupon', 'woocommerce' ); ?>"><?php esc_html_e( 'Apply', 'exmart' ); ?></button>
+			<input type="text" name="coupon_code" class="em-input input-text" id="coupon_code" value="" placeholder="<?php esc_attr_e( 'Coupon code', 'exmart' ); ?>" aria-label="<?php esc_attr_e( 'Coupon code', 'exmart' ); ?>" />
+			<button type="submit" class="em-btn em-btn-secondary" name="apply_coupon" value="<?php esc_attr_e( 'Apply coupon', 'exmart' ); ?>"><?php esc_html_e( 'Apply', 'exmart' ); ?></button>
 			<?php wp_nonce_field( 'woocommerce-cart', 'woocommerce-cart-nonce' ); ?>
 			<?php do_action( 'woocommerce_cart_coupon' ); ?>
 		</form>

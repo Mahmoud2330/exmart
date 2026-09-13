@@ -28,10 +28,10 @@ do_action( 'woocommerce_before_cart' );
 			<table class="shop_table cart woocommerce-cart-form__contents em-cart-table" cellspacing="0">
 				<thead>
 					<tr>
-						<th class="product-name" scope="col"><?php esc_html_e( 'Product', 'woocommerce' ); ?></th>
+						<th class="product-name" scope="col"><?php esc_html_e( 'Product', 'exmart' ); ?></th>
 						<th class="product-quantity" scope="col"><?php esc_html_e( 'Qty', 'exmart' ); ?></th>
-						<th class="product-subtotal" scope="col"><?php esc_html_e( 'Price', 'woocommerce' ); ?></th>
-						<th class="product-remove" scope="col"><span class="screen-reader-text"><?php esc_html_e( 'Remove item', 'woocommerce' ); ?></span></th>
+						<th class="product-subtotal" scope="col"><?php esc_html_e( 'Price', 'exmart' ); ?></th>
+						<th class="product-remove" scope="col"><span class="screen-reader-text"><?php esc_html_e( 'Remove item', 'exmart' ); ?></span></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -59,7 +59,7 @@ do_action( 'woocommerce_before_cart' );
 						?>
 						<tr class="woocommerce-cart-form__cart-item <?php echo esc_attr( apply_filters( 'woocommerce_cart_item_class', 'cart_item', $cart_item, $cart_item_key ) ); ?>">
 
-							<td class="product-name" data-title="<?php esc_attr_e( 'Product', 'woocommerce' ); ?>" role="rowheader">
+							<td class="product-name" data-title="<?php esc_attr_e( 'Product', 'exmart' ); ?>" role="rowheader">
 								<div class="em-cart-product">
 									<div class="em-cart-thumb">
 										<?php
@@ -86,14 +86,14 @@ do_action( 'woocommerce_before_cart' );
 										}
 										echo wc_get_formatted_cart_item_data( $cart_item ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 										if ( $_product->backorders_require_notification() && $_product->is_on_backorder( $cart_item['quantity'] ) ) {
-											echo wp_kses_post( apply_filters( 'woocommerce_cart_item_backorder_notification', '<p class="backorder_notification">' . esc_html__( 'Available on backorder', 'woocommerce' ) . '</p>', $product_id ) );
+											echo wp_kses_post( apply_filters( 'woocommerce_cart_item_backorder_notification', '<p class="backorder_notification">' . esc_html__( 'Available on backorder', 'exmart' ) . '</p>', $product_id ) );
 										}
 										?>
 									</div>
 								</div>
 							</td>
 
-							<td class="product-quantity" data-title="<?php esc_attr_e( 'Quantity', 'woocommerce' ); ?>">
+							<td class="product-quantity" data-title="<?php esc_attr_e( 'Quantity', 'exmart' ); ?>">
 								<?php
 								if ( $_product->is_sold_individually() ) {
 									$min_quantity = 1;
@@ -124,7 +124,7 @@ do_action( 'woocommerce_before_cart' );
 								?>
 							</td>
 
-							<td class="product-subtotal" data-title="<?php esc_attr_e( 'Price', 'woocommerce' ); ?>">
+							<td class="product-subtotal" data-title="<?php esc_attr_e( 'Price', 'exmart' ); ?>">
 								<?php
 								echo apply_filters( 'woocommerce_cart_item_subtotal', WC()->cart->get_product_subtotal( $_product, $cart_item['quantity'] ), $cart_item, $cart_item_key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 								?>
@@ -137,7 +137,7 @@ do_action( 'woocommerce_before_cart' );
 									sprintf(
 										'<a href="%s" class="remove em-cart-remove" aria-label="%s" data-product_id="%s" data-product_sku="%s">&times;</a>',
 										esc_url( wc_get_cart_remove_url( $cart_item_key ) ),
-										esc_attr( sprintf( __( 'Remove %s from cart', 'woocommerce' ), wp_strip_all_tags( $product_name ) ) ),
+										esc_attr( sprintf( __( 'Remove %s from cart', 'exmart' ), wp_strip_all_tags( $product_name ) ) ),
 										esc_attr( (string) $product_id ),
 										esc_attr( $_product->get_sku() )
 									),
@@ -154,7 +154,7 @@ do_action( 'woocommerce_before_cart' );
 
 					<tr class="em-cart-actions-row">
 						<td colspan="4" class="actions">
-							<button type="submit" class="button em-cart-update-btn" name="update_cart" value="<?php esc_attr_e( 'Update cart', 'woocommerce' ); ?>"><?php esc_html_e( 'Update cart', 'woocommerce' ); ?></button>
+							<button type="submit" class="button em-cart-update-btn" name="update_cart" value="<?php esc_attr_e( 'Update cart', 'exmart' ); ?>"><?php esc_html_e( 'Update cart', 'exmart' ); ?></button>
 							<?php do_action( 'woocommerce_cart_actions' ); ?>
 							<?php wp_nonce_field( 'woocommerce-cart', 'woocommerce-cart-nonce' ); ?>
 						</td>

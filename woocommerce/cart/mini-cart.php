@@ -72,10 +72,10 @@ do_action( 'woocommerce_before_mini_cart' );
 		</p>
 		<p class="woocommerce-mini-cart__buttons buttons em-mini-cart-buttons">
 			<a href="<?php echo esc_url( wc_get_cart_url() ); ?>" class="em-mini-cart-btn em-mini-cart-btn--view button wc-forward">
-				<?php esc_html_e( 'View cart', 'woocommerce' ); ?>
+				<?php esc_html_e( 'View cart', 'exmart' ); ?>
 			</a>
 			<a href="<?php echo esc_url( wc_get_checkout_url() ); ?>" class="em-mini-cart-btn em-mini-cart-btn--checkout button checkout wc-forward">
-				<?php esc_html_e( 'Checkout', 'woocommerce' ); ?>
+				<?php esc_html_e( 'Checkout', 'exmart' ); ?>
 			</a>
 		</p>
 	</div>
@@ -83,7 +83,7 @@ do_action( 'woocommerce_before_mini_cart' );
 <?php else : ?>
 
 	<p class="woocommerce-mini-cart__empty-message em-mini-cart-empty">
-		<?php esc_html_e( 'No products in the cart.', 'woocommerce' ); ?>
+		<?php esc_html_e( 'No products in the cart.', 'exmart' ); ?>
 	</p>
 
 <?php endif; ?>

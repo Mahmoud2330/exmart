@@ -41,7 +41,7 @@ defined( 'ABSPATH' ) || exit;
 	<hr class="em-rule" />
 
 	<div class="em-summary-row cart-subtotal">
-		<span class="em-summary-label"><?php esc_html_e( 'Subtotal', 'woocommerce' ); ?></span>
+		<span class="em-summary-label"><?php esc_html_e( 'Subtotal', 'exmart' ); ?></span>
 		<span class="em-summary-value"><?php wc_cart_totals_subtotal_html(); ?></span>
 	</div>
 
@@ -57,7 +57,7 @@ defined( 'ABSPATH' ) || exit;
 		<?php
 		$packages      = WC()->shipping()->get_packages();
 		$chosen_methods = WC()->session ? WC()->session->get( 'chosen_shipping_methods' ) : array();
-		$ship_label     = __( 'Shipping', 'woocommerce' );
+		$ship_label     = __( 'Shipping', 'exmart' );
 		$ship_value     = '';
 
 		foreach ( $packages as $i => $package ) {
@@ -118,7 +118,7 @@ defined( 'ABSPATH' ) || exit;
 	<?php do_action( 'woocommerce_review_order_before_order_total' ); ?>
 
 	<div class="em-summary-row em-summary-total order-total">
-		<span class="em-summary-label"><?php esc_html_e( 'Total', 'woocommerce' ); ?></span>
+		<span class="em-summary-label"><?php esc_html_e( 'Total', 'exmart' ); ?></span>
 		<span class="em-summary-value"><?php wc_cart_totals_order_total_html(); ?></span>
 	</div>
 
