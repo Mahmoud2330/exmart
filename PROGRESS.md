@@ -136,6 +136,7 @@ Theme was at **1.0.17** when this doc was written; current head is **1.0.70**. A
 
 ## Changelog
 
+- **2026-09-13 — v1.0.82** — "Our Brands" strip: `.em-brand-pill` sized up and de-pilled per request — `border-radius` from `var(--r-full)` (999px pill) to `var(--r-md)` (12px rounded rectangle), padding from `s2/s3` to `s3/s5`, logo box from 72×28 to 88×34, name text from .8125rem to .875rem. (1.0.81 was the Solar-icon category change, reverted same day — see above.)
 - **2026-09-14 — v1.0.80** — PDP: remove small qty stepper; Add to cart → cart stepper + Buy now only.
 - **2026-09-14 — v1.0.79** — Shop: remove WooCommerce’s boxed border around pagination.
 - **2026-09-14 — v1.0.78** — Cart: reload empty state after AJAX-clearing last item (form may be removed — don’t bail); hide “Your Cart” H1 when empty.
