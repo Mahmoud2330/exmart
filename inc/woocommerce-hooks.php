@@ -1071,3 +1071,111 @@ function exmart_ajax_set_cart_qty() {
 }
 add_action( 'wp_ajax_exmart_set_cart_qty', 'exmart_ajax_set_cart_qty' );
 add_action( 'wp_ajax_nopriv_exmart_set_cart_qty', 'exmart_ajax_set_cart_qty' );
+
+/**
+ * Checkout — Figma 4-step wizard.
+ * Payment lives in the Payment step (left), not inside the Order Summary aside.
+ */
+remove_action( 'woocommerce_checkout_order_review', 'woocommerce_checkout_payment', 20 );
+add_action( 'exmart_checkout_payment_step', 'woocommerce_checkout_payment', 10 );
+
+/**
+ * Shipping method radio cards for the Shipping step.
+ */
+function exmart_checkout_shipping_methods() {
+	if ( ! function_exists( 'WC' ) || ! WC()->cart || ! WC()->cart->needs_shipping() ) {
+		echo '<p class="em-caption">' . esc_html__( 'No shipping is required for this order.', 'exmart' ) . '</p>';
+		return;
+	}
+
+	if ( ! WC()->cart->show_shipping() ) {
+		echo '<p class="em-caption">' . esc_html__( 'Enter your address to see shipping options.', 'exmart' ) . '</p>';
+		return;
+	}
+
+	$packages       = WC()->shipping()->get_packages();
+	$chosen_methods = WC()->session ? WC()->session->get( 'chosen_shipping_methods' ) : array();
+
+	if ( empty( $packages ) ) {
+		echo '<p class="em-caption">' . esc_html__( 'Enter your address to see shipping options.', 'exmart' ) . '</p>';
+		return;
+	}
+
+	foreach ( $packages as $index => $package ) {
+		$available = isset( $package['rates'] ) ? $package['rates'] : array();
+		$chosen    = isset( $chosen_methods[ $index ] ) ? $chosen_methods[ $index ] : '';
+
+		if ( empty( $available ) ) {
+			echo '<p class="em-caption">' . esc_html__( 'There are no shipping options available for your address.', 'exmart' ) . '</p>';
+			continue;
+		}
+
+		echo '<div class="em-checkout-ship-package" data-index="' . esc_attr( (string) $index ) . '">';
+
+		foreach ( $available as $method ) {
+			$method_id = $method->id;
+			$input_id  = 'shipping_method_' . $index . '_' . sanitize_title( $method_id );
+			$checked   = checked( $method_id, $chosen, false );
+			$cost      = (float) $method->cost;
+			if ( WC()->cart->display_prices_including_tax() ) {
+				$cost += (float) $method->get_shipping_tax();
+			}
+			$price_html = ( $cost <= 0 )
+				? esc_html__( 'Free', 'exmart' )
+				: wp_kses_post( wc_price( $cost ) );
+
+			$meta = $method->get_meta_data();
+			$eta  = '';
+			if ( ! empty( $meta['eta'] ) ) {
+				$eta = (string) $meta['eta'];
+			} elseif ( false !== stripos( $method->get_label(), 'express' ) ) {
+				$eta = __( 'Next working day', 'exmart' );
+			} else {
+				$eta = __( '2–5 working days', 'exmart' );
+			}
+			?>
+			<label class="em-checkout-ship-card" for="<?php echo esc_attr( $input_id ); ?>">
+				<?php if ( count( $available ) > 1 ) : ?>
+					<input type="radio" name="shipping_method[<?php echo esc_attr( (string) $index ); ?>]" data-index="<?php echo esc_attr( (string) $index ); ?>" id="<?php echo esc_attr( $input_id ); ?>" value="<?php echo esc_attr( $method_id ); ?>" class="shipping_method" <?php echo $checked; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> />
+				<?php else : ?>
+					<input type="hidden" name="shipping_method[<?php echo esc_attr( (string) $index ); ?>]" data-index="<?php echo esc_attr( (string) $index ); ?>" id="<?php echo esc_attr( $input_id ); ?>" value="<?php echo esc_attr( $method_id ); ?>" class="shipping_method" />
+					<span class="em-checkout-ship-radio" aria-hidden="true"></span>
+				<?php endif; ?>
+				<span class="em-checkout-ship-body">
+					<span class="em-checkout-ship-name"><?php echo esc_html( $method->get_label() ); ?></span>
+					<?php if ( $eta ) : ?>
+						<span class="em-caption em-checkout-ship-eta"><?php echo esc_html( $eta ); ?></span>
+					<?php endif; ?>
+				</span>
+				<span class="em-checkout-ship-price"><?php echo $price_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+			</label>
+			<?php
+			do_action( 'woocommerce_after_shipping_rate', $method, $index );
+		}
+
+		echo '</div>';
+	}
+}
+
+/**
+ * Refresh shipping method cards when checkout AJAX updates.
+ *
+ * @param array $fragments Checkout fragments.
+ * @return array
+ */
+function exmart_checkout_shipping_fragment( $fragments ) {
+	ob_start();
+	echo '<div class="em-checkout-shipping-methods">';
+	exmart_checkout_shipping_methods();
+	echo '</div>';
+	$fragments['.em-checkout-shipping-methods'] = ob_get_clean();
+	return $fragments;
+}
+add_filter( 'woocommerce_update_order_review_fragments', 'exmart_checkout_shipping_fragment' );
+
+/**
+ * Soften the default coupon info strip; keep it usable.
+ */
+add_filter( 'woocommerce_checkout_coupon_message', function ( $message ) {
+	return esc_html__( 'Have a coupon?', 'woocommerce' ) . ' <a href="#" class="showcoupon">' . esc_html__( 'Click here to enter your code', 'woocommerce' ) . '</a>';
+} );

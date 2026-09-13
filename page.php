@@ -18,13 +18,28 @@ $is_wc_page = function_exists( 'is_woocommerce' ) && ( is_cart() || is_checkout(
 	<?php
 	$crumb_label = is_account_page() ? __( 'Account', 'exmart' ) : get_the_title();
 	$page_title  = is_account_page() ? __( 'My Account', 'exmart' ) : get_the_title();
+	$crumbs      = array(
+		array( 'label' => __( 'Home', 'exmart' ), 'href' => home_url( '/' ) ),
+		array( 'label' => $crumb_label ),
+	);
 	if ( function_exists( 'is_cart' ) && is_cart() ) {
 		$page_title  = __( 'Your Cart', 'exmart' );
 		$crumb_label = __( 'Cart', 'exmart' );
+		$crumbs      = array(
+			array( 'label' => __( 'Home', 'exmart' ), 'href' => home_url( '/' ) ),
+			array( 'label' => $crumb_label ),
+		);
+	}
+	if ( function_exists( 'is_checkout' ) && is_checkout() && ! is_wc_endpoint_url() ) {
+		$page_title = __( 'Checkout', 'exmart' );
+		$crumbs     = array(
+			array( 'label' => __( 'Cart', 'exmart' ), 'href' => wc_get_cart_url() ),
+			array( 'label' => __( 'Checkout', 'exmart' ) ),
+		);
 	}
 	?>
 	<div class="em-container" style="padding-block: var(--s8);">
-		<?php exmart_breadcrumb( array( array( 'label' => __( 'Home', 'exmart' ), 'href' => home_url( '/' ) ), array( 'label' => $crumb_label ) ) ); ?>
+		<?php exmart_breadcrumb( $crumbs ); ?>
 		<?php if ( ! is_account_page() || is_user_logged_in() ) : ?>
 			<?php if ( ! ( function_exists( 'is_cart' ) && is_cart() && WC()->cart && WC()->cart->is_empty() ) ) : ?>
 				<h1 class="em-h2" style="margin-bottom:var(--s6);"><?php echo esc_html( $page_title ); ?></h1>

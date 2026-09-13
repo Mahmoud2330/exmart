@@ -85,6 +85,7 @@
 		initShopFilters();
 		initShopFiltersDrawer();
 		initCartPageQty();
+		initCheckoutSteps();
 	} );
 
 	// ── Product card ATC → quantity stepper ───────────────
@@ -787,6 +788,152 @@
 				queueUpdate();
 			}
 		} );
+	}
+
+	// ── Checkout multi-step (Figma: Contact → Address → Shipping → Payment)
+	function initCheckoutSteps() {
+		var form = document.querySelector( 'form.checkout[data-em-checkout-steps]' );
+		if ( ! form ) return;
+
+		var STEPS = [ 'contact', 'address', 'shipping', 'payment' ];
+		var stepIndex = 0;
+		var continueBtn = form.querySelector( '.em-checkout-continue' );
+		var nav = form.querySelector( '.em-checkout-nav' );
+		var pipeline = form.querySelector( '.em-checkout-pipeline' );
+
+		function panelsFor( step ) {
+			return form.querySelectorAll( '.em-checkout-step[data-step="' + step + '"]' );
+		}
+
+		function withPanels( step ) {
+			return form.querySelectorAll( '[data-em-checkout-with="' + step + '"]' );
+		}
+
+		function setPipeline( index ) {
+			if ( ! pipeline ) return;
+			var steps = pipeline.querySelectorAll( '.em-pipeline-step' );
+			steps.forEach( function ( el, i ) {
+				var dot = el.querySelector( '.em-pipeline-dot' );
+				var lab = el.querySelector( '.em-pipeline-label' );
+				el.classList.toggle( 'done', i < index );
+				if ( dot ) {
+					dot.classList.toggle( 'done', i < index );
+					dot.classList.toggle( 'current', i === index );
+					dot.disabled = i > index;
+					dot.innerHTML = '';
+					if ( i < index ) {
+						dot.innerHTML = '<svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M2 5l2 2 4-4" stroke="var(--paper)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+					}
+				}
+				if ( lab ) {
+					lab.classList.toggle( 'done', i < index );
+					lab.classList.toggle( 'current', i === index );
+				}
+			} );
+		}
+
+		function showStep( index ) {
+			stepIndex = Math.max( 0, Math.min( index, STEPS.length - 1 ) );
+			var id = STEPS[ stepIndex ];
+
+			STEPS.forEach( function ( sid ) {
+				panelsFor( sid ).forEach( function ( panel ) {
+					var on = sid === id;
+					panel.hidden = ! on;
+					panel.classList.toggle( 'is-active', on );
+				} );
+				withPanels( sid ).forEach( function ( el ) {
+					el.hidden = sid !== id;
+				} );
+			} );
+
+			setPipeline( stepIndex );
+
+			if ( nav ) {
+				nav.hidden = id === 'payment';
+			}
+			if ( continueBtn ) {
+				continueBtn.hidden = id === 'payment';
+			}
+
+			var first = form.querySelector( '.em-checkout-step[data-step="' + id + '"] input, .em-checkout-step[data-step="' + id + '"] select, .em-checkout-step[data-step="' + id + '"] textarea' );
+			if ( first && window.matchMedia( '(min-width: 768px)' ).matches ) {
+				try { first.focus( { preventScroll: true } ); } catch ( err ) { /* ignore */ }
+			}
+
+			form.setAttribute( 'data-em-step', id );
+		}
+
+		function visibleRequired( step ) {
+			var fields = [];
+			panelsFor( step ).forEach( function ( panel ) {
+				panel.querySelectorAll( 'input, select, textarea' ).forEach( function ( el ) {
+					if ( el.disabled || el.type === 'hidden' || el.type === 'checkbox' || el.type === 'radio' ) return;
+					if ( el.getAttribute( 'aria-required' ) === 'true' || el.required || ( el.closest( '.validate-required' ) && el.type !== 'checkbox' ) ) {
+						fields.push( el );
+					}
+				} );
+			} );
+			return fields;
+		}
+
+		function validateStep( step ) {
+			var ok = true;
+			var firstBad = null;
+			visibleRequired( step ).forEach( function ( el ) {
+				var empty = ! String( el.value || '' ).trim();
+				var invalid = empty;
+				if ( ! empty && typeof el.checkValidity === 'function' ) {
+					invalid = ! el.checkValidity();
+				}
+				el.classList.toggle( 'em-checkout-invalid', invalid );
+				if ( invalid ) {
+					ok = false;
+					if ( ! firstBad ) firstBad = el;
+				}
+			} );
+			if ( firstBad ) {
+				firstBad.focus();
+				if ( typeof firstBad.reportValidity === 'function' ) {
+					firstBad.reportValidity();
+				}
+			}
+			return ok;
+		}
+
+		if ( continueBtn ) {
+			continueBtn.addEventListener( 'click', function () {
+				var current = STEPS[ stepIndex ];
+				if ( ! validateStep( current ) ) return;
+				if ( current === 'address' && window.jQuery ) {
+					window.jQuery( document.body ).trigger( 'update_checkout' );
+				}
+				showStep( stepIndex + 1 );
+				if ( STEPS[ stepIndex ] === 'shipping' && window.jQuery ) {
+					window.jQuery( document.body ).trigger( 'update_checkout' );
+				}
+			} );
+		}
+
+		if ( pipeline ) {
+			pipeline.addEventListener( 'click', function ( e ) {
+				var btn = e.target.closest( '[data-em-checkout-goto]' );
+				if ( ! btn || btn.disabled ) return;
+				var target = btn.getAttribute( 'data-em-checkout-goto' );
+				var idx = STEPS.indexOf( target );
+				if ( idx < 0 || idx > stepIndex ) return;
+				showStep( idx );
+			} );
+		}
+
+		// Payment fragment refresh can remount #payment — keep step visibility.
+		if ( window.jQuery ) {
+			window.jQuery( document.body ).on( 'updated_checkout', function () {
+				showStep( stepIndex );
+			} );
+		}
+
+		showStep( 0 );
 	}
 
 } )();
