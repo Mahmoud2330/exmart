@@ -1180,6 +1180,12 @@ add_filter( 'woocommerce_update_order_review_fragments', 'exmart_checkout_shippi
 remove_action( 'woocommerce_before_checkout_form', 'woocommerce_checkout_coupon_form', 10 );
 
 /**
+ * “Returning customer? Click here to login” info banner — not in Figma.
+ * Contact step already has “Already have an account? Log in”.
+ */
+remove_action( 'woocommerce_before_checkout_form', 'woocommerce_checkout_login_form', 10 );
+
+/**
  * Present gateways as Figma cards:
  * - COD: Cash on Delivery
  * - fawry_pay (live FawryPay plugin): one grouped Visa | Mastercard | Meeza | Fawry option

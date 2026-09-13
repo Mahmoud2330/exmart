@@ -136,6 +136,7 @@ Theme was at **1.0.17** when this doc was written; current head is **1.0.70**. A
 
 ## Changelog
 
+- **2026-09-14 — v1.0.71** — WooCommerce notices restyled to design system (no thick blue left bar); removed checkout “Returning customer” login banner + Super Socializer dump (Contact step already has Log in).
 - **2026-09-13 — v1.0.70** — Removed blue focus outline on checkout payment radios (global `input:focus` accent ring).
 - **2026-09-13 — v1.0.69** — Payment cards rebuilt; Fawry option uses Media Library Visa/MC + Meeza + Fawry logos instead of plugin sprite icons.
 - **2026-09-13 — v1.0.68** — Checkout polish: pipeline current-dot blue ring; hide coupon strip; remove phone SMS helper; COD + grouped `fawry_pay` as “Visa | Mastercard | Meeza | Fawry”.
