@@ -5,7 +5,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'EXMART_VERSION', '1.0.65' );
+define( 'EXMART_VERSION', '1.0.66' );
 define( 'EXMART_DIR', get_template_directory() );
 define( 'EXMART_URI', get_template_directory_uri() );
 

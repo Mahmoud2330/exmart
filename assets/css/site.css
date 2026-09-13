@@ -1212,6 +1212,23 @@ table.woocommerce-product-attributes td, table.woocommerce-product-attributes th
 		column-gap: var(--s4);
 		align-items: center;
 	}
+	/* Continuous divider across the row (cell borders break on column-gap). */
+	.woocommerce-cart .em-cart-table thead tr {
+		border-bottom: 1px solid var(--ink-200);
+		padding-bottom: var(--s3);
+	}
+	.woocommerce-cart .em-cart-table tbody tr.cart_item {
+		border-bottom: 1px solid var(--ink-100);
+		padding-block: var(--s5);
+	}
+	.woocommerce-cart .em-cart-table thead th {
+		border-bottom: none !important;
+		padding: 0 !important;
+	}
+	.woocommerce-cart .em-cart-table tbody td {
+		border-bottom: none !important;
+		padding: 0 !important;
+	}
 	.woocommerce-cart .em-cart-table thead th,
 	.woocommerce-cart .em-cart-table tbody td {
 		width: auto !important;
