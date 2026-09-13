@@ -1635,8 +1635,13 @@ table.woocommerce-product-attributes td, table.woocommerce-product-attributes th
 .woocommerce .cart-collaterals .cart_totals table { border: none; }
 .woocommerce .cart-collaterals .cart_totals table td, .woocommerce .cart-collaterals .cart_totals table th { border: none; padding: var(--s2) 0; }
 
-.woocommerce-checkout #payment { background: var(--ink-50); border-radius: var(--r-md); padding: var(--s4); }
-.woocommerce-checkout #payment ul.payment_methods { list-style: none; padding: 0; margin: 0; }
+/* Kill leftover WC #payment grey panel from older rules */
+.woocommerce-checkout #payment.em-checkout-payment,
+.woocommerce-checkout .em-checkout-payment#payment {
+	background: transparent !important;
+	border-radius: 0 !important;
+	padding: 0 !important;
+}
 
 /* ── Checkout: Figma 4-step wizard ─────────────────────── */
 .woocommerce-checkout form.checkout.em-checkout,
@@ -1816,85 +1821,124 @@ form.checkout.woocommerce-checkout.em-checkout {
 	background: transparent !important;
 	padding: 0 !important;
 	border-radius: 0 !important;
+	border: none !important;
 }
-.woocommerce-checkout .em-checkout-payment-list {
-	list-style: none;
-	margin: 0;
-	padding: 0;
+.woocommerce-checkout .em-checkout-payment-list,
+.woocommerce-checkout #payment ul.payment_methods {
+	list-style: none !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	border: none !important;
 	display: flex;
 	flex-direction: column;
 	gap: var(--s3);
 }
-.woocommerce-checkout .em-checkout-pay-card {
+.woocommerce-checkout #payment ul.payment_methods::before,
+.woocommerce-checkout #payment ul.payment_methods::after {
+	display: none !important;
+	content: none !important;
+}
+.woocommerce-checkout .em-checkout-pay-card,
+.woocommerce-checkout #payment ul.payment_methods li.em-checkout-pay-card {
+	list-style: none !important;
 	margin: 0 !important;
-	padding: var(--s4) !important;
-	border: 1px solid var(--ink-200);
-	border-radius: var(--r-sm);
-	background: var(--paper);
+	padding: 0 !important;
+	border: 1px solid var(--ink-200) !important;
+	border-radius: var(--r-sm) !important;
+	background: var(--paper) !important;
+	width: 100% !important;
+	box-sizing: border-box;
+	overflow: hidden;
+	transition: border-color .15s, background .15s;
+}
+.woocommerce-checkout .em-checkout-pay-card:has(input:checked),
+.woocommerce-checkout #payment ul.payment_methods li.em-checkout-pay-card:has(input:checked) {
+	border-color: var(--ink-900) !important;
+	background: var(--ink-50) !important;
+}
+.woocommerce-checkout .em-checkout-pay-hit {
 	display: grid;
 	grid-template-columns: 18px minmax(0, 1fr);
 	column-gap: var(--s3);
-	row-gap: var(--s2);
 	align-items: start;
-	transition: border-color .15s, background .15s;
+	padding: var(--s4);
+	margin: 0;
+	cursor: pointer;
+	width: 100%;
 	box-sizing: border-box;
 }
-.woocommerce-checkout .em-checkout-pay-card:has(input:checked) {
-	border-color: var(--ink-900);
-	background: var(--ink-50);
-}
-.woocommerce-checkout .em-checkout-pay-card > input {
-	margin: 2px 0 0 !important;
+.woocommerce-checkout .em-checkout-pay-hit > input.input-radio {
+	margin: 3px 0 0 !important;
 	accent-color: var(--ink-900);
 	width: 18px;
 	height: 18px;
+	flex-shrink: 0;
 }
-.woocommerce-checkout .em-checkout-pay-label {
+.woocommerce-checkout .em-checkout-pay-body {
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	gap: 4px;
-	cursor: pointer;
+	gap: 6px;
 	min-width: 0;
+	width: 100%;
 }
 .woocommerce-checkout .em-checkout-pay-title {
+	display: block;
 	font-weight: 600;
 	font-size: .9375rem;
 	color: var(--ink-900);
-	line-height: 1.3;
+	line-height: 1.35;
 }
 .woocommerce-checkout .em-checkout-pay-desc {
+	display: block;
 	font-size: .8125rem;
 	font-weight: 400;
 	color: var(--ink-500);
-	line-height: 1.4;
-	margin: 0;
+	line-height: 1.45;
+	max-width: 42rem;
 }
-.woocommerce-checkout .em-checkout-pay-icons {
+.woocommerce-checkout .em-checkout-pay-logos {
 	display: flex;
 	flex-wrap: wrap;
+	align-items: center;
 	gap: var(--s2);
-	margin-top: 2px;
+	margin-top: var(--s1);
 }
-.woocommerce-checkout .em-checkout-pay-icons img {
-	height: 20px;
-	width: auto;
-	max-width: 48px;
-	object-fit: contain;
+.woocommerce-checkout .em-checkout-pay-logo {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	height: 40px;
+	padding: 6px 12px;
+	border: 1px solid var(--ink-200);
+	border-radius: 6px;
+	background: #fff;
+	box-sizing: border-box;
+}
+.woocommerce-checkout .em-checkout-pay-logo img {
+	display: block !important;
+	height: 24px !important;
+	width: auto !important;
+	max-width: 96px !important;
+	object-fit: contain !important;
+	border: none !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	float: none !important;
 }
 .woocommerce-checkout .em-checkout-pay-card .payment_box {
-	grid-column: 2;
 	margin: 0 !important;
-	padding: var(--s3) !important;
-	background: var(--paper) !important;
-	border: 1px solid var(--ink-200);
-	border-radius: var(--r-sm);
+	padding: var(--s3) var(--s4) var(--s4) !important;
+	padding-left: calc(18px + var(--s3) + var(--s4)) !important;
+	background: transparent !important;
+	border: none !important;
+	border-top: 1px solid var(--ink-200) !important;
+	border-radius: 0 !important;
 	font-size: .875rem;
 	color: var(--ink-600);
 	line-height: 1.45;
 }
 .woocommerce-checkout .em-checkout-pay-card .payment_box::before { display: none !important; }
-/* COD description already shown on the card — hide WC bubble copy. */
 .woocommerce-checkout .em-checkout-pay-card.payment_method_cod .payment_box {
 	display: none !important;
 }

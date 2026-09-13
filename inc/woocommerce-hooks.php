@@ -1200,12 +1200,14 @@ function exmart_checkout_gateway_presentation( $gateways ) {
 		if ( 'cod' === $id ) {
 			$gateway->title       = __( 'Cash on Delivery', 'exmart' );
 			$gateway->description = __( 'Pay when your order arrives. No additional fee.', 'exmart' );
+			$gateway->icon        = '';
 		}
 
 		// Confirmed on live site analytics: payment_options includes "fawry_pay".
 		if ( 'fawry_pay' === $id || false !== stripos( (string) $id, 'fawry' ) ) {
 			$gateway->title       = __( 'Visa | Mastercard | Meeza | Fawry', 'exmart' );
 			$gateway->description = __( 'Pay securely with card, Meeza, or at any Fawry point via FawryPay.', 'exmart' );
+			$gateway->icon        = ''; // Theme renders Media Library logos in the card.
 		}
 	}
 
