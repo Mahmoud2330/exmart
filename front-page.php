@@ -186,7 +186,7 @@ $trust_items = array(
 				<?php foreach ( $product_cats as $cat ) : ?>
 					<a href="<?php echo esc_url( get_term_link( $cat ) ); ?>" class="em-cat-item">
 						<div class="em-cat-circle">
-							<?php echo exmart_category_icon_svg( $cat->slug ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static, theme-generated SVG markup, not user input ?>
+							<img src="<?php echo esc_url( exmart_category_image_url( $cat, 200 ) ); ?>" alt="<?php echo esc_attr( $cat->name ); ?>" width="200" height="200" loading="lazy" decoding="async" />
 						</div>
 						<span class="em-cat-label"><?php echo esc_html( $cat->name ); ?></span>
 					</a>
