@@ -465,7 +465,7 @@
 	gap: var(--s2);
 }
 
-/* ATC row: qty + primary CTA + wishlist (Figma) — one row on desktop. */
+/* ATC row: primary CTA + wishlist; in-cart = tall stepper + Buy now. */
 .em-pdp-atc-row {
 	display: flex !important;
 	flex-wrap: nowrap;
@@ -474,11 +474,6 @@
 	margin: 0 !important;
 	padding: 0 !important;
 	width: 100%;
-}
-.em-pdp-atc-row .em-qty {
-	flex: 0 0 auto;
-	height: 52px;
-	align-self: center;
 }
 .em-pdp-cta-stack {
 	flex: 1 1 auto;

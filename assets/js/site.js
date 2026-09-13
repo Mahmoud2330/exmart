@@ -168,17 +168,14 @@
 				wrap.setAttribute( 'data-cart-qty', String( qty ) );
 				var idle = wrap.querySelector( '[data-em-pdp-idle]' );
 				var incart = wrap.querySelector( '[data-em-pdp-incart]' );
-				var pick = wrap.querySelector( '[data-em-pdp-pick]' );
 				var val = wrap.querySelector( '[data-em-pdp-cart-val]' );
 				if ( qty > 0 ) {
 					if ( idle ) idle.hidden = true;
 					if ( incart ) incart.hidden = false;
-					if ( pick ) pick.hidden = true;
 					if ( val ) val.textContent = String( qty );
 				} else {
 					if ( idle ) idle.hidden = false;
 					if ( incart ) incart.hidden = true;
-					if ( pick ) pick.hidden = false;
 				}
 			} );
 		}
@@ -322,33 +319,6 @@
 		}
 
 		document.addEventListener( 'click', function ( e ) {
-			/* PDP: local pick qty (does not touch cart until Add). */
-			var pickMinus = e.target.closest( '[data-em-pdp-pick-minus]' );
-			if ( pickMinus ) {
-				e.preventDefault();
-				var pickWrapM = pickMinus.closest( '[data-em-pdp-atc]' );
-				if ( ! pickWrapM ) return;
-				var pickValM = pickWrapM.querySelector( '[data-em-pdp-pick-val]' );
-				var pickCurM = parseInt( ( pickValM && pickValM.textContent ) || '1', 10 ) || 1;
-				var nextM = Math.max( 1, pickCurM - 1 );
-				if ( pickValM ) pickValM.textContent = String( nextM );
-				pickMinus.disabled = nextM <= 1;
-				return;
-			}
-			var pickPlus = e.target.closest( '[data-em-pdp-pick-plus]' );
-			if ( pickPlus ) {
-				e.preventDefault();
-				var pickWrapP = pickPlus.closest( '[data-em-pdp-atc]' );
-				if ( ! pickWrapP ) return;
-				var pickValP = pickWrapP.querySelector( '[data-em-pdp-pick-val]' );
-				var pickMax = parseInt( pickWrapP.getAttribute( 'data-max' ) || '99', 10 ) || 99;
-				var pickCurP = parseInt( ( pickValP && pickValP.textContent ) || '1', 10 ) || 1;
-				var nextP = Math.min( pickMax, pickCurP + 1 );
-				if ( pickValP ) pickValP.textContent = String( nextP );
-				var minusBtn = pickWrapP.querySelector( '[data-em-pdp-pick-minus]' );
-				if ( minusBtn ) minusBtn.disabled = nextP <= 1;
-				return;
-			}
 			var pdpAdd = e.target.closest( '[data-em-pdp-add]' );
 			if ( pdpAdd ) {
 				e.preventDefault();
@@ -356,11 +326,9 @@
 				var pdpWrap = pdpAdd.closest( '[data-em-pdp-atc]' );
 				if ( ! pdpWrap ) return;
 				var pid = pdpWrap.getAttribute( 'data-product-id' );
-				var pickEl = pdpWrap.querySelector( '[data-em-pdp-pick-val]' );
-				var pickQty = parseInt( ( pickEl && pickEl.textContent ) || '1', 10 ) || 1;
 				var cartQty = parseInt( pdpWrap.getAttribute( 'data-cart-qty' ) || '0', 10 ) || 0;
 				var pMax = parseInt( pdpWrap.getAttribute( 'data-max' ) || '99', 10 ) || 99;
-				setProductQty( pid, cartQty + pickQty, pMax );
+				setProductQty( pid, cartQty + 1, pMax );
 				return;
 			}
 			var cartMinus = e.target.closest( '[data-em-pdp-cart-minus]' );

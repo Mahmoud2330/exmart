@@ -136,6 +136,7 @@ Theme was at **1.0.17** when this doc was written; current head is **1.0.70**. A
 
 ## Changelog
 
+- **2026-09-14 — v1.0.80** — PDP: remove small qty stepper; Add to cart → cart stepper + Buy now only.
 - **2026-09-14 — v1.0.79** — Shop: remove WooCommerce’s boxed border around pagination.
 - **2026-09-14 — v1.0.78** — Cart: reload empty state after AJAX-clearing last item (form may be removed — don’t bail); hide “Your Cart” H1 when empty.
 - **2026-09-14 — v1.0.77** — PDP: hide pick-qty when in-cart (only cart stepper + Buy now); single star picker in reviews (no WC duplicate).
