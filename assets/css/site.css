@@ -1873,6 +1873,17 @@ form.checkout.woocommerce-checkout.em-checkout {
 	width: 18px;
 	height: 18px;
 	flex-shrink: 0;
+	outline: none !important;
+	box-shadow: none !important;
+	border-color: transparent !important;
+}
+.woocommerce-checkout .em-checkout-pay-hit > input.input-radio:focus,
+.woocommerce-checkout .em-checkout-pay-hit > input.input-radio:focus-visible,
+.woocommerce-checkout .em-checkout-pay-card input.input-radio:focus,
+.woocommerce-checkout .em-checkout-pay-card input.input-radio:focus-visible {
+	outline: none !important;
+	box-shadow: none !important;
+	border-color: transparent !important;
 }
 .woocommerce-checkout .em-checkout-pay-body {
 	display: flex;
