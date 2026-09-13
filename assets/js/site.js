@@ -83,6 +83,7 @@
 		initBrandFilter();
 		initCardAtc();
 		initPdpVariationPills();
+		initPdpStarPicker();
 		initShopFilters();
 		initShopFiltersDrawer();
 		initCartPageQty();
@@ -502,6 +503,55 @@
 				} );
 				refreshLabel();
 			} );
+		} );
+	}
+
+	/**
+	 * Interactive star rating for the PDP review form.
+	 */
+	function initPdpStarPicker() {
+		document.querySelectorAll( '[data-em-star-picker]' ).forEach( function ( picker ) {
+			var wrap = picker.closest( '.em-pdp-rating-input' );
+			var input = wrap ? wrap.querySelector( 'input[name="rating"]' ) : null;
+			var buttons = Array.prototype.slice.call( picker.querySelectorAll( 'button[data-value]' ) );
+			if ( ! input || ! buttons.length ) return;
+
+			function paint( value, hover ) {
+				buttons.forEach( function ( btn ) {
+					var v = parseInt( btn.getAttribute( 'data-value' ), 10 ) || 0;
+					btn.classList.toggle( 'is-active', v <= value );
+					btn.classList.toggle( 'is-hover', hover > 0 && v <= hover );
+					btn.setAttribute( 'aria-checked', v === value ? 'true' : 'false' );
+				} );
+			}
+
+			buttons.forEach( function ( btn ) {
+				btn.setAttribute( 'role', 'radio' );
+				btn.addEventListener( 'mouseenter', function () {
+					paint( parseInt( input.value, 10 ) || 0, parseInt( btn.getAttribute( 'data-value' ), 10 ) || 0 );
+				} );
+				btn.addEventListener( 'mouseleave', function () {
+					paint( parseInt( input.value, 10 ) || 0, 0 );
+				} );
+				btn.addEventListener( 'click', function ( e ) {
+					e.preventDefault();
+					var v = parseInt( btn.getAttribute( 'data-value' ), 10 ) || 0;
+					input.value = String( v );
+					paint( v, 0 );
+				} );
+			} );
+			paint( parseInt( input.value, 10 ) || 0, 0 );
+
+			var form = picker.closest( 'form' );
+			if ( form && input.required ) {
+				form.addEventListener( 'submit', function ( e ) {
+					if ( ! input.value ) {
+						e.preventDefault();
+						picker.focus();
+						picker.classList.add( 'is-invalid' );
+					}
+				} );
+			}
 		} );
 	}
 

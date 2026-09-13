@@ -16,7 +16,7 @@ Living tracker for the Figma → WordPress/WooCommerce rebuild.
 | 2 | Header / footer chrome | Mostly done (footer contacts + payment logos) |
 | **3** | **Home** | **Done — polish left (images + mobile)** |
 | 4 | Shop / PLP / Search / Collections | **Shop PLP shell (1.0.42):** filters left + multi-col grid; mobile filters drawer (1.0.55); Search/Collections still open |
-| 5 | Product detail (PDP) | **Figma match (1.0.75):** qty+ATC, reviews section, related rail |
+| 5 | Product detail (PDP) | **Figma match (1.0.76):** wider info col, review form polish |
 | 6 | Brands index + brand landing | Partial (brand sync / logos work; Figma polish left) |
 | 7 | Cart + mini-cart | **Done (1.0.60–1.0.66):** Figma cart + mini-cart drawer; mobile cart fixed |
 | 8 | Checkout · thank-you · account | **Checkout 4-step (1.0.67–1.0.70)** + Account shell (1.0.21). Thank-you still open. |
@@ -136,6 +136,7 @@ Theme was at **1.0.17** when this doc was written; current head is **1.0.70**. A
 
 ## Changelog
 
+- **2026-09-14 — v1.0.76** — PDP: wider info column (kill WC 48% float); review form gets clickable stars, no “logged in as”/notes/website field; long Google button for guests.
 - **2026-09-14 — v1.0.75** — PDP matches Figma screenshots: qty + primary Add to cart + wishlist; EGP price lockup; variant pills; Customer Reviews summary+list (outside tabs); “You may also like” horizontal rail.
 - **2026-09-14 — v1.0.74** — PDP Figma pass (desktop + mobile): square gallery + thumbs, brand/trust/ATC/wishlist/trust block, −% sale badge, stock copy, tabs (incl. Shipping & Returns), “You might also like” (brand → category). Hide short description/SKU meta.
 - **2026-09-14 — v1.0.72** — Empty cart: always show Figma empty state (icon + copy + Continue shopping); hide “Your Cart” title; reload after AJAX-clearing last item.

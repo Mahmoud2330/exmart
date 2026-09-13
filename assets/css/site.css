@@ -319,21 +319,49 @@
 	grid-template-columns: 1fr;
 	gap: var(--s8);
 	align-items: start;
+	width: 100%;
 }
 @media (min-width: 768px) {
-	.em-pdp-grid { grid-template-columns: 1fr 1fr; gap: var(--s10); }
+	/* Slightly wider info column so ATC/trust aren’t cramped (still within 1280 guide). */
+	.em-pdp-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: var(--s10); }
+}
+/* Kill WooCommerce’s default float + 48% widths on summary/images — they
+   nest inside our grid cell and make the right column look “cut off”. */
+.woocommerce div.product.em-pdp,
+.woocommerce-page div.product.em-pdp {
+	display: block;
+	width: 100%;
+}
+.woocommerce div.product.em-pdp::before,
+.woocommerce div.product.em-pdp::after {
+	display: none !important;
+	content: none !important;
+}
+.woocommerce div.product.em-pdp .em-pdp-gallery,
+.woocommerce div.product.em-pdp .em-pdp-gallery .woocommerce-product-gallery,
+.woocommerce div.product.em-pdp .em-pdp-gallery .images,
+.woocommerce div.product.em-pdp .em-pdp-info,
+.woocommerce div.product.em-pdp .em-pdp-info.summary,
+.woocommerce div.product.em-pdp div.summary {
+	float: none !important;
+	width: 100% !important;
+	max-width: none !important;
+	margin: 0 !important;
+	clear: none !important;
 }
 .em-pdp-gallery {
 	display: flex;
 	flex-direction: column;
 	gap: var(--s3);
 	min-width: 0;
+	width: 100%;
 }
 .em-pdp-info {
 	display: flex;
 	flex-direction: column;
 	gap: var(--s5);
 	min-width: 0;
+	width: 100%;
 }
 /* Kill WC summary child margins — flex gap owns spacing. */
 .em-pdp-info > * { margin: 0 !important; }
@@ -437,11 +465,11 @@
 	gap: var(--s2);
 }
 
-/* ATC row: qty + primary CTA + wishlist (Figma). */
+/* ATC row: qty + primary CTA + wishlist (Figma) — one row on desktop. */
 .em-pdp-atc-row {
 	display: flex !important;
-	flex-wrap: wrap;
-	align-items: center;
+	flex-wrap: nowrap;
+	align-items: stretch;
 	gap: var(--s3);
 	margin: 0 !important;
 	padding: 0 !important;
@@ -450,9 +478,10 @@
 .em-pdp-atc-row .em-qty {
 	flex: 0 0 auto;
 	height: 52px;
+	align-self: center;
 }
 .em-pdp-cta-stack {
-	flex: 1 1 180px;
+	flex: 1 1 auto;
 	min-width: 0;
 	display: flex;
 	flex-direction: column;
@@ -763,9 +792,10 @@ table.woocommerce-product-attributes th {
 	display: grid;
 	grid-template-columns: 1fr;
 	gap: var(--s8);
+	width: 100%;
 }
 @media (min-width: 768px) {
-	.em-pdp-reviews-grid { grid-template-columns: 200px 1fr; }
+	.em-pdp-reviews-grid { grid-template-columns: minmax(200px, 240px) minmax(0, 1fr); }
 }
 .em-pdp-reviews-summary {
 	display: flex;
@@ -796,6 +826,8 @@ table.woocommerce-product-attributes th {
 	display: flex;
 	flex-direction: column;
 	gap: var(--s6);
+	min-width: 0;
+	width: 100%;
 }
 .em-pdp-review {
 	padding-bottom: var(--s6);
@@ -823,6 +855,112 @@ table.woocommerce-product-attributes th {
 	margin-top: var(--s4);
 	padding-top: var(--s6);
 	border-top: 1px solid var(--ink-100);
+	width: 100%;
+}
+.em-pdp-review-form-wrap .comment-respond,
+.em-pdp-review-form-wrap form#commentform,
+.em-pdp-review-form-wrap .comment-form {
+	width: 100%;
+	max-width: none;
+}
+.em-pdp-review-form-wrap .comment-notes,
+.em-pdp-review-form-wrap .logged-in-as,
+.em-pdp-review-form-wrap .must-log-in {
+	display: none !important;
+}
+/* Hide Super Socializer compact icons — we render the long Google button. */
+.em-pdp-review-form-wrap .the_champ_login_container,
+.em-pdp-review-form-wrap .the_champ_outer_login_container,
+.em-pdp-reviews .the_champ_login_container,
+.em-pdp-reviews .the_champ_outer_login_container {
+	display: none !important;
+}
+.em-pdp-review-google {
+	margin-bottom: var(--s5);
+}
+.em-pdp-review-google .em-auth-divider { display: none; }
+.em-pdp-review-google .em-auth-social-label {
+	text-align: left;
+	margin-bottom: var(--s3);
+}
+.em-pdp-rating-input {
+	display: flex;
+	flex-direction: column;
+	gap: var(--s2);
+	margin: 0 0 var(--s4);
+}
+.em-pdp-rating-input > span.em-caption {
+	color: var(--ink-700);
+	font-weight: 600;
+}
+.em-pdp-star-picker {
+	display: inline-flex;
+	gap: 4px;
+	align-items: center;
+}
+.em-pdp-star-picker button {
+	appearance: none;
+	background: none;
+	border: none;
+	padding: 4px;
+	cursor: pointer;
+	color: var(--ink-200);
+	line-height: 1;
+	border-radius: var(--r-sm);
+	transition: color .12s;
+}
+.em-pdp-star-picker button svg {
+	display: block;
+	width: 28px;
+	height: 28px;
+}
+.em-pdp-star-picker button.is-active,
+.em-pdp-star-picker button.is-hover {
+	color: #F5A524;
+}
+.em-pdp-star-picker button:focus-visible {
+	outline: 2px solid var(--accent-600);
+	outline-offset: 2px;
+}
+.em-pdp-review-form-wrap .comment-form-author,
+.em-pdp-review-form-wrap .comment-form-email,
+.em-pdp-review-form-wrap .comment-form-comment {
+	margin: 0 0 var(--s4);
+	width: 100%;
+}
+.em-pdp-review-form-wrap .comment-form-url,
+.em-pdp-review-form-wrap .comment-form-cookies-consent {
+	display: none !important;
+}
+.em-pdp-review-form-wrap label {
+	display: block;
+	font-size: .8125rem;
+	font-weight: 600;
+	color: var(--ink-700);
+	margin-bottom: var(--s2);
+}
+.em-pdp-review-form-wrap input[type="text"],
+.em-pdp-review-form-wrap input[type="email"],
+.em-pdp-review-form-wrap textarea {
+	width: 100%;
+	max-width: none;
+	min-height: 48px;
+	padding: var(--s3) var(--s4);
+	border: 1px solid var(--ink-200);
+	border-radius: var(--r-sm);
+	font-size: .9375rem;
+	background: var(--paper);
+	box-sizing: border-box;
+}
+.em-pdp-review-form-wrap textarea { min-height: 120px; resize: vertical; }
+.em-pdp-review-form-wrap .form-submit { margin: 0; }
+.em-pdp-review-form-wrap .form-submit .em-btn,
+.em-pdp-review-form-wrap .form-submit input[type="submit"] {
+	min-height: 48px;
+	padding-inline: var(--s6);
+	border: none;
+	border-radius: var(--r-sm);
+	cursor: pointer;
 }
 
 /* Legacy reviews tab polish (if a plugin re-adds it) */
@@ -835,6 +973,9 @@ table.woocommerce-product-attributes th {
 #reviews #respond { margin-top: var(--s8); }
 
 @media (max-width: 767px) {
+	.em-pdp-atc-row {
+		flex-wrap: wrap;
+	}
 	.em-pdp-cta-stack {
 		flex: 1 1 calc(100% - 64px);
 	}

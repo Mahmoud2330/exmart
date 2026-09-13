@@ -1027,14 +1027,82 @@ function exmart_pdp_reviews_section() {
 				<?php if ( comments_open( $product->get_id() ) ) : ?>
 					<div class="em-pdp-review-form-wrap">
 						<?php
+						$commenter = wp_get_current_commenter();
+						$req       = (bool) get_option( 'require_name_email' );
+						$aria_req  = $req ? ' required="required"' : '';
+
+						$rating_field  = '';
+						if ( wc_review_ratings_enabled() ) {
+							$rating_field  = '<div class="em-pdp-rating-input">';
+							$rating_field .= '<span class="em-caption">' . esc_html__( 'Your rating', 'exmart' ) . ' <span class="required" aria-hidden="true">*</span></span>';
+							$rating_field .= '<div class="em-pdp-star-picker" role="radiogroup" aria-label="' . esc_attr__( 'Your rating', 'exmart' ) . '" data-em-star-picker>';
+							for ( $i = 1; $i <= 5; $i++ ) {
+								$rating_field .= '<button type="button" data-value="' . esc_attr( (string) $i ) . '" aria-label="' . esc_attr( sprintf( /* translators: %d: star count */ __( '%d star', 'exmart' ), $i ) ) . '">';
+								$rating_field .= '<svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.9L22 10l-5 4.9L18.2 22 12 18.3 5.8 22 7 14.9 2 10l7.1-1.1L12 2z"/></svg>';
+								$rating_field .= '</button>';
+							}
+							$rating_field .= '</div>';
+							$rating_field .= '<input type="hidden" name="rating" id="rating" value=""' . ( wc_review_ratings_required() ? ' required' : '' ) . ' />';
+							$rating_field .= '</div>';
+						}
+
+						$comment_field  = $rating_field;
+						$comment_field .= '<p class="comment-form-comment"><label for="comment">' . esc_html__( 'Your review', 'exmart' ) . '&nbsp;<span class="required">*</span></label>';
+						$comment_field .= '<textarea id="comment" name="comment" cols="45" rows="5" required></textarea></p>';
+
+						$fields = array(
+							'author' => sprintf(
+								'<p class="comment-form-author"><label for="author">%1$s%2$s</label><input id="author" name="author" type="text" value="%3$s" size="30" maxlength="245"%4$s /></p>',
+								esc_html__( 'Name', 'exmart' ),
+								$req ? ' <span class="required">*</span>' : '',
+								esc_attr( $commenter['comment_author'] ),
+								$aria_req
+							),
+							'email'  => sprintf(
+								'<p class="comment-form-email"><label for="email">%1$s%2$s</label><input id="email" name="email" type="email" value="%3$s" size="30" maxlength="100"%4$s /></p>',
+								esc_html__( 'Email', 'exmart' ),
+								$req ? ' <span class="required">*</span>' : '',
+								esc_attr( $commenter['comment_author_email'] ),
+								$aria_req
+							),
+						);
+
+						if ( ! is_user_logged_in() ) {
+							$redirect = get_permalink( $product->get_id() );
+							$google   = '';
+							if ( function_exists( 'exmart_super_socializer_google_url' ) ) {
+								$google = exmart_super_socializer_google_url( $redirect ? $redirect : home_url( '/' ) );
+							} elseif ( function_exists( 'exmart_google_login_url' ) ) {
+								$google = exmart_google_login_url();
+							}
+							if ( $google ) {
+								echo '<div class="em-pdp-review-google">';
+								?>
+								<p class="em-auth-social-label"><?php esc_html_e( 'Continue with your Google account', 'exmart' ); ?></p>
+								<a class="em-btn em-btn-google" href="<?php echo esc_url( $google ); ?>">
+									<span class="em-btn-google-icon" aria-hidden="true">
+										<svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 01-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
+									</span>
+									<span><?php esc_html_e( 'Continue with Google', 'exmart' ); ?></span>
+								</a>
+								<?php
+								echo '</div>';
+							}
+						}
+
 						comment_form(
 							array(
-								'title_reply'         => __( 'Write a review', 'exmart' ),
-								'title_reply_before'  => '<h3 id="reply-title" class="em-h3 comment-reply-title">',
-								'title_reply_after'   => '</h3>',
-								'label_submit'        => __( 'Submit review', 'exmart' ),
-								'class_submit'        => 'em-btn em-btn-primary',
-								'comment_field'       => '<p class="comment-form-comment"><label for="comment">' . esc_html__( 'Your review', 'exmart' ) . '&nbsp;<span class="required">*</span></label><textarea id="comment" name="comment" cols="45" rows="5" required></textarea></p>',
+								'title_reply'          => __( 'Write a review', 'exmart' ),
+								'title_reply_before'   => '<h3 id="reply-title" class="em-h3 comment-reply-title">',
+								'title_reply_after'    => '</h3>',
+								'label_submit'         => __( 'Submit review', 'exmart' ),
+								'class_submit'         => 'em-btn em-btn-primary',
+								'comment_notes_before' => '',
+								'comment_notes_after'  => '',
+								'logged_in_as'         => '',
+								'must_log_in'          => '',
+								'fields'               => $fields,
+								'comment_field'        => $comment_field,
 							),
 							$product->get_id()
 						);
@@ -1047,6 +1115,21 @@ function exmart_pdp_reviews_section() {
 	<?php
 }
 add_action( 'woocommerce_after_single_product_summary', 'exmart_pdp_reviews_section', 15 );
+
+/**
+ * Strip the Website field from product review forms.
+ *
+ * @param array $fields Default comment fields.
+ * @return array
+ */
+function exmart_pdp_review_comment_fields( $fields ) {
+	if ( function_exists( 'is_product' ) && is_product() ) {
+		unset( $fields['url'] );
+	}
+	return $fields;
+}
+add_filter( 'comment_form_default_fields', 'exmart_pdp_review_comment_fields' );
+add_filter( 'comment_form_fields', 'exmart_pdp_review_comment_fields' );
 
 /**
  * Small brand label shown above each product card title. Called
