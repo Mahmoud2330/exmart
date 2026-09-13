@@ -12,6 +12,11 @@
 
 defined( 'ABSPATH' ) || exit;
 
+if ( WC()->cart && WC()->cart->is_empty() ) {
+	wc_get_template( 'cart/cart-empty.php' );
+	return;
+}
+
 do_action( 'woocommerce_before_cart' );
 ?>
 

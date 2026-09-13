@@ -16,7 +16,7 @@ Living tracker for the Figma → WordPress/WooCommerce rebuild.
 | 2 | Header / footer chrome | Mostly done (footer contacts + payment logos) |
 | **3** | **Home** | **Done — polish left (images + mobile)** |
 | 4 | Shop / PLP / Search / Collections | **Shop PLP shell (1.0.42):** filters left + multi-col grid; mobile filters drawer (1.0.55); Search/Collections still open |
-| 5 | Product detail (PDP) | Partial (1.0.49–1.0.53 reconstruction; polish left) |
+| 5 | Product detail (PDP) | **Figma pass (1.0.74):** gallery, ATC, tabs, “You might also like”; polish left |
 | 6 | Brands index + brand landing | Partial (brand sync / logos work; Figma polish left) |
 | 7 | Cart + mini-cart | **Done (1.0.60–1.0.66):** Figma cart + mini-cart drawer; mobile cart fixed |
 | 8 | Checkout · thank-you · account | **Checkout 4-step (1.0.67–1.0.70)** + Account shell (1.0.21). Thank-you still open. |
@@ -35,7 +35,7 @@ Treat **Home as done** (aside from small polish). What’s left to “tackle dow
 1. **Shop / category PLP** — layout + Brand/Category/Availability filters shipped (1.0.42); polish/edge cases left  
 2. **Search results** — same grid language as PLP  
 3. **Collections** — Offers / New / Best Sellers / tag archives  
-4. **Product detail (PDP)** — gallery/ATC pass done (1.0.49–53); polish left  
+4. ~~**Product detail (PDP)**~~ — **Figma shell (1.0.74):** gallery, ATC, tabs, related; light polish left  
 5. ~~**Cart page** + **mini-cart drawer**~~ — **done (1.0.60–1.0.66)**  
 6. **Checkout + thank-you + My Account** — checkout 4-step done (1.0.67–70); thank-you still open; account shell already done  
 
@@ -136,6 +136,8 @@ Theme was at **1.0.17** when this doc was written; current head is **1.0.70**. A
 
 ## Changelog
 
+- **2026-09-14 — v1.0.74** — PDP Figma pass (desktop + mobile): square gallery + thumbs, brand/trust/ATC/wishlist/trust block, −% sale badge, stock copy, tabs (incl. Shipping & Returns), “You might also like” (brand → category). Hide short description/SKU meta.
+- **2026-09-14 — v1.0.72** — Empty cart: always show Figma empty state (icon + copy + Continue shopping); hide “Your Cart” title; reload after AJAX-clearing last item.
 - **2026-09-14 — v1.0.71** — WooCommerce notices restyled to design system (no thick blue left bar); removed checkout “Returning customer” login banner + Super Socializer dump (Contact step already has Log in).
 - **2026-09-13 — v1.0.70** — Removed blue focus outline on checkout payment radios (global `input:focus` accent ring).
 - **2026-09-13 — v1.0.69** — Payment cards rebuilt; Fawry option uses Media Library Visa/MC + Meeza + Fawry logos instead of plugin sprite icons.

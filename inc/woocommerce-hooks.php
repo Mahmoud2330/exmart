@@ -97,6 +97,41 @@ function exmart_free_shipping_threshold() {
 remove_action( 'woocommerce_cart_collaterals', 'woocommerce_cross_sell_display' );
 
 /**
+ * Figma empty-cart state (icon + copy + Continue shopping).
+ */
+function exmart_render_cart_empty_state() {
+	static $done = false;
+	if ( $done ) {
+		return;
+	}
+	$done = true;
+
+	$shop_url = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
+	?>
+	<div class="em-empty-state em-cart-empty">
+		<div class="em-empty-icon" aria-hidden="true">
+			<svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path d="M3 3h2l2.4 12.4a2 2 0 002 1.6h8.2a2 2 0 002-1.6L21 8H6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+				<circle cx="9" cy="21" r="1" fill="currentColor"/>
+				<circle cx="18" cy="21" r="1" fill="currentColor"/>
+			</svg>
+		</div>
+		<h1 class="em-h3"><?php esc_html_e( 'Your cart is empty', 'exmart' ); ?></h1>
+		<p class="em-body em-cart-empty-copy"><?php esc_html_e( 'Add products from the shop and they will appear here.', 'exmart' ); ?></p>
+		<a class="em-btn em-btn-primary" href="<?php echo esc_url( $shop_url ? $shop_url : home_url( '/' ) ); ?>"><?php esc_html_e( 'Continue shopping', 'exmart' ); ?></a>
+	</div>
+	<?php
+}
+add_action( 'woocommerce_cart_is_empty', 'exmart_render_cart_empty_state', 10 );
+
+/**
+ * Prefer our empty state over WC’s default info banner.
+ */
+add_action( 'wp', function () {
+	remove_action( 'woocommerce_cart_is_empty', 'wc_empty_cart_message', 10 );
+}, 20 );
+
+/**
  * Apply Brand / Category / In-stock filters from the PLP sidebar.
  *
  * Query args: filter_brand[], filter_cat[], in_stock=1
@@ -360,7 +395,106 @@ function exmart_shop_active_filters() {
 }
 
 /**
- * Related products: match the original "You may also like" rail (up to 6).
+ * Related products: “You might also like” — same brand first, then same
+ * category, preferring in-stock items (matches Figma getRelated logic).
+ *
+ * @param int[] $related_posts Related product IDs.
+ * @param int   $product_id    Current product ID.
+ * @param array $args          Query args (posts_per_page / limit).
+ * @return int[]
+ */
+function exmart_smart_related_products( $related_posts, $product_id, $args ) {
+	$product_id = absint( $product_id );
+	$limit      = isset( $args['posts_per_page'] ) ? absint( $args['posts_per_page'] ) : ( isset( $args['limit'] ) ? absint( $args['limit'] ) : 6 );
+	if ( $limit < 1 ) {
+		$limit = 6;
+	}
+
+	$exclude = array_filter( array_merge( array( $product_id ), wc_get_product( $product_id ) ? wc_get_product( $product_id )->get_upsell_ids() : array() ) );
+	$ids     = array();
+
+	$collect = static function ( $tax_query ) use ( &$ids, $exclude, $limit ) {
+		if ( count( $ids ) >= $limit ) {
+			return;
+		}
+		$query = new WP_Query(
+			array(
+				'post_type'              => 'product',
+				'post_status'            => 'publish',
+				'posts_per_page'         => $limit * 2,
+				'post__not_in'           => array_merge( $exclude, $ids ),
+				'fields'                 => 'ids',
+				'orderby'                => 'rand',
+				'no_found_rows'          => true,
+				'update_post_meta_cache' => false,
+				'update_post_term_cache' => false,
+				'tax_query'              => array_merge( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+					array( 'relation' => 'AND' ),
+					$tax_query,
+					array(
+						array(
+							'taxonomy' => 'product_visibility',
+							'field'    => 'name',
+							'terms'    => array( 'exclude-from-catalog', 'exclude-from-search' ),
+							'operator' => 'NOT IN',
+						),
+					)
+				),
+				'meta_query'             => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+					array(
+						'key'   => '_stock_status',
+						'value' => 'instock',
+					),
+				),
+			)
+		);
+		if ( ! empty( $query->posts ) ) {
+			$ids = array_values( array_unique( array_merge( $ids, array_map( 'absint', $query->posts ) ) ) );
+		}
+	};
+
+	// 1) Same brand.
+	if ( taxonomy_exists( 'product_brand' ) ) {
+		$brands = wp_get_post_terms( $product_id, 'product_brand', array( 'fields' => 'ids' ) );
+		if ( ! empty( $brands ) && ! is_wp_error( $brands ) ) {
+			$collect(
+				array(
+					array(
+						'taxonomy' => 'product_brand',
+						'field'    => 'term_id',
+						'terms'    => $brands,
+					),
+				)
+			);
+		}
+	}
+
+	// 2) Same category (fill remaining).
+	$cats = wc_get_product_term_ids( $product_id, 'product_cat' );
+	if ( ! empty( $cats ) && count( $ids ) < $limit ) {
+		$collect(
+			array(
+				array(
+					'taxonomy' => 'product_cat',
+					'field'    => 'term_id',
+					'terms'    => $cats,
+				),
+			)
+		);
+	}
+
+	// 3) Fallback: any in-stock catalog products.
+	if ( count( $ids ) < $limit ) {
+		$collect( array() );
+	}
+
+	$ids = array_slice( $ids, 0, $limit );
+	return ! empty( $ids ) ? $ids : $related_posts;
+}
+add_filter( 'woocommerce_related_products', 'exmart_smart_related_products', 10, 3 );
+
+/**
+ * Related products rail: match Figma “You might also like” (up to 6 / 4 cols).
  */
 function exmart_related_products_args( $args ) {
 	$args['posts_per_page'] = 6;
@@ -368,6 +502,10 @@ function exmart_related_products_args( $args ) {
 	return $args;
 }
 add_filter( 'woocommerce_output_related_products_args', 'exmart_related_products_args' );
+
+add_filter( 'woocommerce_product_related_products_heading', function () {
+	return __( 'You might also like', 'exmart' );
+} );
 
 /**
  * Custom "How to Use" field on the product edit screen (Diagnostics/Health
@@ -395,11 +533,17 @@ function exmart_save_how_to_use_field( $post_id ) {
 add_action( 'woocommerce_process_product_meta', 'exmart_save_how_to_use_field' );
 
 /**
- * Add the "How to Use" and "Accuracy" tabs on the single product page.
+ * Add the "How to Use", "Accuracy", and "Shipping & Returns" tabs.
  */
 function exmart_custom_product_tabs( $tabs ) {
 	global $product;
-	if ( ! $product ) return $tabs;
+	if ( ! $product ) {
+		return $tabs;
+	}
+
+	if ( isset( $tabs['additional_information'] ) ) {
+		$tabs['additional_information']['title'] = __( 'Specifications', 'exmart' );
+	}
 
 	$how_to_use = get_post_meta( $product->get_id(), '_exmart_how_to_use', true );
 	if ( $how_to_use ) {
@@ -407,7 +551,7 @@ function exmart_custom_product_tabs( $tabs ) {
 			'title'    => __( 'How to Use', 'exmart' ),
 			'priority' => 15,
 			'callback' => function () use ( $how_to_use ) {
-				echo '<p class="em-body">' . wp_kses_post( nl2br( esc_html( $how_to_use ) ) ) . '</p>';
+				echo '<p class="em-body" style="color:var(--ink-700)">' . wp_kses_post( nl2br( esc_html( $how_to_use ) ) ) . '</p>';
 			},
 		);
 	}
@@ -416,24 +560,45 @@ function exmart_custom_product_tabs( $tabs ) {
 	if ( has_term( $accuracy_categories, 'product_cat', $product->get_id() ) ) {
 		$tabs['exmart_accuracy'] = array(
 			'title'    => __( 'Accuracy', 'exmart' ),
-			'priority' => 25, // Between core's "additional_information" (20) and "reviews" (30).
+			'priority' => 25,
 			'callback' => function () {
 				?>
-				<p class="em-body">This device provides readings for informational purposes only. It is not intended to diagnose, treat, cure, or prevent any disease or health condition.</p>
-				<p class="em-body">Always consult a qualified healthcare professional for clinical decisions. Readings may vary based on usage technique. Refer to the included manual for accuracy specifications and limitations.</p>
+				<p class="em-body" style="color:var(--ink-700)"><?php esc_html_e( 'This device provides readings for informational purposes only. It is not intended to diagnose, treat, cure, or prevent any disease or health condition.', 'exmart' ); ?></p>
+				<p class="em-body" style="color:var(--ink-700)"><?php esc_html_e( 'Always consult a qualified healthcare professional for clinical decisions. Readings may vary based on usage technique. Refer to the included manual for accuracy specifications and limitations.', 'exmart' ); ?></p>
 				<?php
 			},
 		);
 	}
+
+	$tabs['exmart_shipping'] = array(
+		'title'    => __( 'Shipping & Returns', 'exmart' ),
+		'priority' => 35,
+		'callback' => function () {
+			?>
+			<p class="em-body" style="color:var(--ink-700)"><?php esc_html_e( 'Standard delivery: 2–5 working days across Egypt. Free shipping on orders over EGP 300.', 'exmart' ); ?></p>
+			<p class="em-body" style="color:var(--ink-700)"><?php
+				printf(
+					/* translators: %s: contact email */
+					esc_html__( 'Returns accepted within 14 days of delivery. Item must be unused and in original packaging. Contact us at %s to initiate a return.', 'exmart' ),
+					esc_html( function_exists( 'exmart_email' ) ? exmart_email() : 'info@exmartegypt.com' )
+				);
+			?></p>
+			<?php
+		},
+	);
 
 	return $tabs;
 }
 add_filter( 'woocommerce_product_tabs', 'exmart_custom_product_tabs' );
 
 /**
- * Trust block under the add-to-cart form on the single product page.
+ * Trust block under ATC on the single product page (summary pri 35 so it
+ * still shows for simple products that skip Woo’s cart form).
  */
 function exmart_trust_block() {
+	if ( ! is_product() ) {
+		return;
+	}
 	$items = array(
 		__( 'Authenticated by exMart — direct from manufacturer', 'exmart' ),
 		__( 'Cash on delivery available', 'exmart' ),
@@ -454,7 +619,7 @@ function exmart_trust_block() {
 	</div>
 	<?php
 }
-add_action( 'woocommerce_after_add_to_cart_form', 'exmart_trust_block' );
+add_action( 'woocommerce_single_product_summary', 'exmart_trust_block', 35 );
 
 /**
  * Brand + trust lockup line above the product title.
@@ -490,9 +655,11 @@ add_action( 'woocommerce_single_product_summary', 'exmart_product_brand_row', 4 
 function exmart_pdp_add_to_cart() {
 	global $product;
 	if ( $product instanceof WC_Product && $product->is_type( 'simple' ) && ! $product->has_child() ) {
+		// Stock lives in WC’s cart form — print it ourselves for the card ATC path.
+		echo wc_get_stock_html( $product ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo '<div class="em-card-actions em-pdp-atc-row">';
-		exmart_pdp_wishlist_button();
 		exmart_card_atc_control( $product );
+		exmart_pdp_wishlist_button();
 		echo '</div>';
 	} else {
 		woocommerce_template_single_add_to_cart();
@@ -502,11 +669,9 @@ remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_singl
 add_action( 'woocommerce_single_product_summary', 'exmart_pdp_add_to_cart', 30 );
 
 /**
- * Wishlist heart next to the PDP Add to Cart button — the same
- * .em-wishlist-toggle button/JS already used on product cards, just
- * placed here too (it only ever existed on cards before). Also hooked
- * to woocommerce_after_add_to_cart_button for the variable/grouped/
- * external fallback path above, which still uses WooCommerce's own form.
+ * Wishlist heart next to the PDP Add to Cart button.
+ * Hooked after WC’s button for variable/grouped; simple products call this
+ * directly from exmart_pdp_add_to_cart() (no WC form → hook never fires).
  */
 function exmart_pdp_wishlist_button() {
 	global $product;
@@ -516,15 +681,135 @@ function exmart_pdp_wishlist_button() {
 	?>
 	<button
 		type="button"
-		class="em-wishlist-btn em-wishlist-toggle"
+		class="em-wishlist-btn em-wishlist-toggle em-pdp-wishlist"
 		data-product-id="<?php echo esc_attr( $product->get_id() ); ?>"
 		aria-label="<?php esc_attr_e( 'Add to wishlist', 'exmart' ); ?>"
 	>
-		<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" stroke="currentColor" stroke-width="2"/></svg>
+		<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" stroke="currentColor" stroke-width="2"/></svg>
 	</button>
 	<?php
 }
 add_action( 'woocommerce_after_add_to_cart_button', 'exmart_pdp_wishlist_button' );
+
+/**
+ * Figma stock line copy.
+ *
+ * @param string     $text     Availability text.
+ * @param WC_Product $product  Product.
+ * @return string
+ */
+function exmart_pdp_availability_text( $text, $product ) {
+	if ( ! is_product() || ! $product instanceof WC_Product ) {
+		return $text;
+	}
+	if ( ! $product->is_in_stock() ) {
+		return __( 'Out of stock', 'exmart' );
+	}
+	$qty = $product->managing_stock() ? (int) $product->get_stock_quantity() : null;
+	if ( null !== $qty && $qty > 0 && $qty < 10 ) {
+		return sprintf(
+			/* translators: %d: remaining stock */
+			__( 'Only %d left in stock', 'exmart' ),
+			$qty
+		);
+	}
+	return __( 'In stock — ready to ship', 'exmart' );
+}
+add_filter( 'woocommerce_get_availability_text', 'exmart_pdp_availability_text', 10, 2 );
+
+/**
+ * Low-stock warning class (Figma em-stock-low).
+ *
+ * @param array      $availability Availability text + class.
+ * @param WC_Product $product      Product.
+ * @return array
+ */
+function exmart_pdp_availability_class( $availability, $product ) {
+	if ( ! is_product() || ! $product instanceof WC_Product || empty( $availability['class'] ) ) {
+		return $availability;
+	}
+	if ( $product->is_in_stock() && $product->managing_stock() ) {
+		$qty = (int) $product->get_stock_quantity();
+		if ( $qty > 0 && $qty < 10 ) {
+			$availability['class'] = trim( str_replace( 'in-stock', '', $availability['class'] ) . ' em-stock-low' );
+		}
+	}
+	return $availability;
+}
+add_filter( 'woocommerce_get_availability', 'exmart_pdp_availability_class', 10, 2 );
+
+/**
+ * Sale badge as −X% (Figma).
+ *
+ * @param string     $html    Default flash HTML.
+ * @param WP_Post    $post    Product post.
+ * @param WC_Product $product Product.
+ * @return string
+ */
+function exmart_pdp_sale_flash( $html, $post, $product ) {
+	if ( ! $product instanceof WC_Product || ! $product->is_on_sale() ) {
+		return $html;
+	}
+	$regular = (float) $product->get_regular_price();
+	$sale    = (float) $product->get_sale_price();
+	if ( $product->is_type( 'variable' ) ) {
+		$regular = (float) $product->get_variation_regular_price( 'min', true );
+		$sale    = (float) $product->get_variation_sale_price( 'min', true );
+	}
+	if ( $regular <= 0 || $sale <= 0 || $sale >= $regular ) {
+		return $html;
+	}
+	$pct = (int) round( ( 1 - ( $sale / $regular ) ) * 100 );
+	return '<span class="onsale em-badge em-badge-sale">−' . esc_html( (string) $pct ) . '%</span>';
+}
+add_filter( 'woocommerce_sale_flash', 'exmart_pdp_sale_flash', 10, 3 );
+
+/**
+ * PDP breadcrumb: Home / Category / Product (Figma).
+ */
+function exmart_pdp_breadcrumb() {
+	if ( ! is_product() ) {
+		return;
+	}
+	global $product;
+	if ( ! $product instanceof WC_Product ) {
+		$product = wc_get_product( get_the_ID() );
+	}
+	if ( ! $product ) {
+		return;
+	}
+
+	$crumbs = array(
+		array(
+			'label' => __( 'Home', 'exmart' ),
+			'href'  => home_url( '/' ),
+		),
+	);
+
+	$terms = wc_get_product_terms(
+		$product->get_id(),
+		'product_cat',
+		array(
+			'orderby' => 'parent',
+			'order'   => 'DESC',
+		)
+	);
+	if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
+		$term     = $terms[0];
+		$crumbs[] = array(
+			'label' => $term->name,
+			'href'  => get_term_link( $term ),
+		);
+	}
+
+	$crumbs[] = array( 'label' => $product->get_name() );
+	exmart_breadcrumb( $crumbs );
+}
+add_action( 'woocommerce_before_single_product', 'exmart_pdp_breadcrumb', 5 );
+
+/* Figma PDP info column does not show short description or SKU meta. */
+remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_excerpt', 20 );
+remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_meta', 40 );
 
 /**
  * Small brand label shown above each product card title. Called

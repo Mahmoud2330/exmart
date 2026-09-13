@@ -37,15 +37,17 @@ $is_wc_page = function_exists( 'is_woocommerce' ) && ( is_cart() || is_checkout(
 			array( 'label' => __( 'Checkout', 'exmart' ) ),
 		);
 	}
+	$cart_is_empty = function_exists( 'is_cart' ) && is_cart()
+		&& function_exists( 'WC' ) && WC()->cart && WC()->cart->is_empty();
 	?>
 	<div class="em-container" style="padding-block: var(--s8);">
 		<?php exmart_breadcrumb( $crumbs ); ?>
 		<?php if ( ! is_account_page() || is_user_logged_in() ) : ?>
-			<?php if ( ! ( function_exists( 'is_cart' ) && is_cart() && WC()->cart && WC()->cart->is_empty() ) ) : ?>
+			<?php if ( ! $cart_is_empty ) : ?>
 				<h1 class="em-h2" style="margin-bottom:var(--s6);"><?php echo esc_html( $page_title ); ?></h1>
 			<?php endif; ?>
 		<?php endif; ?>
-		<div class="<?php echo is_account_page() ? 'em-account-page' : ''; ?>">
+		<div class="<?php echo is_account_page() ? 'em-account-page' : ''; ?><?php echo $cart_is_empty ? ' em-cart-page-empty' : ''; ?>">
 			<?php while ( have_posts() ) : the_post(); the_content(); endwhile; ?>
 		</div>
 	</div>

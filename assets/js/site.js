@@ -86,6 +86,7 @@
 		initShopFiltersDrawer();
 		initCartPageQty();
 		initCheckoutSteps();
+		initCartEmptyReload();
 	} );
 
 	// ── Product card ATC → quantity stepper ───────────────
@@ -787,6 +788,20 @@
 			if ( e.target && e.target.matches( 'input.qty' ) ) {
 				queueUpdate();
 			}
+		} );
+	}
+
+	// After the last cart item is removed via AJAX, force a full reload
+	// so cart-empty.php (Figma empty state) renders instead of a blank table.
+	function initCartEmptyReload() {
+		if ( ! document.body.classList.contains( 'woocommerce-cart' ) ) return;
+		if ( ! window.jQuery ) return;
+		window.jQuery( document.body ).on( 'updated_wc_div updated_cart_totals', function () {
+			var form = document.querySelector( 'form.woocommerce-cart-form' );
+			if ( ! form ) return;
+			if ( form.querySelector( '.cart_item, tr.cart_item, .em-cart-product' ) ) return;
+			if ( document.querySelector( '.em-cart-empty' ) ) return;
+			window.location.reload();
 		} );
 	}
 
