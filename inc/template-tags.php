@@ -299,6 +299,55 @@ function exmart_media_url_by_filename( $filename ) {
 }
 
 /**
+ * Resolve Media Library URL by filename stem (e.g. "personal-care" matches
+ * personal-care.jpg or personal-care-1a1097bf-….jpg).
+ *
+ * @param string $stem Filename stem without extension.
+ * @return string Empty when not found.
+ */
+function exmart_media_url_by_stem( $stem ) {
+	$stem = sanitize_title( (string) $stem );
+	if ( '' === $stem ) {
+		return '';
+	}
+
+	$exts = array( 'jpg', 'jpeg', 'png', 'webp' );
+	foreach ( $exts as $ext ) {
+		$url = exmart_media_url_by_filename( $stem . '.' . $ext );
+		if ( $url ) {
+			return $url;
+		}
+	}
+
+	global $wpdb;
+	$like  = '%/' . $wpdb->esc_like( $stem ) . '-%.%';
+	$like2 = $wpdb->esc_like( $stem ) . '-%.%';
+	$found = absint(
+		$wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT post_id FROM {$wpdb->postmeta}
+				WHERE meta_key = '_wp_attached_file'
+				AND (
+					meta_value LIKE %s
+					OR meta_value LIKE %s
+				)
+				ORDER BY post_id DESC
+				LIMIT 1",
+				$like,
+				$like2
+			)
+		)
+	);
+
+	if ( ! $found ) {
+		return '';
+	}
+
+	$url = wp_get_attachment_image_url( $found, 'medium' );
+	return $url ? $url : '';
+}
+
+/**
  * Footer payment methods: label + optional Media Library logo filename.
  *
  * @return array<int, array{label: string, file: string}>
@@ -717,21 +766,66 @@ function exmart_get_promo_image( $mod_key, $filename_hint = '' ) {
 }
 
 /**
- * Category image: WooCommerce thumbnail, else Unsplash placeholder.
+ * Media Library filename stems for Shop by Category circles.
+ * Matches uploads named like personal-care.jpg or personal-care-….jpg.
  *
- * @param WP_Term $term
- * @param int     $size
+ * @return array<string, string[]> slug → candidate stems.
+ */
+function exmart_category_media_stems() {
+	return array(
+		'personal-care'       => array( 'personal-care' ),
+		'hair-care'           => array( 'hair-care' ),
+		'skin-care'           => array( 'skin-care' ),
+		'baby-care'           => array( 'baby-care' ),
+		'home-diagnostics'    => array( 'home-diagnostics' ),
+		'bundles'             => array( 'bundles' ),
+		'bundle'              => array( 'bundles', 'bundle' ),
+		'home-care-products'  => array( 'home-care-products', 'home-care' ),
+		'home-care'           => array( 'home-care-products', 'home-care' ),
+		'wipes'               => array( 'wipes' ),
+		'feminine-care'       => array( 'feminine-care' ),
+		'health-protection'   => array( 'health-protection' ),
+	);
+}
+
+/**
+ * Category image: WooCommerce thumbnail → Media Library by name → Unsplash.
+ *
+ * @param WP_Term $term Category term.
+ * @param int     $size Unused (kept for call-site compat); Media uses ‘medium’.
  * @return string
  */
 function exmart_category_image_url( $term, $size = 200 ) {
+	if ( ! $term || is_wp_error( $term ) ) {
+		return exmart_category_placeholder_image( 'personal-care', $size );
+	}
+
 	$thumb_id = get_term_meta( $term->term_id, 'thumbnail_id', true );
 	if ( $thumb_id ) {
-		$url = wp_get_attachment_image_url( (int) $thumb_id, 'thumbnail' );
+		$url = wp_get_attachment_image_url( (int) $thumb_id, 'medium' );
 		if ( $url ) {
 			return $url;
 		}
 	}
-	return exmart_category_placeholder_image( $term->slug, $size );
+
+	$slug  = $term->slug;
+	$stems = exmart_category_media_stems();
+	$try   = isset( $stems[ $slug ] ) ? $stems[ $slug ] : array( $slug );
+
+	// Also try sanitizing the category name (e.g. "Home Care Products").
+	$name_stem = sanitize_title( $term->name );
+	if ( $name_stem && ! in_array( $name_stem, $try, true ) ) {
+		$try[] = $name_stem;
+	}
+
+	foreach ( $try as $stem ) {
+		$url = exmart_media_url_by_stem( $stem );
+		if ( $url ) {
+			return $url;
+		}
+	}
+
+	return exmart_category_placeholder_image( $slug, $size );
 }
 
 /**
