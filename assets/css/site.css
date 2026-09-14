@@ -190,8 +190,8 @@
 
 /* ── Trust strip ───────────────────────────────────────── */
 .em-trust-strip { border-bottom: 1px solid var(--ink-200); }
+.em-trust-strip-viewport { padding-block: var(--s5); }
 .em-trust-strip-row {
-	padding-block: var(--s5);
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
@@ -201,17 +201,26 @@
 .em-trust-item { display: flex; align-items: center; gap: var(--s3); }
 .em-trust-item-icon { width: 36px; height: 36px; border-radius: 50%; background: var(--ink-100); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .em-trust-item-text { font-weight: 500; color: var(--ink-700); }
+.em-trust-item--dup { display: none; }
 @media (max-width: 767px) {
+	.em-trust-strip-viewport { overflow: hidden; }
 	.em-trust-strip-row {
 		flex-wrap: nowrap;
 		justify-content: flex-start;
-		overflow-x: auto;
-		scroll-snap-type: x mandatory;
-		scrollbar-width: none;
-		-ms-overflow-style: none;
+		width: max-content;
+		animation: em-trust-marquee 18s linear infinite;
 	}
-	.em-trust-strip-row::-webkit-scrollbar { display: none; }
-	.em-trust-item { flex-shrink: 0; white-space: nowrap; scroll-snap-align: start; }
+	.em-trust-strip-viewport:hover .em-trust-strip-row { animation-play-state: paused; }
+	.em-trust-item { flex-shrink: 0; white-space: nowrap; }
+	.em-trust-item--dup { display: flex; }
+}
+@keyframes em-trust-marquee {
+	from { transform: translateX(0); }
+	to { transform: translateX(-50%); }
+}
+@media (max-width: 767px) and (prefers-reduced-motion: reduce) {
+	.em-trust-strip-row { animation: none; flex-wrap: nowrap; overflow-x: auto; width: auto; }
+	.em-trust-item--dup { display: none; }
 }
 
 /* ── Shop by category (circular strip) ────────────────── */

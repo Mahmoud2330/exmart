@@ -166,13 +166,21 @@ $trust_items = array(
 <?php endif; ?>
 
 <div class="em-trust-strip">
-	<div class="em-container em-trust-strip-row">
-		<?php foreach ( $trust_items as $item ) : ?>
-			<div class="em-trust-item">
-				<span class="em-trust-item-icon"><?php echo $item['svg']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static SVG markup ?></span>
-				<span class="em-trust-item-text em-body-s"><?php echo esc_html( $item['label'] ); ?></span>
-			</div>
-		<?php endforeach; ?>
+	<div class="em-container em-trust-strip-viewport">
+		<div class="em-trust-strip-row">
+			<?php foreach ( $trust_items as $item ) : ?>
+				<div class="em-trust-item">
+					<span class="em-trust-item-icon"><?php echo $item['svg']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static SVG markup ?></span>
+					<span class="em-trust-item-text em-body-s"><?php echo esc_html( $item['label'] ); ?></span>
+				</div>
+			<?php endforeach; ?>
+			<?php foreach ( $trust_items as $item ) : ?>
+				<div class="em-trust-item em-trust-item--dup" aria-hidden="true">
+					<span class="em-trust-item-icon"><?php echo $item['svg']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static SVG markup ?></span>
+					<span class="em-trust-item-text em-body-s"><?php echo esc_html( $item['label'] ); ?></span>
+				</div>
+			<?php endforeach; ?>
+		</div>
 	</div>
 </div>
 
