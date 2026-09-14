@@ -201,6 +201,18 @@
 .em-trust-item { display: flex; align-items: center; gap: var(--s3); }
 .em-trust-item-icon { width: 36px; height: 36px; border-radius: 50%; background: var(--ink-100); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .em-trust-item-text { font-weight: 500; color: var(--ink-700); }
+@media (max-width: 767px) {
+	.em-trust-strip-row {
+		flex-wrap: nowrap;
+		justify-content: flex-start;
+		overflow-x: auto;
+		scroll-snap-type: x mandatory;
+		scrollbar-width: none;
+		-ms-overflow-style: none;
+	}
+	.em-trust-strip-row::-webkit-scrollbar { display: none; }
+	.em-trust-item { flex-shrink: 0; white-space: nowrap; scroll-snap-align: start; }
+}
 
 /* ── Shop by category (circular strip) ────────────────── */
 .em-cat-heading { margin-bottom: var(--s5); }
