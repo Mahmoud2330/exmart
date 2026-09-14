@@ -2689,6 +2689,47 @@ form.checkout.woocommerce-checkout.em-checkout {
 	}
 }
 
+/* Belt-and-suspenders: guarantee every checkout/cart component spans the
+   full container width on mobile, regardless of any narrower width a
+   WooCommerce core stylesheet, plugin, or select2's JS-computed inline
+   style might otherwise apply (author !important beats inline styles too). */
+@media (max-width: 767px) {
+	.woocommerce-checkout .em-checkout-layout,
+	.woocommerce-checkout .em-checkout-main,
+	.woocommerce-checkout .em-checkout-aside,
+	.woocommerce-checkout .em-checkout-customer,
+	.woocommerce-checkout .em-checkout-step,
+	.woocommerce-checkout .em-checkout-fields,
+	.woocommerce-checkout .em-checkout-fields .form-row,
+	.woocommerce-checkout .em-checkout-fields .form-row input,
+	.woocommerce-checkout .em-checkout-fields .form-row select,
+	.woocommerce-checkout .em-checkout-fields .form-row textarea,
+	.woocommerce-checkout .select2-container,
+	.woocommerce-checkout .select2-selection,
+	.woocommerce-checkout .em-checkout-ship-package,
+	.woocommerce-checkout .em-checkout-ship-card,
+	.woocommerce-checkout .em-checkout-payment-list,
+	.woocommerce-checkout .em-checkout-pay-card,
+	.woocommerce-checkout .em-checkout-place-order,
+	.woocommerce-checkout .em-checkout-place-btn,
+	.woocommerce-checkout .em-checkout-continue,
+	.woocommerce-checkout .em-checkout-summary-wrap,
+	.woocommerce-checkout .em-summary-card,
+	.woocommerce-checkout .em-checkout-pipeline,
+	.woocommerce-cart .em-cart-layout,
+	.woocommerce-cart .em-cart-main,
+	.woocommerce-cart .em-cart-aside,
+	.woocommerce-cart .em-cart-table,
+	.woocommerce-cart .em-summary-card,
+	.woocommerce-cart .em-cart-cod-note,
+	.woocommerce-cart .em-cart-coupon,
+	.woocommerce-cart .em-cart-checkout-btn {
+		width: 100% !important;
+		max-width: 100% !important;
+		box-sizing: border-box !important;
+	}
+}
+
 /* Order summary (aside) */
 .woocommerce-checkout .em-checkout-summary-wrap {
 	width: 100%;
