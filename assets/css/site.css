@@ -2050,14 +2050,12 @@ ul.products li.product > .em-card { width: 100%; }
 	gap: var(--s2);
 	align-items: center;
 	padding: var(--s3);
-	background: var(--ink-50);
+	background: var(--success-bg);
 	border-radius: var(--r-sm);
-	border: 1px solid var(--ink-200);
-	color: var(--ink-600);
+	border: 1px solid var(--success-bg);
+	color: var(--success);
 }
-.woocommerce-cart .em-cart-cod-note svg { flex-shrink: 0; color: var(--ink-600); }
-.woocommerce-cart .em-cart-cod-note .em-cod-icons { display: flex; align-items: center; gap: var(--s1); flex-shrink: 0; }
-.woocommerce-cart .em-cart-cod-note .em-cod-icon-card { color: var(--success); }
+.woocommerce-cart .em-cart-cod-note svg { flex-shrink: 0; color: var(--success); }
 .woocommerce-cart .wc-proceed-to-checkout {
 	padding: 0;
 	margin: 0;

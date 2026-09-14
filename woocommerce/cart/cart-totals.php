@@ -116,17 +116,11 @@ $shop_url   = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink
 	<?php endif; ?>
 
 	<div class="em-cart-cod-note">
-		<span class="em-cod-icons">
-			<svg class="em-cod-icon-card" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-				<rect x="2" y="5" width="20" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/>
-				<path d="M2 10h20" stroke="currentColor" stroke-width="1.5"/>
-			</svg>
-			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-				<rect x="2" y="6" width="20" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/>
-				<circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.5"/>
-				<path d="M6 12h.01M18 12h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-			</svg>
-		</span>
+		<svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+			<rect x="2" y="6" width="20" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/>
+			<circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.5"/>
+			<path d="M6 12h.01M18 12h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+		</svg>
 		<span class="em-caption"><?php esc_html_e( 'Cash on delivery available at checkout', 'exmart' ); ?></span>
 	</div>
 
