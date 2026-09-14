@@ -2056,6 +2056,8 @@ ul.products li.product > .em-card { width: 100%; }
 	color: var(--ink-600);
 }
 .woocommerce-cart .em-cart-cod-note svg { flex-shrink: 0; color: var(--ink-600); }
+.woocommerce-cart .em-cart-cod-note .em-cod-icons { display: flex; align-items: center; gap: var(--s1); flex-shrink: 0; }
+.woocommerce-cart .em-cart-cod-note .em-cod-icon-card { color: var(--success); }
 .woocommerce-cart .wc-proceed-to-checkout {
 	padding: 0;
 	margin: 0;
