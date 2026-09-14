@@ -30,7 +30,13 @@ $is_wc_page = function_exists( 'is_woocommerce' ) && ( is_cart() || is_checkout(
 			array( 'label' => $crumb_label ),
 		);
 	}
-	if ( function_exists( 'is_checkout' ) && is_checkout() && ! is_wc_endpoint_url() ) {
+	if ( function_exists( 'is_order_received_page' ) && is_order_received_page() ) {
+		$page_title = __( 'Order Confirmed', 'exmart' );
+		$crumbs     = array(
+			array( 'label' => __( 'Home', 'exmart' ), 'href' => home_url( '/' ) ),
+			array( 'label' => __( 'Order Confirmed', 'exmart' ) ),
+		);
+	} elseif ( function_exists( 'is_checkout' ) && is_checkout() && ! is_wc_endpoint_url() ) {
 		$page_title = __( 'Checkout', 'exmart' );
 		$crumbs     = array(
 			array( 'label' => __( 'Cart', 'exmart' ), 'href' => wc_get_cart_url() ),

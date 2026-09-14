@@ -3039,3 +3039,100 @@ ul.woocommerce-error li {
 .widget_shopping_cart_content ul.woocommerce-mini-cart li img { width: 72px; height: 72px; object-fit: cover; border-radius: var(--r-sm); border: 1px solid var(--ink-200); flex-shrink: 0; }
 .widget_shopping_cart_content ul.woocommerce-mini-cart li a.remove { position: absolute; top: 0; right: 0; color: var(--ink-400) !important; text-decoration: none; }
 .widget_shopping_cart_content p.woocommerce-mini-cart__total { display: flex; justify-content: space-between; font-weight: 700; }
+
+/* ── Order confirmation (thank-you page) ──────────────────
+   Big blue check + one-shot confetti burst so a completed purchase is
+   unmistakable — the default page gave no obvious "it worked" signal. */
+.em-order-confirm {
+	position: relative;
+	max-width: 560px;
+	margin: 0 auto;
+	padding-block: var(--s10) var(--s8);
+	text-align: center;
+}
+.em-order-confirm-icon {
+	width: 88px;
+	height: 88px;
+	margin: 0 auto var(--s6);
+	border-radius: 50%;
+	background: var(--accent-600);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 12px 32px rgba(42, 68, 232, .28);
+	animation: em-order-confirm-pop .5s cubic-bezier(.34, 1.56, .64, 1) both;
+}
+.em-order-confirm-icon--failed {
+	background: var(--error);
+	box-shadow: 0 12px 32px rgba(198, 40, 40, .28);
+}
+.em-order-confirm-title { margin: 0 0 var(--s3); }
+.em-order-confirm-sub {
+	color: var(--ink-600);
+	text-align: center;
+	margin: 0 0 var(--s8);
+}
+.em-order-confirm-actions {
+	margin: var(--s4) 0 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--s3);
+	justify-content: center;
+}
+.em-order-overview {
+	list-style: none;
+	margin: 0 0 var(--s8);
+	padding: var(--s5);
+	background: var(--ink-50);
+	border: 1px solid var(--ink-200);
+	border-radius: var(--r-md);
+	display: flex;
+	flex-direction: column;
+	gap: var(--s2);
+	text-align: left;
+}
+.em-order-overview li {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: var(--s3);
+	font-size: .9375rem;
+	color: var(--ink-600);
+}
+.em-order-overview li strong { color: var(--ink-900); font-weight: 600; }
+
+@keyframes em-order-confirm-pop {
+	from { transform: scale(.4); opacity: 0; }
+	to { transform: scale(1); opacity: 1; }
+}
+
+.em-order-confirm-confetti {
+	position: absolute;
+	inset: 0;
+	overflow: hidden;
+	pointer-events: none;
+}
+.em-order-confirm-confetti span {
+	position: absolute;
+	top: -12px;
+	left: calc(var(--i, 0) * 6.5%);
+	width: 8px;
+	height: 14px;
+	border-radius: 2px;
+	opacity: 0;
+	animation: em-confetti-fall 1.6s ease-in calc(var(--i, 0) * .06s) 1 both;
+}
+.em-order-confirm-confetti span:nth-child(4n + 1) { background: var(--accent-600); }
+.em-order-confirm-confetti span:nth-child(4n + 2) { background: var(--success); }
+.em-order-confirm-confetti span:nth-child(4n + 3) { background: var(--sale); }
+.em-order-confirm-confetti span:nth-child(4n) { background: var(--warning); }
+
+@keyframes em-confetti-fall {
+	0% { opacity: 1; transform: translateY(0) rotate(0deg); }
+	100% { opacity: 0; transform: translateY(220px) rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.em-order-confirm-icon { animation: none; }
+	.em-order-confirm-confetti { display: none; }
+}
