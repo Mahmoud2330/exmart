@@ -23,13 +23,15 @@
 .em-header-right { margin-left: auto; }
 .em-header-logo { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; text-decoration: none; }
 .em-header-logo img { height: 48px; width: auto; display: block; }
-/* Mobile nav drawer: global img { height:auto } blows the 1540px logo full-width. */
+/* Mobile nav drawer: global img { height:auto } blows the 1540px logo full-width.
+   Needs the same !important hardening as .em-footer-logo below — without it,
+   this rule loses the cascade to something else and the logo scales back up. */
 .em-drawer-logo {
-	display: block;
-	height: 28px;
-	width: auto;
-	max-width: 140px;
-	object-fit: contain;
+	display: block !important;
+	height: 28px !important;
+	width: auto !important;
+	max-width: 140px !important;
+	object-fit: contain !important;
 }
 .em-icon-badge { position: relative; }
 .em-icon-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: var(--sale); border: 2px solid var(--paper); }
