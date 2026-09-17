@@ -70,7 +70,7 @@ $trust_items = array(
 ?>
 
 <section class="em-hero-bento">
-	<div class="em-container">
+	<div class="em-container em-carousel-viewport">
 		<div class="em-hero-bento-grid">
 
 			<div class="em-hero-tile em-hero-tile--main">
@@ -140,7 +140,7 @@ $trust_items = array(
 </section>
 
 <?php if ( ! empty( $product_brands ) ) : ?>
-<div class="em-brands-strip">
+<div class="em-brands-strip em-carousel-viewport">
 	<div class="em-container em-brands-strip-row">
 		<span class="em-overline em-brands-strip-label"><?php esc_html_e( 'Our Brands', 'exmart' ); ?></span>
 		<div class="em-brands-strip-divider" aria-hidden="true"></div>
@@ -166,7 +166,7 @@ $trust_items = array(
 <?php endif; ?>
 
 <div class="em-trust-strip">
-	<div class="em-container em-trust-strip-viewport">
+	<div class="em-container em-trust-strip-viewport em-carousel-viewport">
 		<div class="em-trust-strip-row">
 			<?php foreach ( $trust_items as $item ) : ?>
 				<div class="em-trust-item">
@@ -189,7 +189,7 @@ $trust_items = array(
 		<h2 class="em-h2"><?php esc_html_e( 'Shop by Category', 'exmart' ); ?></h2>
 	</div>
 	<?php if ( ! empty( $product_cats ) ) : ?>
-		<div class="em-container">
+		<div class="em-container em-carousel-viewport em-cat-track-wrap">
 			<div class="em-cat-track">
 				<?php foreach ( $product_cats as $cat ) : ?>
 					<a href="<?php echo esc_url( get_term_link( $cat ) ); ?>" class="em-cat-item">

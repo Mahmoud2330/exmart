@@ -1141,6 +1141,7 @@ function exmart_product_rail( $title, $products, $view_all_url, $empty_message =
 		<?php if ( empty( $products ) ) : ?>
 			<p class="em-body em-rail-empty"><?php echo esc_html( $empty_message ? $empty_message : __( 'No products to show yet.', 'exmart' ) ); ?></p>
 		<?php else : ?>
+		<div class="em-rail-viewport em-carousel-viewport">
 		<div class="em-rail-track">
 			<?php
 			global $post, $product;
@@ -1159,6 +1160,7 @@ function exmart_product_rail( $title, $products, $view_all_url, $empty_message =
 			}
 			wp_reset_postdata();
 			?>
+		</div>
 		</div>
 		<?php endif; ?>
 	</section>
