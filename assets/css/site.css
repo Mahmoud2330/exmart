@@ -275,6 +275,16 @@
 @media (min-width: 640px) {
 	.em-cat-track-wrap::after { display: none; }
 }
+/* Hero + category crop a full tile/circle, not just a sliver of a card —
+   needs a wider, denser fade (solid white for a stretch, not just a hint
+   of one) so the cropped item is actually hidden rather than peeking through. */
+@media (max-width: 767px) {
+	.em-hero-bento .em-carousel-viewport::after,
+	.em-cat-track-wrap::after {
+		width: clamp(56px, 18vw, 110px);
+		background: linear-gradient(to left, #fff 55%, rgba(255,255,255,0) 100%);
+	}
+}
 
 /* ── Brands strip ──────────────────────────────────────── */
 .em-brands-strip { border-bottom: 1px solid var(--ink-200); padding-block: var(--s4); }
