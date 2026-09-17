@@ -242,6 +242,14 @@
   .em-cat-track { overflow-x:visible; justify-content:space-evenly; flex-wrap:nowrap; }
   .em-cat-item { flex:1; min-width:0; flex-shrink:1; scroll-snap-align:unset; }
 }
+/* Mobile tap: the circle itself must stay put (its neighbors don't move
+   out of the way), so the zoom happens on the image inside instead —
+   clipped by the circle's own overflow:hidden. */
+@media (max-width: 639px) {
+  .em-cat-circle:hover, .em-cat-circle:active { transform: none; }
+  .em-cat-circle img { transition: transform .15s; }
+  .em-cat-circle:hover img, .em-cat-circle:active img { transform: scale(1.08); }
+}
 
 /* ── Brands strip ──────────────────────────────────────── */
 .em-brands-strip { border-bottom: 1px solid var(--ink-200); padding-block: var(--s4); }
