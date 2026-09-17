@@ -251,53 +251,6 @@
   .em-cat-circle:hover img, .em-cat-circle:active img { transform: scale(1.08); }
 }
 
-/* ── Carousel edge fade (white glass) ─────────────────────
-   Every horizontally-scrolling strip crops its last visible card at a
-   hard edge. This overlays a white, blurred gradient at each side so
-   the cropped card fades to white instead — same glass language as
-   .em-site-header. Disabled per-carousel wherever that carousel's own
-   breakpoint switches it from scrolling to a static wrapped/grid layout. */
-.em-carousel-viewport { position: relative; }
-.em-carousel-viewport::before,
-.em-carousel-viewport::after {
-	content: '';
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	width: clamp(28px, 7vw, 56px);
-	pointer-events: none;
-	z-index: 2;
-	backdrop-filter: blur(6px);
-	-webkit-backdrop-filter: blur(6px);
-}
-.em-carousel-viewport::before {
-	left: 0;
-	background: linear-gradient(to right, rgba(255,255,255,.85), rgba(255,255,255,0));
-}
-.em-carousel-viewport::after {
-	right: 0;
-	background: linear-gradient(to left, rgba(255,255,255,.85), rgba(255,255,255,0));
-}
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-	.em-carousel-viewport::before { background: linear-gradient(to right, rgba(255,255,255,.98), rgba(255,255,255,0)); }
-	.em-carousel-viewport::after { background: linear-gradient(to left, rgba(255,255,255,.98), rgba(255,255,255,0)); }
-}
-/* Hero bento becomes a non-scrolling 3-col grid at 900px+. */
-@media (min-width: 900px) {
-	.em-hero-bento .em-carousel-viewport::before,
-	.em-hero-bento .em-carousel-viewport::after { display: none; }
-}
-/* Category strip stops scrolling (wraps/centers) at 640px+. */
-@media (min-width: 640px) {
-	.em-cat-track-wrap::before,
-	.em-cat-track-wrap::after { display: none; }
-}
-/* Trust strip only scrolls (marquee) below 768px; centered/wrapped above. */
-@media (min-width: 768px) {
-	.em-trust-strip-viewport::before,
-	.em-trust-strip-viewport::after { display: none; }
-}
-
 /* ── Brands strip ──────────────────────────────────────── */
 .em-brands-strip { border-bottom: 1px solid var(--ink-200); padding-block: var(--s4); }
 .em-brands-strip-row { display: flex; align-items: center; gap: var(--s4); overflow-x: auto; scrollbar-width: none; }
