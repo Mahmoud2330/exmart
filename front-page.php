@@ -70,7 +70,7 @@ $trust_items = array(
 ?>
 
 <section class="em-hero-bento">
-	<div class="em-container em-carousel-viewport">
+	<div class="em-container">
 		<div class="em-hero-bento-grid">
 
 			<div class="em-hero-tile em-hero-tile--main">
