@@ -75,7 +75,6 @@
 		initMobileNav();
 		initCartDrawer();
 		initHeaderSearch();
-		initFloatingPill();
 		initFaq();
 		initNewsletterForms();
 		initWishlistButtons();
@@ -654,7 +653,7 @@
 
 	// ── Mini-cart drawer ───────────────────────────────────
 	function initCartDrawer() {
-		var toggles = [ document.getElementById( 'em-cart-toggle' ), document.getElementById( 'em-pill-cart' ) ].filter( Boolean );
+		var toggles = [ document.getElementById( 'em-cart-toggle' ) ].filter( Boolean );
 		var close = document.getElementById( 'em-cart-close' );
 		var drawer = document.getElementById( 'em-cart-drawer' );
 		var backdrop = document.getElementById( 'em-cart-backdrop' );
@@ -697,22 +696,6 @@
 			}
 		} );
 		if ( close ) close.addEventListener( 'click', function () { overlay.hidden = true; } );
-	}
-
-	// ── Floating mobile pill (search shortcut) ────────────
-	function initFloatingPill() {
-		var searchBtn = document.getElementById( 'em-pill-search' );
-		var overlay = document.getElementById( 'em-header-search-overlay' );
-		if ( ! searchBtn ) return;
-		searchBtn.addEventListener( 'click', function () {
-			if ( overlay ) {
-				overlay.hidden = false;
-				var input = overlay.querySelector( 'input[type="search"]' );
-				if ( input ) setTimeout( function () { input.focus(); }, 60 );
-				return;
-			}
-			window.location.href = ( data.searchUrl || '/' );
-		} );
 	}
 
 	// ── FAQ accordion ──────────────────────────────────────

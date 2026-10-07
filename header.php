@@ -48,7 +48,7 @@ $checkout_url = function_exists( 'wc_get_checkout_url' ) ? wc_get_checkout_url()
 				<button class="em-btn-icon em-mobile-only" id="em-hamburger" aria-label="<?php esc_attr_e( 'Open menu', 'exmart' ); ?>">
 					<svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
 				</button>
-				<button class="em-btn-icon em-desktop-only" id="em-header-search-toggle" aria-label="<?php esc_attr_e( 'Search', 'exmart' ); ?>">
+				<button class="em-btn-icon" id="em-header-search-toggle" aria-label="<?php esc_attr_e( 'Search', 'exmart' ); ?>">
 					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
 				</button>
 				<a href="<?php echo esc_url( $wishlist_url ); ?>" class="em-btn-icon em-desktop-only em-icon-badge" aria-label="<?php esc_attr_e( 'Wishlist', 'exmart' ); ?>">
@@ -68,7 +68,7 @@ $checkout_url = function_exists( 'wc_get_checkout_url' ) ? wc_get_checkout_url()
 				<a href="<?php echo esc_url( $account_url ); ?>" class="em-btn-icon em-desktop-only" aria-label="<?php esc_attr_e( 'My account', 'exmart' ); ?>">
 					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="currentColor" stroke-width="2"/></svg>
 				</a>
-				<button class="em-btn-icon em-desktop-only em-icon-badge" id="em-cart-toggle" aria-label="<?php esc_attr_e( 'Cart', 'exmart' ); ?>">
+				<button class="em-btn-icon em-icon-badge" id="em-cart-toggle" aria-label="<?php esc_attr_e( 'Cart', 'exmart' ); ?>">
 					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 3h2l2.4 12.4a2 2 0 002 1.6h8.2a2 2 0 002-1.6L21 8H6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="21" r="1" fill="currentColor"/><circle cx="18" cy="21" r="1" fill="currentColor"/></svg>
 					<span class="em-icon-count em-cart-count-badge" id="em-cart-count" <?php echo $cart_count > 0 ? '' : 'hidden'; ?>><?php echo esc_html( (string) $cart_count ); ?></span>
 				</button>
@@ -201,5 +201,4 @@ $checkout_url = function_exists( 'wc_get_checkout_url' ) ? wc_get_checkout_url()
 		</div>
 	</aside>
 
-	<style>@media(max-width:767px){#main-content{padding-bottom:88px;}}</style>
 	<main id="main-content" style="flex:1;">

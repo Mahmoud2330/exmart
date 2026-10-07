@@ -1415,14 +1415,6 @@ body:not(.logged-in).woocommerce-account .col-2 {
 .em-404 { padding-block: var(--s20); text-align: center; display: flex; flex-direction: column; align-items: center; gap: var(--s5); }
 .em-404-code { font-size: 5rem; font-weight: 700; color: var(--ink-200); line-height: 1; margin: 0; }
 
-/* ── Floating mobile pill ──────────────────────────────── */
-.em-floating-pill { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 80; display: flex; align-items: center; background: var(--accent-600); border-radius: var(--r-full); box-shadow: 0 8px 32px rgba(42,68,232,.35), 0 2px 8px rgba(42,68,232,.2); padding: 6px 8px; gap: 2px; }
-@media (min-width: 768px) { .em-floating-pill { display: none; } }
-.em-floating-pill button { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: var(--r-full); border: none; background: transparent; color: #fff; cursor: pointer; transition: background .15s; position: relative; }
-.em-floating-pill button.active { background: rgba(255,255,255,.15); }
-.em-floating-pill-sep { width: 1px; height: 20px; background: rgba(255,255,255,.15); flex-shrink: 0; }
-@media (max-width: 767px) { #main-content { padding-bottom: 88px; } }
-
 /* ── WooCommerce class-name adoption ──────────────────────
    Map WooCommerce's default markup onto the em design system
    so the native Shop/Product/Cart/Checkout/Account pages match
@@ -3031,17 +3023,6 @@ ul.woocommerce-error li {
 	margin: var(--s8) 0;
 	text-align: center;
 	color: var(--ink-500);
-}
-
-/* Floating pill cart badge sits on the blue pill — use white ring. */
-#em-pill-cart .em-icon-count {
-	top: 2px;
-	right: 2px;
-	border-color: var(--accent-600);
-	background: var(--sale);
-	min-width: 16px;
-	height: 16px;
-	font-size: .625rem;
 }
 
 .widget_shopping_cart_content ul.woocommerce-mini-cart { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--s4); }

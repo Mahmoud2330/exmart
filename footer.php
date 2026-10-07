@@ -1,6 +1,6 @@
 <?php
 /**
- * Footer: four-column link grid, brand/payment strip, copyright, floating mobile pill.
+ * Footer: four-column link grid, brand/payment strip, copyright.
  */
 if ( ! defined( 'ABSPATH' ) ) exit;
 ?>
@@ -19,7 +19,6 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		0,
 		2
 	);
-	$shop_url = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
 	?>
 
 	<footer class="em-site-footer">
@@ -109,25 +108,6 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			<p class="em-footer-copyright">&copy; <?php echo esc_html( gmdate( 'Y' ) ); ?> exMart Egypt. All rights reserved.</p>
 		</div>
 	</footer>
-
-	<!-- Floating mobile pill -->
-	<div class="em-floating-pill" id="em-floating-pill">
-		<button id="em-pill-search" aria-label="<?php esc_attr_e( 'Search', 'exmart' ); ?>">
-			<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-		</button>
-		<span class="em-floating-pill-sep"></span>
-		<a href="<?php echo esc_url( $shop_url ); ?>" id="em-pill-shop" aria-label="<?php esc_attr_e( 'Browse all products', 'exmart' ); ?>" style="display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:var(--r-full);color:#fff;text-decoration:none;">
-			<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-		</a>
-		<span class="em-floating-pill-sep"></span>
-		<button id="em-pill-cart" aria-label="<?php esc_attr_e( 'Cart', 'exmart' ); ?>" class="em-icon-badge">
-			<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 3h2l2.4 12.4a2 2 0 002 1.6h8.2a2 2 0 002-1.6L21 8H6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="21" r="1" fill="currentColor"/><circle cx="18" cy="21" r="1" fill="currentColor"/></svg>
-			<span class="em-icon-count em-cart-count-badge" id="em-pill-cart-count" <?php
-				$pill_count = ( function_exists( 'WC' ) && WC()->cart ) ? WC()->cart->get_cart_contents_count() : 0;
-				echo $pill_count > 0 ? '' : 'hidden';
-			?>><?php echo esc_html( (string) $pill_count ); ?></span>
-		</button>
-	</div>
 
 </div><!-- #page -->
 
