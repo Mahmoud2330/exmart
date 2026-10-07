@@ -60,19 +60,39 @@ if ( is_product_category() || is_product_tag() ) {
 
 	<?php exmart_shop_active_filters(); ?>
 
+	<?php
+	$em_shop_banner = exmart_get_promo_image( 'exmart_shop_banner_image', 'shop-banner' );
+	if ( $em_shop_banner ) :
+		$em_shop_banner_link = get_theme_mod( 'exmart_shop_banner_link', '' );
+		if ( ! $em_shop_banner_link ) {
+			$em_shop_banner_link = exmart_rail_view_all_url( 'offers' );
+		}
+		?>
+		<a class="em-shop-banner" href="<?php echo esc_url( $em_shop_banner_link ); ?>">
+			<img src="<?php echo esc_url( $em_shop_banner['url'] ); ?>" alt="<?php echo esc_attr( $em_shop_banner['alt'] ); ?>" loading="lazy" decoding="async" />
+		</a>
+	<?php endif; ?>
+
 	<div class="em-shop-layout">
 		<div class="em-backdrop" id="em-shop-filters-backdrop" hidden></div>
-		<aside class="em-shop-filters" id="em-shop-filters" aria-label="<?php esc_attr_e( 'Product filters', 'exmart' ); ?>">
-			<div class="em-shop-filters-header">
-				<h2 class="em-h4"><?php esc_html_e( 'Filters', 'exmart' ); ?></h2>
-				<button type="button" class="em-btn-icon" id="em-shop-filters-close" aria-label="<?php esc_attr_e( 'Close filters', 'exmart' ); ?>">
-					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-				</button>
-			</div>
-			<div class="em-shop-filters-body">
-				<?php exmart_render_shop_filters(); ?>
-			</div>
-		</aside>
+		<div class="em-shop-side">
+			<?php if ( $em_shop_banner ) : ?>
+				<a class="em-shop-banner em-shop-banner--side" href="<?php echo esc_url( $em_shop_banner_link ); ?>">
+					<img src="<?php echo esc_url( $em_shop_banner['url'] ); ?>" alt="<?php echo esc_attr( $em_shop_banner['alt'] ); ?>" loading="lazy" decoding="async" />
+				</a>
+			<?php endif; ?>
+			<aside class="em-shop-filters" id="em-shop-filters" aria-label="<?php esc_attr_e( 'Product filters', 'exmart' ); ?>">
+				<div class="em-shop-filters-header">
+					<h2 class="em-h4"><?php esc_html_e( 'Filters', 'exmart' ); ?></h2>
+					<button type="button" class="em-btn-icon" id="em-shop-filters-close" aria-label="<?php esc_attr_e( 'Close filters', 'exmart' ); ?>">
+						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+					</button>
+				</div>
+				<div class="em-shop-filters-body">
+					<?php exmart_render_shop_filters(); ?>
+				</div>
+			</aside>
+		</div>
 
 		<div class="em-shop-main">
 			<?php if ( woocommerce_product_loop() ) : ?>

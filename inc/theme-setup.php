@@ -222,5 +222,49 @@ function exmart_customize_register( $wp_customize ) {
 			)
 		);
 	}
+
+	/* Shop page banner: horizontal strip on mobile, vertical sidebar banner on desktop. */
+	$wp_customize->add_section(
+		'exmart_shop_banner',
+		array(
+			'title'       => __( 'Shop Page Banner', 'exmart' ),
+			'description' => __( 'Shoppable banner shown at the top of the Shop page and every category/tag archive — a wide strip on mobile, a tall banner beside the filters on desktop. Leave the image empty to hide it.', 'exmart' ),
+			'priority'    => 31,
+		)
+	);
+	$wp_customize->add_setting(
+		'exmart_shop_banner_image',
+		array(
+			'default'           => 0,
+			'sanitize_callback' => 'absint',
+		)
+	);
+	$wp_customize->add_control(
+		new WP_Customize_Media_Control(
+			$wp_customize,
+			'exmart_shop_banner_image',
+			array(
+				'label'     => __( 'Banner image', 'exmart' ),
+				'section'   => 'exmart_shop_banner',
+				'mime_type' => 'image',
+			)
+		)
+	);
+	$wp_customize->add_setting(
+		'exmart_shop_banner_link',
+		array(
+			'default'           => '',
+			'sanitize_callback' => 'esc_url_raw',
+		)
+	);
+	$wp_customize->add_control(
+		'exmart_shop_banner_link',
+		array(
+			'label'       => __( 'Banner link (optional)', 'exmart' ),
+			'description' => __( 'Where the banner should take shoppers. Defaults to the Offers collection if left blank.', 'exmart' ),
+			'section'     => 'exmart_shop_banner',
+			'type'        => 'url',
+		)
+	);
 }
 add_action( 'customize_register', 'exmart_customize_register' );

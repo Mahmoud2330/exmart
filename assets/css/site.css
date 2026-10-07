@@ -1436,6 +1436,27 @@ body:not(.logged-in).woocommerce-account .col-2 {
 	color: var(--ink-400);
 	font-weight: 400;
 }
+/* Shoppable banner: wide strip above the grid on mobile; the second
+   instance (--side) swaps in as a tall banner above the filters on
+   desktop. Both wrap the same image — see archive-product.php. */
+.em-shop-banner {
+	display: block;
+	border-radius: var(--r-md);
+	overflow: hidden;
+	margin-bottom: var(--s6);
+	aspect-ratio: 21 / 6;
+}
+.em-shop-banner img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.em-shop-banner--side { display: none; }
+@media (min-width: 1024px) {
+	.em-shop-page > .em-shop-banner { display: none; }
+	.em-shop-banner--side {
+		display: block;
+		aspect-ratio: 3 / 4;
+		margin-bottom: 0;
+	}
+}
+
 .em-shop-layout {
 	display: grid;
 	grid-template-columns: 1fr;
@@ -1446,6 +1467,11 @@ body:not(.logged-in).woocommerce-account .col-2 {
 	.em-shop-layout {
 		/* Filters left (~220px), products fill remaining width inside 1280 container */
 		grid-template-columns: 220px minmax(0, 1fr);
+	}
+	.em-shop-side {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s5);
 	}
 }
 
