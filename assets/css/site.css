@@ -1612,8 +1612,8 @@ ul.products li.product > .em-card { width: 100%; }
 	padding-block: var(--s3);
 	padding-inline: var(--s4);
 	background: var(--paper) !important;
-	color: var(--ink-900) !important;
-	border: 1px solid var(--ink-200) !important;
+	color: var(--accent-600) !important;
+	border: 1px solid var(--accent-600) !important;
 	border-radius: var(--r-sm);
 	box-shadow: none !important;
 	font-family: var(--font);
@@ -1629,9 +1629,9 @@ ul.products li.product > .em-card { width: 100%; }
 .em-card-actions .em-card-atc-btn:hover:not(:disabled),
 .woocommerce ul.products .em-card-actions a.button:hover,
 .woocommerce .em-card .em-card-actions a.button:hover {
-	background: var(--ink-50) !important;
-	color: var(--ink-900) !important;
-	border-color: var(--ink-300) !important;
+	background: var(--accent-600) !important;
+	color: var(--paper) !important;
+	border-color: var(--accent-600) !important;
 }
 .em-card-actions .em-card-atc-btn:disabled {
 	opacity: .55;
