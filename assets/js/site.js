@@ -74,7 +74,6 @@
 		initMegaMenus();
 		initMobileNav();
 		initCartDrawer();
-		initHeaderSearch();
 		initFaq();
 		initNewsletterForms();
 		initWishlistButtons();
@@ -679,23 +678,6 @@
 		document.addEventListener( 'keydown', function ( e ) { if ( e.key === 'Escape' ) hide(); } );
 
 		// Card ATC uses an inline stepper — do not auto-open the drawer on add.
-	}
-
-	// ── Header search overlay (desktop) ───────────────────
-	function initHeaderSearch() {
-		var toggle = document.getElementById( 'em-header-search-toggle' );
-		var close = document.getElementById( 'em-header-search-close' );
-		var overlay = document.getElementById( 'em-header-search-overlay' );
-		if ( ! toggle || ! overlay ) return;
-
-		toggle.addEventListener( 'click', function () {
-			overlay.hidden = ! overlay.hidden;
-			if ( ! overlay.hidden ) {
-				var input = overlay.querySelector( 'input[type="search"]' );
-				if ( input ) setTimeout( function () { input.focus(); }, 60 );
-			}
-		} );
-		if ( close ) close.addEventListener( 'click', function () { overlay.hidden = true; } );
 	}
 
 	// ── FAQ accordion ──────────────────────────────────────

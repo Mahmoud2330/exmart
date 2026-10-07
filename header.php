@@ -48,9 +48,6 @@ $checkout_url = function_exists( 'wc_get_checkout_url' ) ? wc_get_checkout_url()
 				<button class="em-btn-icon em-mobile-only" id="em-hamburger" aria-label="<?php esc_attr_e( 'Open menu', 'exmart' ); ?>">
 					<svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
 				</button>
-				<button class="em-btn-icon" id="em-header-search-toggle" aria-label="<?php esc_attr_e( 'Search', 'exmart' ); ?>">
-					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-				</button>
 				<a href="<?php echo esc_url( $wishlist_url ); ?>" class="em-btn-icon em-desktop-only em-icon-badge" aria-label="<?php esc_attr_e( 'Wishlist', 'exmart' ); ?>">
 					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" stroke="currentColor" stroke-width="2"/></svg>
 					<span class="em-icon-dot" id="em-wishlist-dot" hidden></span>
@@ -75,15 +72,12 @@ $checkout_url = function_exists( 'wc_get_checkout_url' ) ? wc_get_checkout_url()
 			</div>
 		</div>
 
-		<div id="em-header-search-overlay" class="em-header-search-overlay" hidden>
-			<form action="<?php echo esc_url( home_url( '/' ) ); ?>" method="get" role="search" style="flex:1;position:relative;">
-				<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ink-400);pointer-events:none;"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+		<div class="em-header-search-bar">
+			<form action="<?php echo esc_url( home_url( '/' ) ); ?>" method="get" role="search" class="em-container em-header-search-form">
+				<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
 				<input type="hidden" name="post_type" value="product" />
-				<input class="em-input" style="padding-inline-start:40px;min-height:48px;" type="search" name="s" placeholder="<?php esc_attr_e( 'Search products, brands…', 'exmart' ); ?>" aria-label="<?php esc_attr_e( 'Search', 'exmart' ); ?>" />
+				<input class="em-input" type="search" name="s" placeholder="<?php esc_attr_e( 'Search products, brands…', 'exmart' ); ?>" aria-label="<?php esc_attr_e( 'Search', 'exmart' ); ?>" />
 			</form>
-			<button class="em-btn-icon" id="em-header-search-close" aria-label="<?php esc_attr_e( 'Close search', 'exmart' ); ?>">
-				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-			</button>
 		</div>
 
 		<nav class="em-main-nav" aria-label="<?php esc_attr_e( 'Main navigation', 'exmart' ); ?>" id="em-desktop-nav">
