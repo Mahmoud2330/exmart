@@ -52,19 +52,19 @@ $new_arrivals = exmart_get_new_arrivals( 8 );
 $trust_items = array(
 	array(
 		'label' => __( '100% authentic — direct from manufacturer', 'exmart' ),
-		'svg'   => '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="var(--ink-700)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="var(--ink-700)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+		'svg'   => '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="var(--accent-600)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="var(--accent-600)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
 	),
 	array(
 		'label' => __( 'Official sole distributor in Egypt', 'exmart' ),
-		'svg'   => '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" stroke="var(--ink-700)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="10" r="3" stroke="var(--ink-700)" stroke-width="2"/></svg>',
+		'svg'   => '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" stroke="var(--accent-600)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="10" r="3" stroke="var(--accent-600)" stroke-width="2"/></svg>',
 	),
 	array(
 		'label' => __( 'Cash on delivery available', 'exmart' ),
-		'svg'   => '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2" stroke="var(--ink-700)" stroke-width="2"/><path d="M2 10h20" stroke="var(--ink-700)" stroke-width="2"/><path d="M6 15h4" stroke="var(--ink-700)" stroke-width="2" stroke-linecap="round"/></svg>',
+		'svg'   => '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2" stroke="var(--accent-600)" stroke-width="2"/><path d="M2 10h20" stroke="var(--accent-600)" stroke-width="2"/><path d="M6 15h4" stroke="var(--accent-600)" stroke-width="2" stroke-linecap="round"/></svg>',
 	),
 	array(
 		'label' => __( 'Nationwide delivery across Egypt', 'exmart' ),
-		'svg'   => '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M1 3h15v13H1zM16 8h4l3 3v5h-7V8z" stroke="var(--ink-700)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="5.5" cy="18.5" r="2.5" stroke="var(--ink-700)" stroke-width="2"/><circle cx="18.5" cy="18.5" r="2.5" stroke="var(--ink-700)" stroke-width="2"/></svg>',
+		'svg'   => '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M1 3h15v13H1zM16 8h4l3 3v5h-7V8z" stroke="var(--accent-600)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="5.5" cy="18.5" r="2.5" stroke="var(--accent-600)" stroke-width="2"/><circle cx="18.5" cy="18.5" r="2.5" stroke="var(--accent-600)" stroke-width="2"/></svg>',
 	),
 );
 ?>
