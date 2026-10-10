@@ -504,10 +504,60 @@ function exmart_co_purchased_ids( $product_id ) {
 }
 
 /**
+ * Meaningful words in a product's name (lowercase, no brand names,
+ * numbers, units or filler), used to spot the same product type.
+ *
+ * @param int $product_id Product ID.
+ * @return string[]
+ */
+function exmart_product_name_tokens( $product_id ) {
+	static $cache = array();
+	$product_id   = absint( $product_id );
+	if ( isset( $cache[ $product_id ] ) ) {
+		return $cache[ $product_id ];
+	}
+
+	$skip = array( 'the', 'and', 'with', 'for', 'from', 'pcs', 'pieces', 'piece', 'pack', 'set', 'size', 'free', 'new' );
+	if ( taxonomy_exists( 'product_brand' ) ) {
+		$brands = wp_get_post_terms( $product_id, 'product_brand', array( 'fields' => 'names' ) );
+		if ( ! is_wp_error( $brands ) ) {
+			foreach ( $brands as $brand_name ) {
+				$skip = array_merge( $skip, preg_split( '/[^\p{L}]+/u', mb_strtolower( remove_accents( $brand_name ) ), -1, PREG_SPLIT_NO_EMPTY ) );
+			}
+		}
+	}
+
+	$words  = preg_split( '/[^\p{L}]+/u', mb_strtolower( remove_accents( (string) get_post_field( 'post_title', $product_id, 'raw' ) ) ), -1, PREG_SPLIT_NO_EMPTY );
+	$tokens = array();
+	foreach ( $words as $word ) {
+		if ( mb_strlen( $word ) >= 3 && ! in_array( $word, $skip, true ) ) {
+			$tokens[] = $word;
+		}
+	}
+
+	$cache[ $product_id ] = array_values( array_unique( $tokens ) );
+	return $cache[ $product_id ];
+}
+
+/**
+ * Top-level ("department") categories of a product, e.g. Personal care.
+ *
+ * @param int $product_id Product ID.
+ * @return int[]
+ */
+function exmart_product_departments( $product_id ) {
+	$departments = array();
+	foreach ( wc_get_product_term_ids( $product_id, 'product_cat' ) as $cat_id ) {
+		$ancestors     = get_ancestors( $cat_id, 'product_cat', 'taxonomy' );
+		$departments[] = absint( $ancestors ? end( $ancestors ) : $cat_id );
+	}
+	return array_values( array_unique( $departments ) );
+}
+
+/**
  * Similar-product candidates, best first: the product's Upsells, then
  * products from its categories (most specific category first, then
- * similar price, popularity, rating), then the same brand, then store
- * best sellers as the final fallback.
+ * similar price, popularity, rating), then the same brand.
  *
  * @param WC_Product $product Current product.
  * @return int[]
@@ -587,7 +637,10 @@ function exmart_similar_product_ids( $product ) {
 			update_object_term_cache( $candidates, 'product' );
 			update_meta_cache( 'post', $candidates );
 
-			$base_price = (float) $product->get_price();
+			$base_price  = (float) $product->get_price();
+			$brand_ids   = taxonomy_exists( 'product_brand' ) ? wp_get_post_terms( $product_id, 'product_brand', array( 'fields' => 'ids' ) ) : array();
+			$brand_ids   = is_wp_error( $brand_ids ) ? array() : array_map( 'absint', $brand_ids );
+			$name_tokens = exmart_product_name_tokens( $product_id );
 
 			foreach ( $candidates as $candidate_id ) {
 				$candidate_id = absint( $candidate_id );
@@ -612,8 +665,22 @@ function exmart_similar_product_ids( $product ) {
 					}
 				}
 
+				// Same product line: same brand, and shared words in the name
+				// ("body mist", "cotton pads") — matters most in broad categories.
+				if ( $brand_ids ) {
+					$candidate_brands = wp_get_post_terms( $candidate_id, 'product_brand', array( 'fields' => 'ids' ) );
+					if ( ! is_wp_error( $candidate_brands ) && array_intersect( $brand_ids, array_map( 'absint', $candidate_brands ) ) ) {
+						$score += 3;
+					}
+				}
+				if ( $name_tokens ) {
+					$shared = count( array_intersect( $name_tokens, exmart_product_name_tokens( $candidate_id ) ) );
+					$score += min( 3, 1.5 * $shared );
+				}
+
+				// Popularity is only a tie-breaker.
 				$sales  = (int) get_post_meta( $candidate_id, 'total_sales', true );
-				$score += min( 2, log10( $sales + 1 ) );
+				$score += min( 1, log10( $sales + 1 ) / 2 );
 
 				if ( (int) get_post_meta( $candidate_id, '_wc_review_count', true ) > 0 ) {
 					$score += (float) get_post_meta( $candidate_id, '_wc_average_rating', true ) / 5;
@@ -662,23 +729,48 @@ function exmart_similar_product_ids( $product ) {
 		}
 	}
 
-	$best_sellers = get_posts(
-		array_merge(
-			$base_query,
-			array(
-				'posts_per_page' => 20,
-				'meta_key'       => 'total_sales', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
-				'orderby'        => 'meta_value_num',
-				'tax_query'      => array( $visibility ), // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
-			)
-		)
-	);
-
 	return array_merge(
 		array_map( 'absint', $product->get_upsell_ids() ),
 		wp_list_pluck( $scored, 0 ),
-		array_map( 'absint', $same_brand ),
-		array_map( 'absint', $best_sellers )
+		array_map( 'absint', $same_brand )
+	);
+}
+
+/**
+ * Store best sellers (in stock, catalog-visible), most sold first.
+ *
+ * @return int[]
+ */
+function exmart_best_seller_ids() {
+	return array_map(
+		'absint',
+		get_posts(
+			array(
+				'post_type'           => 'product',
+				'post_status'         => 'publish',
+				'fields'              => 'ids',
+				'posts_per_page'      => 20,
+				'no_found_rows'       => true,
+				'ignore_sticky_posts' => true,
+				'meta_key'            => 'total_sales', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+				'orderby'             => 'meta_value_num',
+				'order'               => 'DESC',
+				'meta_query'          => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+					array(
+						'key'   => '_stock_status',
+						'value' => 'instock',
+					),
+				),
+				'tax_query'           => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+					array(
+						'taxonomy' => 'product_visibility',
+						'field'    => 'name',
+						'terms'    => array( 'exclude-from-catalog' ),
+						'operator' => 'NOT IN',
+					),
+				),
+			)
+		)
 	);
 }
 
@@ -690,7 +782,8 @@ function exmart_similar_product_ids( $product ) {
  *    found in the same orders.
  * 2. Similar — Upsells, then the same category (most specific first).
  * 3. Same brand.
- * 4. Store best sellers.
+ * 4. Store best sellers — only when nothing above matched at all; a
+ *    short rail of relevant products beats padding it with unrelated ones.
  */
 function exmart_pdp_recommendations() {
 	global $product;
@@ -699,16 +792,35 @@ function exmart_pdp_recommendations() {
 	}
 	$current = $product;
 
+	// Order history only counts within the same department (a body mist
+	// bought alongside a toilet cleaner doesn't make the cleaner relevant).
+	$departments = exmart_product_departments( $current->get_id() );
+	$bought_with = array_values(
+		array_filter(
+			exmart_co_purchased_ids( $current->get_id() ),
+			static function ( $id ) use ( $departments ) {
+				return ! $departments || array_intersect( $departments, exmart_product_departments( $id ) );
+			}
+		)
+	);
+
 	$products = exmart_recommendable_products(
 		array_merge(
 			array_map( 'absint', $current->get_cross_sell_ids() ),
 			// At most half the rail from order history, so similar products always show too.
-			array_slice( exmart_co_purchased_ids( $current->get_id() ), 0, 4 ),
+			array_slice( $bought_with, 0, 4 ),
 			exmart_similar_product_ids( $current )
 		),
 		array_merge( array( $current->get_id() ), exmart_cart_product_ids() ),
 		8
 	);
+	if ( ! $products ) {
+		$products = exmart_recommendable_products(
+			exmart_best_seller_ids(),
+			array_merge( array( $current->get_id() ), exmart_cart_product_ids() ),
+			8
+		);
+	}
 
 	$view_all = wc_get_page_permalink( 'shop' );
 	$cats     = wc_get_product_terms( $current->get_id(), 'product_cat', array( 'fields' => 'all' ) );
