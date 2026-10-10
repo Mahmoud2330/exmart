@@ -13,6 +13,10 @@ global $product;
 if ( ! $product || ! $product->is_visible() ) return;
 
 $is_sale       = $product->is_on_sale();
+$sale_label    = $product->is_type( 'variable' ) ? exmart_discount_badge_text( $product ) : '';
+if ( $is_sale && '' === $sale_label ) {
+	$sale_label = __( 'Sale', 'exmart' );
+}
 $is_new        = has_term( array( 'new', 'new-arrivals' ), 'product_tag', $product->get_id() )
 	|| ( ( time() - get_the_date( 'U', $product->get_id() ) ) < ( 30 * DAY_IN_SECONDS ) );
 $is_bestseller = has_term( array( 'best-sellers', 'best-seller' ), 'product_tag', $product->get_id() );
@@ -22,7 +26,7 @@ $out_of_stock  = ! $product->is_in_stock();
 	<a href="<?php the_permalink(); ?>" class="em-card-img-wrap<?php echo $out_of_stock ? ' oos' : ''; ?>">
 		<div class="em-card-placeholder"><?php exmart_product_image( $product, 'exmart-card' ); ?></div>
 		<div class="em-card-badge-pos">
-			<?php if ( $is_sale ) : ?><span class="em-badge em-badge-sale"><?php esc_html_e( 'Sale', 'exmart' ); ?></span><?php endif; ?>
+			<?php if ( $is_sale ) : ?><span class="em-badge em-badge-sale"><?php echo esc_html( $sale_label ); ?></span><?php endif; ?>
 			<?php if ( $is_new ) : ?><span class="em-badge em-badge-ink"><?php esc_html_e( 'New', 'exmart' ); ?></span><?php endif; ?>
 			<?php if ( $is_bestseller && ! $is_sale && ! $is_new ) : ?><span class="em-badge em-badge-accent"><?php esc_html_e( 'Best Seller', 'exmart' ); ?></span><?php endif; ?>
 		</div>

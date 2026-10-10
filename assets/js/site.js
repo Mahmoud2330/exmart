@@ -81,6 +81,7 @@
 		initBrandFilter();
 		initCardAtc();
 		initPdpVariationPills();
+		initPdpVariationPrice();
 		initPdpStarPicker();
 		initShopFilters();
 		initShopFiltersDrawer();
@@ -476,6 +477,87 @@
 	}
 
 	/**
+	 * Variable PDP: when a size is picked, the big price, struck-through
+	 * regular price and the −X% badge switch to that variation; clearing
+	 * the selection restores the "From …" / "Up to −X%" summary.
+	 */
+	function initPdpVariationPrice() {
+		var form = document.querySelector( '.em-pdp-info form.variations_form' );
+		var priceBox = document.querySelector( '[data-em-pdp-price]' );
+		if ( ! form || ! priceBox || typeof jQuery === 'undefined' ) return;
+
+		var productEl = form.closest( '.product' ) || document;
+		var flash = productEl.querySelector( '[data-em-sale-flash]' );
+		var originalPrice = priceBox.innerHTML;
+		var originalFlash = flash ? flash.textContent : '';
+
+		var decimals = parseInt( priceBox.getAttribute( 'data-decimals' ), 10 );
+		if ( isNaN( decimals ) ) decimals = 2;
+		var decSep = priceBox.getAttribute( 'data-dec-sep' ) || '.';
+		var thoSep = priceBox.getAttribute( 'data-tho-sep' ) || '';
+
+		function formatPrice( amount ) {
+			var parts = Number( amount ).toFixed( decimals ).split( '.' );
+			parts[ 0 ] = parts[ 0 ].replace( /\B(?=(\d{3})+(?!\d))/g, thoSep );
+			return parts.join( decSep );
+		}
+
+		function el( cls, text ) {
+			var span = document.createElement( 'span' );
+			span.className = cls;
+			span.textContent = text;
+			return span;
+		}
+
+		function restore() {
+			priceBox.innerHTML = originalPrice;
+			if ( flash ) {
+				flash.textContent = originalFlash;
+				flash.style.display = '';
+			}
+		}
+
+		jQuery( form ).on( 'show_variation', function ( event, variation ) {
+			if ( ! variation || typeof variation.display_price === 'undefined' ) {
+				restore();
+				return;
+			}
+			var price = parseFloat( variation.display_price );
+			var regular = parseFloat( variation.display_regular_price );
+			var onSale = regular > 0 && price < regular;
+
+			var lockup = priceBox.querySelector( '.em-price-lockup' );
+			var currency = lockup ? lockup.querySelector( '.em-price-currency' ) : null;
+			var fresh = document.createElement( 'span' );
+			fresh.className = 'em-price-lockup';
+			fresh.appendChild( el( 'em-price-currency', currency ? currency.textContent : '' ) );
+			fresh.appendChild( el( 'em-price-number em-price-number-lg' + ( onSale ? ' sale' : '' ), formatPrice( price ) ) );
+			if ( onSale ) {
+				fresh.appendChild( el( 'em-price-compare', formatPrice( regular ) ) );
+			}
+			priceBox.innerHTML = '';
+			priceBox.appendChild( fresh );
+
+			if ( flash ) {
+				if ( onSale ) {
+					flash.textContent = '−' + Math.round( ( 1 - price / regular ) * 100 ) + '%';
+					flash.style.display = '';
+				} else {
+					flash.style.display = 'none';
+				}
+			}
+		} );
+
+		jQuery( form ).on( 'hide_variation reset_data', restore );
+
+		// A default size may have been resolved before this listener existed.
+		var variationInput = form.querySelector( 'input[name="variation_id"]' );
+		if ( variationInput && variationInput.value && variationInput.value !== '0' ) {
+			jQuery( form ).trigger( 'check_variations' );
+		}
+	}
+
+	/**
 	 * Interactive star rating for the PDP review form.
 	 */
 	function initPdpStarPicker() {
@@ -691,6 +773,10 @@
 		document.addEventListener( 'keydown', function ( e ) { if ( e.key === 'Escape' ) hide(); } );
 
 		// Card ATC uses an inline stepper — do not auto-open the drawer on add.
+		// Full-page adds (variable products) confirm by opening it instead.
+		if ( document.body.classList.contains( 'em-just-added-to-cart' ) ) {
+			show();
+		}
 	}
 
 	// ── FAQ accordion ──────────────────────────────────────

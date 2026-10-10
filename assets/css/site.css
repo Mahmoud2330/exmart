@@ -450,6 +450,8 @@
 .em-pdp-price .em-price-lockup {
 	align-items: baseline;
 }
+/* The big price above already switches per size — drop WC's duplicate. */
+.em-pdp-info .woocommerce-variation-price { display: none; }
 .em-pdp-price .em-price-currency {
 	font-size: .8125rem;
 	letter-spacing: .06em;
@@ -627,6 +629,8 @@
 	max-width: 100% !important;
 	margin: 0 !important;
 	position: relative;
+	/* WC gives the zoom trigger z-index 99; keep it under the sticky header. */
+	isolation: isolate;
 }
 .em-pdp-gallery .woocommerce-product-gallery__wrapper {
 	border-radius: var(--r-md);

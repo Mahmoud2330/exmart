@@ -3,7 +3,7 @@ Theme Name: exMart
 Theme URI: https://exmart.eg
 Author: exMart
 Description: Authentic health & hygiene storefront theme for WooCommerce. Ported from the exMart React storefront design system.
-Version: 1.1.10
+Version: 1.1.11
 Requires at least: 6.0
 Tested up to: 6.6
 Requires PHP: 7.4
@@ -250,6 +250,7 @@ input[type="checkbox"]:focus-visible {
 
 /* ── Price lockup ──────────────────────────────────────── */
 .em-price-lockup { display:inline-flex; align-items:baseline; gap:6px; font-variant-numeric: tabular-nums; flex-wrap: wrap; }
+.em-price-from { font-size:.75rem; font-weight:500; color: var(--ink-500); }
 .em-price-currency { font-size:.75rem; letter-spacing:.08em; text-transform:uppercase; font-weight:600; color: var(--ink-500); }
 .em-price-number { font-size:1rem; font-weight:600; color: var(--ink-900); }
 .em-price-number.sale,

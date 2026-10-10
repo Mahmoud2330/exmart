@@ -654,7 +654,12 @@ function exmart_pdp_price() {
 	if ( ! $product instanceof WC_Product ) {
 		return;
 	}
-	echo '<div class="em-pdp-price">';
+	printf(
+		'<div class="em-pdp-price" data-em-pdp-price data-decimals="%s" data-dec-sep="%s" data-tho-sep="%s">',
+		esc_attr( (string) wc_get_price_decimals() ),
+		esc_attr( wc_get_price_decimal_separator() ),
+		esc_attr( wc_get_price_thousand_separator() )
+	);
 	exmart_card_price_html( $product, true );
 	echo '</div>';
 }
@@ -835,22 +840,38 @@ add_filter( 'woocommerce_get_availability', 'exmart_pdp_availability_class', 10,
  * @return string
  */
 function exmart_pdp_sale_flash( $html, $post, $product ) {
-	if ( ! $product instanceof WC_Product || ! $product->is_on_sale() ) {
+	if ( ! $product instanceof WC_Product ) {
 		return $html;
 	}
-	$regular = (float) $product->get_regular_price();
-	$sale    = (float) $product->get_sale_price();
-	if ( $product->is_type( 'variable' ) ) {
-		$regular = (float) $product->get_variation_regular_price( 'min', true );
-		$sale    = (float) $product->get_variation_sale_price( 'min', true );
-	}
-	if ( $regular <= 0 || $sale <= 0 || $sale >= $regular ) {
+	$text = exmart_discount_badge_text( $product );
+	if ( '' === $text ) {
 		return $html;
 	}
-	$pct = (int) round( ( 1 - ( $sale / $regular ) ) * 100 );
-	return '<span class="onsale em-badge em-badge-sale">−' . esc_html( (string) $pct ) . '%</span>';
+	return '<span class="onsale em-badge em-badge-sale" data-em-sale-flash>' . esc_html( $text ) . '</span>';
 }
 add_filter( 'woocommerce_sale_flash', 'exmart_pdp_sale_flash', 10, 3 );
+
+/**
+ * Variable products are added to the cart with a full-page form submit,
+ * which makes WooCommerce print an "added to your cart" banner above the
+ * product. The theme opens the mini-cart drawer instead (see body class).
+ */
+add_filter( 'wc_add_to_cart_message_html', '__return_empty_string' );
+
+/**
+ * Flag a page rendered right after a non-AJAX add to cart so site.js
+ * can open the mini-cart drawer as confirmation.
+ *
+ * @param string[] $classes Body classes.
+ * @return string[]
+ */
+function exmart_just_added_body_class( $classes ) {
+	if ( did_action( 'woocommerce_add_to_cart' ) && ! wp_doing_ajax() && ! is_cart() && ! is_checkout() ) {
+		$classes[] = 'em-just-added-to-cart';
+	}
+	return $classes;
+}
+add_filter( 'body_class', 'exmart_just_added_body_class' );
 
 /**
  * PDP breadcrumb: Home / Category / Product (Figma).

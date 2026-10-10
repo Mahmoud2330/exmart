@@ -73,8 +73,75 @@ function exmart_format_card_price( $amount ) {
 }
 
 /**
+ * Price/discount summary across a variable product's variations, using
+ * each variation's own regular and active price (so the cheapest price
+ * is compared to *its own* regular price, never another size's).
+ *
+ * @param WC_Product $product Variable product.
+ * @return array{min:float,min_regular:float,max:float,max_pct:int,uniform_pct:bool}|null
+ */
+function exmart_variable_price_summary( $product ) {
+	if ( ! $product || ! is_a( $product, 'WC_Product' ) || ! $product->is_type( 'variable' ) ) {
+		return null;
+	}
+	$prices = $product->get_variation_prices( true );
+	if ( empty( $prices['price'] ) ) {
+		return null;
+	}
+	$pcts = array();
+	foreach ( $prices['price'] as $variation_id => $price ) {
+		$price   = (float) $price;
+		$regular = isset( $prices['regular_price'][ $variation_id ] ) ? (float) $prices['regular_price'][ $variation_id ] : $price;
+		$pcts[]  = ( $regular > 0 && $price < $regular ) ? (int) round( ( 1 - $price / $regular ) * 100 ) : 0;
+	}
+	$ids    = array_keys( $prices['price'] );
+	$min_id = $ids[0];
+	$min    = (float) $prices['price'][ $min_id ];
+	return array(
+		'min'         => $min,
+		'min_regular' => isset( $prices['regular_price'][ $min_id ] ) ? (float) $prices['regular_price'][ $min_id ] : $min,
+		'max'         => (float) end( $prices['price'] ),
+		'max_pct'     => $pcts ? max( $pcts ) : 0,
+		'uniform_pct' => 1 === count( array_unique( $pcts ) ),
+	);
+}
+
+/**
+ * Discount badge text for a product: "−25%", or "Up to −25%" when a
+ * variable product's sizes are discounted by different amounts.
+ * Empty string when nothing is discounted.
+ *
+ * @param WC_Product $product Product.
+ * @return string
+ */
+function exmart_discount_badge_text( $product ) {
+	if ( ! $product || ! is_a( $product, 'WC_Product' ) || ! $product->is_on_sale() ) {
+		return '';
+	}
+	if ( $product->is_type( 'variable' ) ) {
+		$summary = exmart_variable_price_summary( $product );
+		if ( ! $summary || $summary['max_pct'] < 1 ) {
+			return '';
+		}
+		return $summary['uniform_pct']
+			/* translators: %d: discount percentage */
+			? sprintf( __( '−%d%%', 'exmart' ), $summary['max_pct'] )
+			/* translators: %d: largest discount percentage among sizes */
+			: sprintf( __( 'Up to −%d%%', 'exmart' ), $summary['max_pct'] );
+	}
+	$regular = (float) $product->get_regular_price();
+	$sale    = (float) $product->get_sale_price();
+	if ( $regular <= 0 || $sale <= 0 || $sale >= $regular ) {
+		return '';
+	}
+	/* translators: %d: discount percentage */
+	return sprintf( __( '−%d%%', 'exmart' ), (int) round( ( 1 - $sale / $regular ) * 100 ) );
+}
+
+/**
  * Product-card price lockup (Figma): EGP + sale in red + struck regular.
  * Avoids WooCommerce <ins>/<del> markup that theme/plugin CSS often overrides.
+ * Variable products with a price range get a "From" prefix.
  *
  * @param WC_Product $product Product.
  * @param bool       $large   Larger number (PDP).
@@ -90,11 +157,17 @@ function exmart_card_price_html( $product, $large = false ) {
 	$current  = null;
 	$regular  = null;
 	$on_sale  = $product->is_on_sale();
+	$is_range = false;
 
 	if ( $product->is_type( 'variable' ) ) {
-		$current = (float) $product->get_variation_price( 'min', true );
-		$regular = (float) $product->get_variation_regular_price( 'min', true );
-		$on_sale = $on_sale && $regular > 0 && $current < $regular;
+		$summary = exmart_variable_price_summary( $product );
+		if ( ! $summary ) {
+			return;
+		}
+		$current  = $summary['min'];
+		$regular  = $summary['min_regular'];
+		$is_range = $summary['max'] > $summary['min'];
+		$on_sale  = $regular > 0 && $current < $regular;
 	} else {
 		$current = wc_get_price_to_display( $product );
 		$reg_raw = $product->get_regular_price();
@@ -113,6 +186,9 @@ function exmart_card_price_html( $product, $large = false ) {
 	}
 
 	echo '<span class="em-price-lockup">';
+	if ( $is_range ) {
+		echo '<span class="em-price-from">' . esc_html__( 'From', 'exmart' ) . '</span>';
+	}
 	echo '<span class="em-price-currency">' . esc_html( $label ) . '</span>';
 
 	if ( $on_sale && null !== $regular ) {
