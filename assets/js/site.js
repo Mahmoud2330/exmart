@@ -80,6 +80,7 @@
 		initWishlistPage();
 		initBrandFilter();
 		initCardAtc();
+		initShopBannerSliders();
 		initPdpVariationPills();
 		initPdpVariationPrice();
 		initPdpStarPicker();
@@ -473,6 +474,52 @@
 				} );
 				refreshLabel();
 			} );
+		} );
+	}
+
+	/**
+	 * Shop Page Banner with 2+ slides: swipe/scroll-snap track, dots, and
+	 * autoplay every 5s (paused while hovered/touched, off for reduced motion).
+	 */
+	function initShopBannerSliders() {
+		var reduceMotion = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
+		document.querySelectorAll( '[data-em-banner-slider]' ).forEach( function ( banner ) {
+			var track = banner.querySelector( '.em-shop-banner-track' );
+			var dots = Array.prototype.slice.call( banner.querySelectorAll( '.em-shop-banner-dot' ) );
+			if ( ! track || dots.length < 2 ) return;
+			var count = dots.length;
+			var paused = false;
+
+			function current() {
+				return track.clientWidth ? Math.round( track.scrollLeft / track.clientWidth ) : 0;
+			}
+			function goTo( index ) {
+				track.scrollTo( { left: ( ( index + count ) % count ) * track.clientWidth, behavior: 'smooth' } );
+			}
+
+			dots.forEach( function ( dot ) {
+				dot.addEventListener( 'click', function () {
+					goTo( parseInt( dot.getAttribute( 'data-index' ), 10 ) || 0 );
+				} );
+			} );
+			track.addEventListener( 'scroll', function () {
+				var active = current();
+				dots.forEach( function ( dot, i ) { dot.classList.toggle( 'is-active', i === active ); } );
+			}, { passive: true } );
+
+			[ 'mouseenter', 'touchstart', 'focusin' ].forEach( function ( type ) {
+				banner.addEventListener( type, function () { paused = true; }, { passive: true } );
+			} );
+			[ 'mouseleave', 'touchend', 'focusout' ].forEach( function ( type ) {
+				banner.addEventListener( type, function () { paused = false; }, { passive: true } );
+			} );
+
+			if ( reduceMotion ) return;
+			window.setInterval( function () {
+				// Skip the copy hidden at this breakpoint (phone vs desktop variant).
+				if ( paused || ! banner.offsetParent ) return;
+				goTo( current() + 1 );
+			}, 5000 );
 		} );
 	}
 

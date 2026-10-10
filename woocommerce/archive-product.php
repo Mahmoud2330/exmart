@@ -61,33 +61,14 @@ if ( is_product_category() || is_product_tag() ) {
 	<?php exmart_shop_active_filters(); ?>
 
 	<?php
-	$em_shop_banner        = exmart_get_promo_image( 'exmart_shop_banner_image', 'shop-banner' );
-	$em_shop_banner_mobile = exmart_get_promo_image( 'exmart_shop_banner_mobile_image' );
-	if ( ! $em_shop_banner ) {
-		$em_shop_banner = $em_shop_banner_mobile;
-	}
-	if ( ! $em_shop_banner_mobile ) {
-		$em_shop_banner_mobile = $em_shop_banner;
-	}
-	if ( $em_shop_banner ) :
-		$em_shop_banner_link = get_theme_mod( 'exmart_shop_banner_link', '' );
-		if ( ! $em_shop_banner_link ) {
-			$em_shop_banner_link = exmart_rail_view_all_url( 'offers' );
-		}
-		?>
-		<a class="em-shop-banner" href="<?php echo esc_url( $em_shop_banner_link ); ?>">
-			<img src="<?php echo esc_url( $em_shop_banner_mobile['url'] ); ?>" alt="<?php echo esc_attr( $em_shop_banner_mobile['alt'] ); ?>" loading="lazy" decoding="async" />
-		</a>
-	<?php endif; ?>
+	$em_shop_banner_slides = exmart_shop_banner_slides();
+	exmart_render_shop_banner( $em_shop_banner_slides, 'mobile' );
+	?>
 
 	<div class="em-shop-layout">
 		<div class="em-backdrop" id="em-shop-filters-backdrop" hidden></div>
 		<div class="em-shop-side">
-			<?php if ( $em_shop_banner ) : ?>
-				<a class="em-shop-banner em-shop-banner--side" href="<?php echo esc_url( $em_shop_banner_link ); ?>">
-					<img src="<?php echo esc_url( $em_shop_banner['url'] ); ?>" alt="<?php echo esc_attr( $em_shop_banner['alt'] ); ?>" loading="lazy" decoding="async" />
-				</a>
-			<?php endif; ?>
+			<?php exmart_render_shop_banner( $em_shop_banner_slides, 'desktop' ); ?>
 			<aside class="em-shop-filters" id="em-shop-filters" aria-label="<?php esc_attr_e( 'Product filters', 'exmart' ); ?>">
 				<div class="em-shop-filters-header">
 					<h2 class="em-h4"><?php esc_html_e( 'Filters', 'exmart' ); ?></h2>

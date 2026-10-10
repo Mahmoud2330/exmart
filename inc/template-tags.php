@@ -842,6 +842,93 @@ function exmart_get_promo_image( $mod_key, $filename_hint = '' ) {
 }
 
 /**
+ * Customizer setting names for each Shop Page Banner slide (1-based).
+ * Slide 1 keeps the original single-banner keys so existing setups carry over.
+ *
+ * @return array<int,array{desktop:string,mobile:string,link:string}>
+ */
+function exmart_shop_banner_slide_keys() {
+	$slides = array(
+		1 => array(
+			'desktop' => 'exmart_shop_banner_image',
+			'mobile'  => 'exmart_shop_banner_mobile_image',
+			'link'    => 'exmart_shop_banner_link',
+		),
+	);
+	for ( $n = 2; $n <= 3; $n++ ) {
+		$slides[ $n ] = array(
+			'desktop' => "exmart_shop_banner{$n}_image",
+			'mobile'  => "exmart_shop_banner{$n}_mobile_image",
+			'link'    => "exmart_shop_banner{$n}_link",
+		);
+	}
+	return $slides;
+}
+
+/**
+ * Shop Page Banner slides that have at least one image. Each slide falls
+ * back to its other image when one is missing; slide 1 also falls back to
+ * a Media Library file named "shop-banner*".
+ *
+ * @return array<int,array{desktop:array,mobile:array,link:string}>
+ */
+function exmart_shop_banner_slides() {
+	$slides = array();
+	foreach ( exmart_shop_banner_slide_keys() as $n => $keys ) {
+		$desktop = exmart_get_promo_image( $keys['desktop'], 1 === $n ? 'shop-banner' : '' );
+		$mobile  = exmart_get_promo_image( $keys['mobile'] );
+		if ( ! $desktop && ! $mobile ) {
+			continue;
+		}
+		$link     = trim( (string) get_theme_mod( $keys['link'], '' ) );
+		$slides[] = array(
+			'desktop' => $desktop ? $desktop : $mobile,
+			'mobile'  => $mobile ? $mobile : $desktop,
+			'link'    => '' !== $link ? $link : exmart_rail_view_all_url( 'offers' ),
+		);
+	}
+	return $slides;
+}
+
+/**
+ * Render the Shop Page Banner (one variant) as a slider of linked images.
+ *
+ * @param array  $slides  From exmart_shop_banner_slides().
+ * @param string $variant 'desktop' (tall, beside filters) or 'mobile' (wide strip).
+ */
+function exmart_render_shop_banner( $slides, $variant ) {
+	if ( empty( $slides ) ) {
+		return;
+	}
+	$class = 'em-shop-banner' . ( 'desktop' === $variant ? ' em-shop-banner--side' : '' );
+	$multi = count( $slides ) > 1;
+	?>
+	<div class="<?php echo esc_attr( $class ); ?>"<?php echo $multi ? ' data-em-banner-slider' : ''; ?>>
+		<div class="em-shop-banner-track">
+			<?php foreach ( $slides as $slide ) : ?>
+				<a class="em-shop-banner-slide" href="<?php echo esc_url( $slide['link'] ); ?>">
+					<img src="<?php echo esc_url( $slide[ $variant ]['url'] ); ?>" alt="<?php echo esc_attr( $slide[ $variant ]['alt'] ); ?>" loading="lazy" decoding="async" />
+				</a>
+			<?php endforeach; ?>
+		</div>
+		<?php if ( $multi ) : ?>
+			<div class="em-shop-banner-dots">
+				<?php foreach ( $slides as $i => $slide ) : ?>
+					<button
+						type="button"
+						class="em-shop-banner-dot<?php echo 0 === $i ? ' is-active' : ''; ?>"
+						data-index="<?php echo esc_attr( (string) $i ); ?>"
+						<?php /* translators: %d: slide number */ ?>
+						aria-label="<?php echo esc_attr( sprintf( __( 'Show banner %d', 'exmart' ), $i + 1 ) ); ?>"
+					></button>
+				<?php endforeach; ?>
+			</div>
+		<?php endif; ?>
+	</div>
+	<?php
+}
+
+/**
  * Homepage hero tiles: Customizer image setting, filename fallback, and
  * the built-in copy each text field shows until someone edits it.
  *

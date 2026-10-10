@@ -235,63 +235,58 @@ function exmart_customize_register( $wp_customize ) {
 		'exmart_shop_banner',
 		array(
 			'title'       => __( 'Shop Page Banner', 'exmart' ),
-			'description' => __( 'Shoppable banner shown on the Shop page and every category/tag page: a tall banner beside the filters on desktop, a wide strip above the products on phones. If only one image is set, it is used (cropped) for both. Leave both empty to hide the banner.', 'exmart' ),
+			'description' => __( 'Shoppable banner shown on the Shop page and every category/tag page: a tall banner beside the filters on desktop, a wide strip above the products on phones. Up to 3 slides rotate automatically; a slide with no images is skipped. If a slide has only one of its two images, that image is used (cropped) for both.', 'exmart' ),
 			'priority'    => 31,
 		)
 	);
-	$wp_customize->add_setting(
-		'exmart_shop_banner_image',
-		array(
-			'default'           => 0,
-			'sanitize_callback' => 'absint',
-		)
-	);
-	$wp_customize->add_control(
-		new WP_Customize_Media_Control(
-			$wp_customize,
-			'exmart_shop_banner_image',
+	foreach ( exmart_shop_banner_slide_keys() as $n => $keys ) {
+		$priority = $n * 10;
+		foreach ( array( 'desktop', 'mobile' ) as $variant ) {
+			$wp_customize->add_setting(
+				$keys[ $variant ],
+				array(
+					'default'           => 0,
+					'sanitize_callback' => 'absint',
+				)
+			);
+			$wp_customize->add_control(
+				new WP_Customize_Media_Control(
+					$wp_customize,
+					$keys[ $variant ],
+					array(
+						'label'       => 'desktop' === $variant
+							/* translators: %d: slide number */
+							? sprintf( __( 'Slide %d — desktop banner (tall)', 'exmart' ), $n )
+							/* translators: %d: slide number */
+							: sprintf( __( 'Slide %d — phone banner (wide)', 'exmart' ), $n ),
+						'description' => 'desktop' === $variant
+							? __( 'Portrait, 3:4 — e.g. 900 × 1200 px.', 'exmart' )
+							: __( 'Wide strip, 21:6 — e.g. 1400 × 400 px.', 'exmart' ),
+						'section'     => 'exmart_shop_banner',
+						'mime_type'   => 'image',
+						'priority'    => $priority++,
+					)
+				)
+			);
+		}
+		$wp_customize->add_setting(
+			$keys['link'],
 			array(
-				'label'       => __( 'Desktop banner (tall)', 'exmart' ),
-				'description' => __( 'Portrait, 3:4 — e.g. 900 × 1200 px.', 'exmart' ),
-				'section'     => 'exmart_shop_banner',
-				'mime_type'   => 'image',
+				'default'           => '',
+				'sanitize_callback' => 'exmart_sanitize_hero_link',
 			)
-		)
-	);
-	$wp_customize->add_setting(
-		'exmart_shop_banner_mobile_image',
-		array(
-			'default'           => 0,
-			'sanitize_callback' => 'absint',
-		)
-	);
-	$wp_customize->add_control(
-		new WP_Customize_Media_Control(
-			$wp_customize,
-			'exmart_shop_banner_mobile_image',
+		);
+		$wp_customize->add_control(
+			$keys['link'],
 			array(
-				'label'       => __( 'Phone banner (wide)', 'exmart' ),
-				'description' => __( 'Wide strip, 21:6 — e.g. 1400 × 400 px.', 'exmart' ),
+				/* translators: %d: slide number */
+				'label'       => sprintf( __( 'Slide %d — link (optional)', 'exmart' ), $n ),
+				'description' => __( 'Where this slide takes shoppers. Defaults to the Offers collection if left blank.', 'exmart' ),
 				'section'     => 'exmart_shop_banner',
-				'mime_type'   => 'image',
+				'type'        => 'text',
+				'priority'    => $priority++,
 			)
-		)
-	);
-	$wp_customize->add_setting(
-		'exmart_shop_banner_link',
-		array(
-			'default'           => '',
-			'sanitize_callback' => 'exmart_sanitize_hero_link',
-		)
-	);
-	$wp_customize->add_control(
-		'exmart_shop_banner_link',
-		array(
-			'label'       => __( 'Banner link (optional)', 'exmart' ),
-			'description' => __( 'Where the banner should take shoppers. Defaults to the Offers collection if left blank.', 'exmart' ),
-			'section'     => 'exmart_shop_banner',
-			'type'        => 'text',
-		)
-	);
+		);
+	}
 }
 add_action( 'customize_register', 'exmart_customize_register' );
