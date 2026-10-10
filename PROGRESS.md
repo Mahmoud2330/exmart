@@ -136,6 +136,7 @@ Theme was at **1.0.17** when this doc was written; current head is **1.0.70**. A
 
 ## Changelog
 
+- **2026-10-10 — v1.1.23** — Header search border: now two layers in logo colours — a 1.5px blue→red gradient inner border (`#004B97` → `#DD3921`), a 2px white gap, then a blue outer ring (`#004B97`, 2px), gap and blue ring via box-shadow. Focus outline offset bumped to 6px so it clears the blue ring. Changed `style.css`.
 - **2026-10-10 — v1.1.22** — Header search input now has a 2px gradient border from the logo blue (`#004B97`) to the logo red (`#DD3921`), left to right. Focus keeps the gradient plus the usual blue focus outline. Changed `style.css`.
 - **2026-10-10 — v1.1.21** — Desktop shop banner (right sticky column) now fills the viewport height below the sticky header instead of a 9:16 frame (min 360px). Changed `assets/css/site.css`.
 - **2026-10-10 — v1.1.20** — Desktop shop banner moved from above the filters (left) to its own right-hand column (220px filters · grid · 240px banner) at 1200px+. Banner is now taller (9:16, capped to the viewport height) and sticky: it follows the user down the page, sitting just below the sticky header (`--em-header-h`, set from JS). With the banner column the grid is 3-up instead of 4-up. Below 1200px (and on mobile) the wide strip above the grid is unchanged. Changed `woocommerce/archive-product.php`, `assets/css/site.css`, `assets/js/site.js`.

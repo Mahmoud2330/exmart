@@ -3,7 +3,7 @@ Theme Name: exMart
 Theme URI: https://exmart.eg
 Author: exMart
 Description: Authentic health & hygiene storefront theme for WooCommerce. Ported from the exMart React storefront design system.
-Version: 1.1.22
+Version: 1.1.23
 Requires at least: 6.0
 Tested up to: 6.6
 Requires PHP: 7.4
@@ -349,17 +349,18 @@ input[type="checkbox"]:focus-visible {
   color: var(--ink-400);
   pointer-events: none;
 }
-/* Gradient border (logo blue → logo red): white fill clipped to the padding box,
-   gradient painted under the transparent border. */
+/* Logo-colour frame: 1.5px blue→red gradient border inside, 2px white gap, 2px blue ring outside.
+   Gradient border = white fill clipped to the padding box over a gradient under the transparent border. */
 .em-header-search-form .em-input {
   padding-inline-start: 40px;
   min-height: 44px;
-  border: 2px solid transparent;
+  border: 1.5px solid transparent;
   background:
     linear-gradient(var(--paper), var(--paper)) padding-box,
     linear-gradient(90deg, #004B97, #DD3921) border-box;
+  box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px #004B97;
 }
-.em-header-search-form .em-input:focus { border-color: transparent; }
+.em-header-search-form .em-input:focus { border-color: transparent; outline-offset: 6px; }
 
 /* ── Mega menu ─────────────────────────────────────────── */
 .em-mega { position:absolute; top:100%; left:0; right:0; background: var(--paper); border-top: 1px solid var(--ink-200); box-shadow: var(--shadow-menu); z-index:30; display: none; }
