@@ -61,7 +61,14 @@ if ( is_product_category() || is_product_tag() ) {
 	<?php exmart_shop_active_filters(); ?>
 
 	<?php
-	$em_shop_banner = exmart_get_promo_image( 'exmart_shop_banner_image', 'shop-banner' );
+	$em_shop_banner        = exmart_get_promo_image( 'exmart_shop_banner_image', 'shop-banner' );
+	$em_shop_banner_mobile = exmart_get_promo_image( 'exmart_shop_banner_mobile_image' );
+	if ( ! $em_shop_banner ) {
+		$em_shop_banner = $em_shop_banner_mobile;
+	}
+	if ( ! $em_shop_banner_mobile ) {
+		$em_shop_banner_mobile = $em_shop_banner;
+	}
 	if ( $em_shop_banner ) :
 		$em_shop_banner_link = get_theme_mod( 'exmart_shop_banner_link', '' );
 		if ( ! $em_shop_banner_link ) {
@@ -69,7 +76,7 @@ if ( is_product_category() || is_product_tag() ) {
 		}
 		?>
 		<a class="em-shop-banner" href="<?php echo esc_url( $em_shop_banner_link ); ?>">
-			<img src="<?php echo esc_url( $em_shop_banner['url'] ); ?>" alt="<?php echo esc_attr( $em_shop_banner['alt'] ); ?>" loading="lazy" decoding="async" />
+			<img src="<?php echo esc_url( $em_shop_banner_mobile['url'] ); ?>" alt="<?php echo esc_attr( $em_shop_banner_mobile['alt'] ); ?>" loading="lazy" decoding="async" />
 		</a>
 	<?php endif; ?>
 
