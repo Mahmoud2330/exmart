@@ -1499,11 +1499,12 @@ body:not(.logged-in).woocommerce-account .col-2 {
 		top: calc(var(--em-header-h, 140px) + var(--s4));
 	}
 	.em-shop-banner--side { margin-bottom: 0; }
-	/* Tall 9:16 frame, capped so the whole banner (and its dots) stays in
-	   view under the sticky header while scrolling. */
+	/* Fills the viewport below the sticky header, leaving room for the dots
+	   so the whole banner stays in view while scrolling. */
 	.em-shop-banner--side .em-shop-banner-track {
-		aspect-ratio: 9 / 16;
-		max-height: calc(100vh - var(--em-header-h, 140px) - var(--s4) * 2 - 24px);
+		aspect-ratio: auto;
+		height: calc(100vh - var(--em-header-h, 140px) - var(--s4) * 2 - 24px);
+		min-height: 360px;
 	}
 }
 
