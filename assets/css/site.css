@@ -135,7 +135,7 @@
 	text-decoration: none;
 	flex: 0 0 clamp(250px, 80vw, 340px);
 	scroll-snap-align: start;
-	min-height: 280px;
+	min-height: 392px;
 	padding: clamp(18px, 2.2vw, 28px);
 }
 .em-hero-tile--main { background: linear-gradient(135deg, var(--ink-900) 0%, var(--accent-700) 100%); }
@@ -144,7 +144,7 @@
 .em-hero-tile--best { background: linear-gradient(135deg, #3A2A08 0%, var(--warning) 100%); }
 @media (min-width: 900px) {
 	/* 3.3 tiles per view: three whole tiles plus a slice of the next as a scroll cue. */
-	.em-hero-tile { flex: 0 0 calc((100% - 3 * var(--s4)) / 3.3); min-height: 300px; }
+	.em-hero-tile { flex: 0 0 calc((100% - 3 * var(--s4)) / 3.3); min-height: 420px; }
 }
 
 /* Prev/next arrows — desktop only; mobile keeps swipe + autoplay. */
