@@ -532,8 +532,9 @@ function exmart_similar_product_ids( $product ) {
 		'post__not_in'           => array( $product_id ),
 		'no_found_rows'          => true,
 		'ignore_sticky_posts'    => true,
-		'meta_key'               => 'total_sales', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
-		'orderby'                => 'meta_value_num',
+		// Not ordered by the total_sales meta in SQL: that join silently drops
+		// products with no total_sales row (common for imported products).
+		'orderby'                => 'date',
 		'order'                  => 'DESC',
 		'meta_query'             => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 			array(
@@ -608,7 +609,6 @@ function exmart_similar_product_ids( $product ) {
 				$scored[] = array( $candidate_id, $score );
 			}
 
-			// Stable sort keeps best-seller order between equal scores.
 			usort(
 				$scored,
 				static function ( $a, $b ) {
@@ -638,6 +638,15 @@ function exmart_similar_product_ids( $product ) {
 				)
 			)
 		);
+		if ( $same_brand ) {
+			update_meta_cache( 'post', $same_brand );
+			usort(
+				$same_brand,
+				static function ( $a, $b ) {
+					return (int) get_post_meta( $b, 'total_sales', true ) <=> (int) get_post_meta( $a, 'total_sales', true );
+				}
+			);
+		}
 	}
 
 	$best_sellers = get_posts(
@@ -645,6 +654,8 @@ function exmart_similar_product_ids( $product ) {
 			$base_query,
 			array(
 				'posts_per_page' => 20,
+				'meta_key'       => 'total_sales', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+				'orderby'        => 'meta_value_num',
 				'tax_query'      => array( $visibility ), // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
 			)
 		)
