@@ -152,39 +152,21 @@ function exmart_customize_register( $wp_customize ) {
 		'exmart_hero',
 		array(
 			'title'       => __( 'Homepage Hero', 'exmart' ),
-			'description' => __( 'Background photos for the four homepage banner tiles. A dark overlay is applied automatically so the text stays readable. Leave a slot empty to fall back to the Media Library file named big-block / top-right / bottom-left / bottom-right.', 'exmart' ),
+			'description' => __( 'Image, text and button link for each of the four homepage banners. A dark overlay is applied automatically so the text stays readable. Empty image: falls back to the Media Library file named big-block / top-right / bottom-left / bottom-right. Empty text box: that line is hidden. Empty link: the automatic link is used.', 'exmart' ),
 			'priority'    => 30,
 		)
 	);
 
-	$wp_customize->add_setting(
-		'exmart_hero_image',
-		array(
-			'default'           => 0,
-			'sanitize_callback' => 'absint',
-		)
+	$hero_fields = array(
+		'kicker' => array( __( 'Small label above the headline', 'exmart' ), 'text', 'sanitize_text_field' ),
+		'title'  => array( __( 'Headline', 'exmart' ), 'text', 'sanitize_text_field' ),
+		'desc'   => array( __( 'Description', 'exmart' ), 'textarea', 'sanitize_textarea_field' ),
+		'cta'    => array( __( 'Button text', 'exmart' ), 'text', 'sanitize_text_field' ),
 	);
-	$wp_customize->add_control(
-		new WP_Customize_Media_Control(
-			$wp_customize,
-			'exmart_hero_image',
-			array(
-				'label'     => __( 'Main tile image (first banner)', 'exmart' ),
-				'section'   => 'exmart_hero',
-				'mime_type' => 'image',
-			)
-		)
-	);
-
-	/* Bento hero: three secondary promo tiles (Offers / New in / Best sellers). */
-	$promo_tiles = array(
-		'exmart_promo1_image' => __( 'Promo tile 1 image (Offers)', 'exmart' ),
-		'exmart_promo2_image' => __( 'Promo tile 2 image (New in)', 'exmart' ),
-		'exmart_promo3_image' => __( 'Promo tile 3 image (Best sellers)', 'exmart' ),
-	);
-	foreach ( $promo_tiles as $setting_id => $label ) {
+	$priority = 10;
+	foreach ( exmart_hero_tiles_config() as $tile => $config ) {
 		$wp_customize->add_setting(
-			$setting_id,
+			$config['image_mod'],
 			array(
 				'default'           => 0,
 				'sanitize_callback' => 'absint',
@@ -193,14 +175,59 @@ function exmart_customize_register( $wp_customize ) {
 		$wp_customize->add_control(
 			new WP_Customize_Media_Control(
 				$wp_customize,
-				$setting_id,
+				$config['image_mod'],
 				array(
-					'label'     => $label,
+					/* translators: %s: banner name, e.g. "Offers banner". */
+					'label'     => sprintf( __( '%s — image', 'exmart' ), $config['label'] ),
 					'section'   => 'exmart_hero',
 					'mime_type' => 'image',
+					'priority'  => $priority++,
 				)
 			)
 		);
+
+		foreach ( $hero_fields as $field => $field_def ) {
+			$setting_id = "exmart_hero_{$tile}_{$field}";
+			$wp_customize->add_setting(
+				$setting_id,
+				array(
+					'default'           => $config[ $field ],
+					'sanitize_callback' => $field_def[2],
+				)
+			);
+			$wp_customize->add_control(
+				$setting_id,
+				array(
+					/* translators: 1: banner name, 2: field name. */
+					'label'       => sprintf( __( '%1$s — %2$s', 'exmart' ), $config['label'], $field_def[0] ),
+					'description' => __( 'Clear the box to hide this text.', 'exmart' ),
+					'section'     => 'exmart_hero',
+					'type'        => $field_def[1],
+					'priority'    => $priority++,
+				)
+			);
+		}
+
+		$wp_customize->add_setting(
+			"exmart_hero_{$tile}_link",
+			array(
+				'default'           => '',
+				'sanitize_callback' => 'exmart_sanitize_hero_link',
+			)
+		);
+		$wp_customize->add_control(
+			"exmart_hero_{$tile}_link",
+			array(
+				/* translators: %s: banner name. */
+				'label'       => sprintf( __( '%s — button link', 'exmart' ), $config['label'] ),
+				/* translators: %s: the automatic URL used when the field is empty. */
+				'description' => sprintf( __( 'Leave empty to use the automatic link: %s', 'exmart' ), esc_html( exmart_hero_tile_auto_link( $tile ) ) ),
+				'section'     => 'exmart_hero',
+				'type'        => 'text',
+				'priority'    => $priority++,
+			)
+		);
+		$priority += 10;
 	}
 
 	/* Shop page banner: horizontal strip on mobile, vertical sidebar banner on desktop. */

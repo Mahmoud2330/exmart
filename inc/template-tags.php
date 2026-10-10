@@ -766,6 +766,129 @@ function exmart_get_promo_image( $mod_key, $filename_hint = '' ) {
 }
 
 /**
+ * Homepage hero tiles: Customizer image setting, filename fallback, and
+ * the built-in copy each text field shows until someone edits it.
+ *
+ * @return array<string,array<string,string>>
+ */
+function exmart_hero_tiles_config() {
+	return array(
+		'main'   => array(
+			'label'      => __( 'Main banner (first)', 'exmart' ),
+			'image_mod'  => 'exmart_hero_image',
+			'image_hint' => 'big-block',
+			'kicker'     => __( 'Authentic health & hygiene — Egypt', 'exmart' ),
+			'title'      => __( 'Professional-grade health products, delivered to your door.', 'exmart' ),
+			'desc'       => __( 'Official sole distributor of Diversey, Grace, Oview & SureCheck in Egypt. Plus our own exclusive brands — Qualita, Eliv, and Verve.', 'exmart' ),
+			'cta'        => __( 'Shop all', 'exmart' ),
+			'auto_link'  => 'shop',
+		),
+		'offers' => array(
+			'label'      => __( 'Offers banner', 'exmart' ),
+			'image_mod'  => 'exmart_promo1_image',
+			'image_hint' => 'top-right',
+			'kicker'     => __( 'Offers', 'exmart' ),
+			'title'      => __( 'Save on your everyday essentials', 'exmart' ),
+			'desc'       => __( 'Real markdowns across the catalog, while stock lasts.', 'exmart' ),
+			'cta'        => __( 'Shop all', 'exmart' ),
+			'auto_link'  => 'offers',
+		),
+		'new'    => array(
+			'label'      => __( 'New in banner', 'exmart' ),
+			'image_mod'  => 'exmart_promo2_image',
+			'image_hint' => 'bottom-left',
+			'kicker'     => __( 'New in', 'exmart' ),
+			'title'      => __( 'Freshly added to the catalog', 'exmart' ),
+			'desc'       => '',
+			'cta'        => __( 'Shop all', 'exmart' ),
+			'auto_link'  => 'new_arrivals',
+		),
+		'best'   => array(
+			'label'      => __( 'Best sellers banner', 'exmart' ),
+			'image_mod'  => 'exmart_promo3_image',
+			'image_hint' => 'bottom-right',
+			'kicker'     => __( 'Best sellers', 'exmart' ),
+			'title'      => __( 'Customer favorites', 'exmart' ),
+			'desc'       => '',
+			'cta'        => __( 'Shop all', 'exmart' ),
+			'auto_link'  => 'best_sellers',
+		),
+	);
+}
+
+/**
+ * Text for one hero tile field. A field nobody has saved shows the
+ * built-in copy; a field saved as empty is intentionally hidden.
+ *
+ * @param string $tile  Tile key from exmart_hero_tiles_config().
+ * @param string $field kicker|title|desc|cta.
+ * @return string
+ */
+function exmart_hero_tile_text( $tile, $field ) {
+	$config = exmart_hero_tiles_config();
+	if ( ! isset( $config[ $tile ][ $field ] ) ) {
+		return '';
+	}
+	$value = get_theme_mod( "exmart_hero_{$tile}_{$field}", null );
+	if ( null === $value || false === $value ) {
+		return $config[ $tile ][ $field ];
+	}
+	return trim( (string) $value );
+}
+
+/**
+ * Link for one hero tile: the Customizer URL if one is set, otherwise
+ * the automatic collection link (shop / on-sale / new / best sellers).
+ *
+ * @param string $tile Tile key from exmart_hero_tiles_config().
+ * @return string
+ */
+function exmart_hero_tile_link( $tile ) {
+	$custom = trim( (string) get_theme_mod( "exmart_hero_{$tile}_link", '' ) );
+	if ( '' !== $custom ) {
+		return $custom;
+	}
+	return exmart_hero_tile_auto_link( $tile );
+}
+
+/**
+ * Automatic hero tile link used when no Customizer URL is set.
+ *
+ * @param string $tile Tile key from exmart_hero_tiles_config().
+ * @return string
+ */
+function exmart_hero_tile_auto_link( $tile ) {
+	$config = exmart_hero_tiles_config();
+	$auto   = isset( $config[ $tile ]['auto_link'] ) ? $config[ $tile ]['auto_link'] : 'shop';
+	if ( 'shop' === $auto ) {
+		return function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
+	}
+	return exmart_rail_view_all_url( $auto );
+}
+
+/**
+ * Sanitize a hero link typed into the Customizer. Accepts full URLs,
+ * site-relative paths ("/shop/"), and bare paths ("shop/") which are
+ * resolved against the site URL instead of becoming "http://shop/".
+ *
+ * @param string $value Raw input.
+ * @return string
+ */
+function exmart_sanitize_hero_link( $value ) {
+	$value = trim( (string) $value );
+	if ( '' === $value ) {
+		return '';
+	}
+	if ( preg_match( '#^(https?:)?//#i', $value ) || 0 === strpos( $value, '/' ) || 0 === strpos( $value, '#' ) || 0 === stripos( $value, 'mailto:' ) || 0 === stripos( $value, 'tel:' ) ) {
+		return esc_url_raw( $value );
+	}
+	if ( preg_match( '#^(wa\.me|www\.)|^[a-z0-9-]+(\.[a-z0-9-]+)+(/|$)#i', $value ) ) {
+		return esc_url_raw( 'https://' . $value );
+	}
+	return esc_url_raw( home_url( '/' . ltrim( $value, '/' ) ) );
+}
+
+/**
  * Media Library filename stems for Shop by Category circles.
  * Matches uploads named like personal-care.jpg or personal-care-….jpg.
  *
