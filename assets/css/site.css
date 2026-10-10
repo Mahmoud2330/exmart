@@ -7,18 +7,16 @@
 
 /* ── Header ────────────────────────────────────────────── */
 .em-site-header {
-	border-bottom: 1px solid rgba(42,68,232,.12);
-	/* Brand-blue (accent-600) wash layered over the frosted white. */
-	background: linear-gradient(rgba(42,68,232,.06), rgba(42,68,232,.06)), rgba(255,255,255,.72);
+	border-bottom: 1px solid rgba(228,230,234,.6);
+	background: rgba(255,255,255,.72);
 	backdrop-filter: blur(16px) saturate(180%);
 	-webkit-backdrop-filter: blur(16px) saturate(180%);
 	position: sticky;
 	top: 0;
 	z-index: 20;
 }
-.em-site-header .em-header-search-bar { border-bottom-color: rgba(42,68,232,.10); }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-	.em-site-header { background: #F2F4FE; }
+	.em-site-header { background: var(--paper); }
 }
 .em-header-bar { display: flex; align-items: center; min-height: 72px; position: relative; }
 .em-header-left, .em-header-right { display: flex; align-items: center; gap: var(--s1); z-index: 1; }
