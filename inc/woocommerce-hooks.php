@@ -448,7 +448,7 @@ function exmart_recommendable_products( $ids, $exclude, $limit ) {
 function exmart_co_purchased_ids( $product_id ) {
 	global $wpdb;
 	$product_id = absint( $product_id );
-	$cache_key  = 'exmart_cobought_' . $product_id;
+	$cache_key  = 'exmart_cobought2_' . $product_id;
 	$cached     = get_transient( $cache_key );
 	if ( is_array( $cached ) ) {
 		return $cached;
@@ -462,7 +462,11 @@ function exmart_co_purchased_ids( $product_id ) {
 		&& $stats === $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $stats ) )
 	) {
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table names come from $wpdb->prefix.
-		$rows = $wpdb->get_col(
+		// Ranked by how specific the pairing is (shared orders ÷ all orders
+		// containing the other product), so store-wide best sellers that
+		// appear in most orders don't top every product's list.
+		$since = gmdate( 'Y-m-d H:i:s', time() - YEAR_IN_SECONDS );
+		$rows  = $wpdb->get_col(
 			$wpdb->prepare(
 				"SELECT other.product_id
 				FROM {$lookup} AS this_item
@@ -476,10 +480,19 @@ function exmart_co_purchased_ids( $product_id ) {
 					AND this_item.date_created >= %s
 					AND orders.status IN ( 'wc-processing', 'wc-completed', 'wc-on-hold' )
 				GROUP BY other.product_id
-				ORDER BY COUNT( DISTINCT other.order_id ) DESC, MAX( other.date_created ) DESC
+				HAVING COUNT( DISTINCT other.order_id ) >= 2
+				ORDER BY COUNT( DISTINCT other.order_id ) / (
+						SELECT COUNT( DISTINCT any_item.order_id )
+						FROM {$lookup} AS any_item
+						WHERE any_item.product_id = other.product_id
+							AND any_item.product_qty > 0
+							AND any_item.date_created >= %s
+					) DESC,
+					COUNT( DISTINCT other.order_id ) DESC
 				LIMIT 30",
 				$product_id,
-				gmdate( 'Y-m-d H:i:s', time() - YEAR_IN_SECONDS )
+				$since,
+				$since
 			)
 		);
 		// phpcs:enable
@@ -689,7 +702,8 @@ function exmart_pdp_recommendations() {
 	$products = exmart_recommendable_products(
 		array_merge(
 			array_map( 'absint', $current->get_cross_sell_ids() ),
-			exmart_co_purchased_ids( $current->get_id() ),
+			// At most half the rail from order history, so similar products always show too.
+			array_slice( exmart_co_purchased_ids( $current->get_id() ), 0, 4 ),
 			exmart_similar_product_ids( $current )
 		),
 		array_merge( array( $current->get_id() ), exmart_cart_product_ids() ),
