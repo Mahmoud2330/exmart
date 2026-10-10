@@ -491,9 +491,10 @@ function exmart_co_purchased_ids( $product_id ) {
 }
 
 /**
- * Candidates for "Similar products", best first: the product's Upsells,
- * then catalog products scored by most-specific shared category, similar
- * price, popularity, rating and (lightly) same brand; then best sellers.
+ * Similar-product candidates, best first: the product's Upsells, then
+ * products from its categories (most specific category first, then
+ * similar price, popularity, rating), then the same brand, then store
+ * best sellers as the final fallback.
  *
  * @param WC_Product $product Current product.
  * @return int[]
@@ -573,8 +574,6 @@ function exmart_similar_product_ids( $product ) {
 			update_meta_cache( 'post', $candidates );
 
 			$base_price = (float) $product->get_price();
-			$brand_ids  = taxonomy_exists( 'product_brand' ) ? wp_get_post_terms( $product_id, 'product_brand', array( 'fields' => 'ids' ) ) : array();
-			$brand_ids  = is_wp_error( $brand_ids ) ? array() : array_map( 'absint', $brand_ids );
 
 			foreach ( $candidates as $candidate_id ) {
 				$candidate_id = absint( $candidate_id );
@@ -606,13 +605,6 @@ function exmart_similar_product_ids( $product ) {
 					$score += (float) get_post_meta( $candidate_id, '_wc_average_rating', true ) / 5;
 				}
 
-				if ( $brand_ids ) {
-					$candidate_brands = wp_get_post_terms( $candidate_id, 'product_brand', array( 'fields' => 'ids' ) );
-					if ( ! is_wp_error( $candidate_brands ) && array_intersect( $brand_ids, array_map( 'absint', $candidate_brands ) ) ) {
-						$score += 1;
-					}
-				}
-
 				$scored[] = array( $candidate_id, $score );
 			}
 
@@ -624,6 +616,28 @@ function exmart_similar_product_ids( $product ) {
 				}
 			);
 		}
+	}
+
+	$same_brand = array();
+	$brand_ids  = taxonomy_exists( 'product_brand' ) ? wp_get_post_terms( $product_id, 'product_brand', array( 'fields' => 'ids' ) ) : array();
+	if ( ! empty( $brand_ids ) && ! is_wp_error( $brand_ids ) ) {
+		$same_brand = get_posts(
+			array_merge(
+				$base_query,
+				array(
+					'posts_per_page' => 20,
+					'tax_query'      => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+						'relation' => 'AND',
+						array(
+							'taxonomy' => 'product_brand',
+							'field'    => 'term_id',
+							'terms'    => array_map( 'absint', $brand_ids ),
+						),
+						$visibility,
+					),
+				)
+			)
+		);
 	}
 
 	$best_sellers = get_posts(
@@ -639,16 +653,20 @@ function exmart_similar_product_ids( $product ) {
 	return array_merge(
 		array_map( 'absint', $product->get_upsell_ids() ),
 		wp_list_pluck( $scored, 0 ),
+		array_map( 'absint', $same_brand ),
 		array_map( 'absint', $best_sellers )
 	);
 }
 
 /**
- * PDP recommendations, replacing WooCommerce's random related products
- * and its separate Upsells block:
- * - "Frequently bought together": the product's Cross-sells, then what
- *   customers actually bought with it (hidden until there are 2+).
- * - "Similar products": Upsells, then relevance-scored catalog products.
+ * PDP "You may also like" rail, replacing WooCommerce's randomly ordered
+ * related products and its separate Upsells block. Filled in priority
+ * order until full:
+ * 1. Usually bought with it — the product's Cross-sells, then products
+ *    found in the same orders.
+ * 2. Similar — Upsells, then the same category (most specific first).
+ * 3. Same brand.
+ * 4. Store best sellers.
  */
 function exmart_pdp_recommendations() {
 	global $product;
@@ -656,22 +674,15 @@ function exmart_pdp_recommendations() {
 		return;
 	}
 	$current = $product;
-	$limit   = 8;
-	$exclude = array_merge( array( $current->get_id() ), exmart_cart_product_ids() );
 
-	$together = exmart_recommendable_products(
-		array_merge( array_map( 'absint', $current->get_cross_sell_ids() ), exmart_co_purchased_ids( $current->get_id() ) ),
-		$exclude,
-		$limit
-	);
-	if ( count( $together ) < 2 ) {
-		$together = array();
-	}
-
-	$similar = exmart_recommendable_products(
-		exmart_similar_product_ids( $current ),
-		array_merge( $exclude, array_keys( $together ) ),
-		$limit
+	$products = exmart_recommendable_products(
+		array_merge(
+			array_map( 'absint', $current->get_cross_sell_ids() ),
+			exmart_co_purchased_ids( $current->get_id() ),
+			exmart_similar_product_ids( $current )
+		),
+		array_merge( array( $current->get_id() ), exmart_cart_product_ids() ),
+		8
 	);
 
 	$view_all = wc_get_page_permalink( 'shop' );
@@ -683,13 +694,9 @@ function exmart_pdp_recommendations() {
 		}
 	}
 
-	if ( $together ) {
+	if ( $products ) {
 		echo '<hr class="em-rule" />';
-		exmart_product_rail( __( 'Frequently bought together', 'exmart' ), array_values( $together ), '' );
-	}
-	if ( $similar ) {
-		echo '<hr class="em-rule" />';
-		exmart_product_rail( __( 'Similar products', 'exmart' ), array_values( $similar ), $view_all );
+		exmart_product_rail( __( 'You may also like', 'exmart' ), array_values( $products ), $view_all );
 	}
 }
 remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_upsell_display', 15 );
