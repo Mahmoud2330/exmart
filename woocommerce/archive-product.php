@@ -2,8 +2,9 @@
 /**
  * Shop / product category / tag archives — Figma PLP.
  *
- * Filters left, multi-column product grid filling the remaining width
- * inside .em-container (max-width 1280px).
+ * Filters left, multi-column product grid in the middle, and (desktop
+ * 1200px+) a tall sticky shop banner on the right, inside .em-container
+ * (max-width 1280px).
  *
  * @package exMart
  * @version 1.0.42
@@ -65,10 +66,9 @@ if ( is_product_category() || is_product_tag() ) {
 	exmart_render_shop_banner( $em_shop_banner_slides, 'mobile' );
 	?>
 
-	<div class="em-shop-layout">
+	<div class="em-shop-layout<?php echo $em_shop_banner_slides ? ' em-shop-layout--banner' : ''; ?>">
 		<div class="em-backdrop" id="em-shop-filters-backdrop" hidden></div>
 		<div class="em-shop-side">
-			<?php exmart_render_shop_banner( $em_shop_banner_slides, 'desktop' ); ?>
 			<aside class="em-shop-filters" id="em-shop-filters" aria-label="<?php esc_attr_e( 'Product filters', 'exmart' ); ?>">
 				<div class="em-shop-filters-header">
 					<h2 class="em-h4"><?php esc_html_e( 'Filters', 'exmart' ); ?></h2>
@@ -103,6 +103,12 @@ if ( is_product_category() || is_product_tag() ) {
 				</p>
 			<?php endif; ?>
 		</div>
+
+		<?php if ( $em_shop_banner_slides ) : ?>
+			<div class="em-shop-aside">
+				<?php exmart_render_shop_banner( $em_shop_banner_slides, 'desktop' ); ?>
+			</div>
+		<?php endif; ?>
 	</div>
 </div>
 <?php

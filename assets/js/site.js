@@ -81,6 +81,7 @@
 		initBrandFilter();
 		initCardAtc();
 		initShopBannerSliders();
+		initHeaderHeightVar();
 		initPdpVariationPills();
 		initPdpVariationPrice();
 		initPdpStarPicker();
@@ -521,6 +522,20 @@
 				goTo( current() + 1 );
 			}, 5000 );
 		} );
+	}
+
+	/**
+	 * Expose the sticky header's height as --em-header-h so sticky columns
+	 * (shop banner) sit just below it instead of sliding underneath.
+	 */
+	function initHeaderHeightVar() {
+		var header = document.querySelector( '.em-site-header' );
+		if ( ! header ) return;
+		function update() {
+			document.documentElement.style.setProperty( '--em-header-h', header.offsetHeight + 'px' );
+		}
+		update();
+		window.addEventListener( 'resize', update, { passive: true } );
 	}
 
 	/**

@@ -1454,10 +1454,10 @@ body:not(.logged-in).woocommerce-account .col-2 {
 	color: var(--ink-400);
 	font-weight: 400;
 }
-/* Shoppable banner: wide strip above the grid on mobile; the second
-   instance (--side) swaps in as a tall banner above the filters on
-   desktop. The frame (aspect ratio, rounding) is on the track so the
-   slide dots can sit below the image. */
+/* Shoppable banner: wide strip above the grid below 1200px; the second
+   instance (--side) swaps in as a tall sticky banner in a right-hand
+   column at 1200px+. The frame (aspect ratio, rounding) is on the track so
+   the slide dots can sit below the image. */
 .em-shop-banner {
 	display: block;
 	margin-bottom: var(--s6);
@@ -1490,14 +1490,21 @@ body:not(.logged-in).woocommerce-account .col-2 {
 	transition: width .2s, background .2s;
 }
 .em-shop-banner-dot.is-active { background: var(--accent-600); width: 18px; }
-.em-shop-banner--side { display: none; }
-@media (min-width: 1024px) {
+.em-shop-aside { display: none; }
+@media (min-width: 1200px) {
 	.em-shop-page > .em-shop-banner { display: none; }
-	.em-shop-banner--side {
+	.em-shop-aside {
 		display: block;
-		margin-bottom: 0;
+		position: sticky;
+		top: calc(var(--em-header-h, 140px) + var(--s4));
 	}
-	.em-shop-banner--side .em-shop-banner-track { aspect-ratio: 3 / 4; }
+	.em-shop-banner--side { margin-bottom: 0; }
+	/* Tall 9:16 frame, capped so the whole banner (and its dots) stays in
+	   view under the sticky header while scrolling. */
+	.em-shop-banner--side .em-shop-banner-track {
+		aspect-ratio: 9 / 16;
+		max-height: calc(100vh - var(--em-header-h, 140px) - var(--s4) * 2 - 24px);
+	}
 }
 
 .em-shop-layout {
@@ -1516,6 +1523,15 @@ body:not(.logged-in).woocommerce-account .col-2 {
 		flex-direction: column;
 		gap: var(--s5);
 	}
+}
+@media (min-width: 1200px) {
+	.em-shop-layout--banner {
+		grid-template-columns: 220px minmax(0, 1fr) 240px;
+	}
+	/* Grid loses ~270px to the banner column — 3 cards per row keeps them
+	   the same size as the 4-up grid without the banner. */
+	.em-shop-layout--banner ul.products,
+	.em-shop-layout--banner ul.products.columns-4 { grid-template-columns: repeat(3, 1fr); }
 }
 
 /* Filters: a slide-in drawer below 1024px (was rendering as a plain block
