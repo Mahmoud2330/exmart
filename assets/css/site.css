@@ -190,7 +190,6 @@
 .em-hero-tile--main .em-hero-tile-content { justify-content: center; gap: var(--s3); }
 .em-hero-tile-content .em-overline { color: rgba(255,255,255,.75); }
 .em-hero-tile-content .em-h1 { color: var(--paper); margin: 0; font-size: clamp(1.375rem, 1rem + 1vw, 1.75rem); line-height: 1.2; }
-.em-hero-tile-content .em-h1 br { display: none; }
 .em-hero-tile--main .em-body {
 	color: rgba(255,255,255,.8);
 	margin: 0;

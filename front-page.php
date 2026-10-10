@@ -127,7 +127,7 @@ $trust_items = array(
 							<p class="em-body-s em-hero-tile-desc"><?php echo esc_html( $tile['desc'] ); ?></p>
 						<?php endif; ?>
 						<?php if ( '' !== $tile['cta'] ) : ?>
-							<span class="em-btn em-btn-sm em-btn-primary em-hero-tile-cta"><?php echo esc_html( $tile['cta'] ); ?></span>
+							<span class="em-btn em-btn-primary em-hero-tile-cta"><?php echo esc_html( $tile['cta'] ); ?></span>
 						<?php endif; ?>
 					</div>
 					<?php if ( $tile['image'] ) : ?>
