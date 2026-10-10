@@ -36,7 +36,7 @@ function exmart_brand_add_form_fields() {
 	?>
 	<div class="form-field">
 		<label for="exmart_brand_color"><?php esc_html_e( 'Accent color', 'exmart' ); ?></label>
-		<input type="text" name="exmart_brand_color" id="exmart_brand_color" value="#2A44E8" placeholder="#2A44E8">
+		<input type="text" name="exmart_brand_color" id="exmart_brand_color" value="#004B97" placeholder="#004B97">
 		<p><?php esc_html_e( 'Hex color used for brand hover accents and badges.', 'exmart' ); ?></p>
 	</div>
 	<div class="form-field">
@@ -63,7 +63,7 @@ add_action( 'product_brand_add_form_fields', 'exmart_brand_add_form_fields' );
  * Extra fields on the "Edit Brand" screen.
  */
 function exmart_brand_edit_form_fields( $term ) {
-	$color   = get_term_meta( $term->term_id, 'exmart_brand_color', true ) ?: '#2A44E8';
+	$color   = get_term_meta( $term->term_id, 'exmart_brand_color', true ) ?: '#004B97';
 	$type    = get_term_meta( $term->term_id, 'exmart_brand_type', true ) ?: 'distributed';
 	$tagline = get_term_meta( $term->term_id, 'exmart_brand_tagline', true );
 	$logo_id = absint( get_term_meta( $term->term_id, 'exmart_brand_logo', true ) );
@@ -127,7 +127,7 @@ add_action( 'edited_product_brand', 'exmart_save_brand_meta' );
  * Small helpers used across templates.
  */
 function exmart_brand_color( $term_id ) {
-	return get_term_meta( $term_id, 'exmart_brand_color', true ) ?: '#2A44E8';
+	return get_term_meta( $term_id, 'exmart_brand_color', true ) ?: '#004B97';
 }
 function exmart_brand_type( $term_id ) {
 	return get_term_meta( $term_id, 'exmart_brand_type', true ) ?: 'distributed';
