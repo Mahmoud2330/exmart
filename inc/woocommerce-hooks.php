@@ -395,117 +395,306 @@ function exmart_shop_active_filters() {
 }
 
 /**
- * Related products: “You might also like” — same brand first, then same
- * category, preferring in-stock items (matches Figma getRelated logic).
+ * Parent product IDs already in the shopper's cart — never recommended.
  *
- * @param int[] $related_posts Related product IDs.
- * @param int   $product_id    Current product ID.
- * @param array $args          Query args (posts_per_page / limit).
  * @return int[]
  */
-function exmart_smart_related_products( $related_posts, $product_id, $args ) {
+function exmart_cart_product_ids() {
+	$ids = array();
+	if ( function_exists( 'WC' ) && WC()->cart ) {
+		foreach ( WC()->cart->get_cart() as $item ) {
+			$ids[] = absint( $item['product_id'] );
+		}
+	}
+	return $ids;
+}
+
+/**
+ * Turn candidate IDs into products that can actually be shown and bought
+ * (published, catalog-visible, in stock), keeping the given order.
+ *
+ * @param int[] $ids     Candidate product IDs, best first.
+ * @param int[] $exclude IDs to skip.
+ * @param int   $limit   Max products.
+ * @return array<int,WC_Product> Keyed by product ID.
+ */
+function exmart_recommendable_products( $ids, $exclude, $limit ) {
+	$exclude = array_map( 'absint', $exclude );
+	$out     = array();
+	foreach ( array_unique( array_map( 'absint', $ids ) ) as $id ) {
+		if ( count( $out ) >= $limit ) {
+			break;
+		}
+		if ( ! $id || in_array( $id, $exclude, true ) ) {
+			continue;
+		}
+		$candidate = wc_get_product( $id );
+		if ( ! $candidate || 'publish' !== $candidate->get_status() || ! $candidate->is_visible() || ! $candidate->is_in_stock() ) {
+			continue;
+		}
+		$out[ $id ] = $candidate;
+	}
+	return $out;
+}
+
+/**
+ * Products most often bought in the same order as this one over the last
+ * year (paid / on-hold orders only), from WooCommerce's analytics lookup
+ * tables. Cached per product for 12 hours.
+ *
+ * @param int $product_id Product ID.
+ * @return int[] Most co-purchased first.
+ */
+function exmart_co_purchased_ids( $product_id ) {
+	global $wpdb;
 	$product_id = absint( $product_id );
-	$limit      = isset( $args['posts_per_page'] ) ? absint( $args['posts_per_page'] ) : ( isset( $args['limit'] ) ? absint( $args['limit'] ) : 6 );
-	if ( $limit < 1 ) {
-		$limit = 6;
+	$cache_key  = 'exmart_cobought_' . $product_id;
+	$cached     = get_transient( $cache_key );
+	if ( is_array( $cached ) ) {
+		return $cached;
 	}
 
-	$exclude = array_filter( array_merge( array( $product_id ), wc_get_product( $product_id ) ? wc_get_product( $product_id )->get_upsell_ids() : array() ) );
-	$ids     = array();
-
-	$collect = static function ( $tax_query ) use ( &$ids, $exclude, $limit ) {
-		if ( count( $ids ) >= $limit ) {
-			return;
-		}
-		$query = new WP_Query(
-			array(
-				'post_type'              => 'product',
-				'post_status'            => 'publish',
-				'posts_per_page'         => $limit * 2,
-				'post__not_in'           => array_merge( $exclude, $ids ),
-				'fields'                 => 'ids',
-				'orderby'                => 'rand',
-				'no_found_rows'          => true,
-				'update_post_meta_cache' => false,
-				'update_post_term_cache' => false,
-				'tax_query'              => array_merge( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
-					array( 'relation' => 'AND' ),
-					$tax_query,
-					array(
-						array(
-							'taxonomy' => 'product_visibility',
-							'field'    => 'name',
-							'terms'    => array( 'exclude-from-catalog', 'exclude-from-search' ),
-							'operator' => 'NOT IN',
-						),
-					)
-				),
-				'meta_query'             => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
-					array(
-						'key'   => '_stock_status',
-						'value' => 'instock',
-					),
-				),
+	$lookup = $wpdb->prefix . 'wc_order_product_lookup';
+	$stats  = $wpdb->prefix . 'wc_order_stats';
+	$ids    = array();
+	if (
+		$lookup === $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $lookup ) )
+		&& $stats === $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $stats ) )
+	) {
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table names come from $wpdb->prefix.
+		$rows = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT other.product_id
+				FROM {$lookup} AS this_item
+				INNER JOIN {$lookup} AS other
+					ON other.order_id = this_item.order_id
+					AND other.product_id <> this_item.product_id
+					AND other.product_qty > 0
+				INNER JOIN {$stats} AS orders ON orders.order_id = this_item.order_id
+				WHERE this_item.product_id = %d
+					AND this_item.product_qty > 0
+					AND this_item.date_created >= %s
+					AND orders.status IN ( 'wc-processing', 'wc-completed', 'wc-on-hold' )
+				GROUP BY other.product_id
+				ORDER BY COUNT( DISTINCT other.order_id ) DESC, MAX( other.date_created ) DESC
+				LIMIT 30",
+				$product_id,
+				gmdate( 'Y-m-d H:i:s', time() - YEAR_IN_SECONDS )
 			)
 		);
-		if ( ! empty( $query->posts ) ) {
-			$ids = array_values( array_unique( array_merge( $ids, array_map( 'absint', $query->posts ) ) ) );
-		}
-	};
+		// phpcs:enable
+		$ids = array_map( 'absint', (array) $rows );
+	}
 
-	// 1) Same brand.
-	if ( taxonomy_exists( 'product_brand' ) ) {
-		$brands = wp_get_post_terms( $product_id, 'product_brand', array( 'fields' => 'ids' ) );
-		if ( ! empty( $brands ) && ! is_wp_error( $brands ) ) {
-			$collect(
+	set_transient( $cache_key, $ids, 12 * HOUR_IN_SECONDS );
+	return $ids;
+}
+
+/**
+ * Candidates for "Similar products", best first: the product's Upsells,
+ * then catalog products scored by most-specific shared category, similar
+ * price, popularity, rating and (lightly) same brand; then best sellers.
+ *
+ * @param WC_Product $product Current product.
+ * @return int[]
+ */
+function exmart_similar_product_ids( $product ) {
+	$product_id = $product->get_id();
+	$cat_ids    = array_map( 'absint', wc_get_product_term_ids( $product_id, 'product_cat' ) );
+
+	// Most specific categories: ones that aren't a parent of another assigned category.
+	$leaf_cats = array();
+	foreach ( $cat_ids as $cat_id ) {
+		$is_parent = false;
+		foreach ( $cat_ids as $other_id ) {
+			if ( $other_id !== $cat_id && term_is_ancestor_of( $cat_id, $other_id, 'product_cat' ) ) {
+				$is_parent = true;
+				break;
+			}
+		}
+		if ( ! $is_parent ) {
+			$leaf_cats[] = $cat_id;
+		}
+	}
+
+	// Pool = assigned categories + their parents (siblings come in via children).
+	$pool_cats = $cat_ids;
+	foreach ( $cat_ids as $cat_id ) {
+		$pool_cats = array_merge( $pool_cats, array_map( 'absint', get_ancestors( $cat_id, 'product_cat', 'taxonomy' ) ) );
+	}
+	$pool_cats = array_values( array_unique( $pool_cats ) );
+
+	$base_query = array(
+		'post_type'              => 'product',
+		'post_status'            => 'publish',
+		'fields'                 => 'ids',
+		'post__not_in'           => array( $product_id ),
+		'no_found_rows'          => true,
+		'ignore_sticky_posts'    => true,
+		'meta_key'               => 'total_sales', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+		'orderby'                => 'meta_value_num',
+		'order'                  => 'DESC',
+		'meta_query'             => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+			array(
+				'key'   => '_stock_status',
+				'value' => 'instock',
+			),
+		),
+	);
+	$visibility = array(
+		'taxonomy' => 'product_visibility',
+		'field'    => 'name',
+		'terms'    => array( 'exclude-from-catalog' ),
+		'operator' => 'NOT IN',
+	);
+
+	$scored = array();
+	if ( ! empty( $pool_cats ) ) {
+		$candidates = get_posts(
+			array_merge(
+				$base_query,
 				array(
-					array(
-						'taxonomy' => 'product_brand',
-						'field'    => 'term_id',
-						'terms'    => $brands,
+					'posts_per_page' => 80,
+					'tax_query'      => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+						'relation' => 'AND',
+						array(
+							'taxonomy' => 'product_cat',
+							'field'    => 'term_id',
+							'terms'    => $pool_cats,
+						),
+						$visibility,
 					),
 				)
+			)
+		);
+
+		if ( ! empty( $candidates ) ) {
+			update_object_term_cache( $candidates, 'product' );
+			update_meta_cache( 'post', $candidates );
+
+			$base_price = (float) $product->get_price();
+			$brand_ids  = taxonomy_exists( 'product_brand' ) ? wp_get_post_terms( $product_id, 'product_brand', array( 'fields' => 'ids' ) ) : array();
+			$brand_ids  = is_wp_error( $brand_ids ) ? array() : array_map( 'absint', $brand_ids );
+
+			foreach ( $candidates as $candidate_id ) {
+				$candidate_id = absint( $candidate_id );
+				$score        = 0.0;
+
+				$candidate_cats = array_map( 'absint', wc_get_product_term_ids( $candidate_id, 'product_cat' ) );
+				if ( array_intersect( $leaf_cats, $candidate_cats ) ) {
+					$score += 4;
+				} elseif ( array_intersect( $cat_ids, $candidate_cats ) ) {
+					$score += 2;
+				} else {
+					$score += 1;
+				}
+
+				$price = (float) get_post_meta( $candidate_id, '_price', true );
+				if ( $base_price > 0 && $price > 0 ) {
+					$ratio = $price / $base_price;
+					if ( $ratio >= 0.5 && $ratio <= 2 ) {
+						$score += 2;
+					} elseif ( $ratio >= 0.33 && $ratio <= 3 ) {
+						$score += 1;
+					}
+				}
+
+				$sales  = (int) get_post_meta( $candidate_id, 'total_sales', true );
+				$score += min( 2, log10( $sales + 1 ) );
+
+				if ( (int) get_post_meta( $candidate_id, '_wc_review_count', true ) > 0 ) {
+					$score += (float) get_post_meta( $candidate_id, '_wc_average_rating', true ) / 5;
+				}
+
+				if ( $brand_ids ) {
+					$candidate_brands = wp_get_post_terms( $candidate_id, 'product_brand', array( 'fields' => 'ids' ) );
+					if ( ! is_wp_error( $candidate_brands ) && array_intersect( $brand_ids, array_map( 'absint', $candidate_brands ) ) ) {
+						$score += 1;
+					}
+				}
+
+				$scored[] = array( $candidate_id, $score );
+			}
+
+			// Stable sort keeps best-seller order between equal scores.
+			usort(
+				$scored,
+				static function ( $a, $b ) {
+					return $b[1] <=> $a[1];
+				}
 			);
 		}
 	}
 
-	// 2) Same category (fill remaining).
-	$cats = wc_get_product_term_ids( $product_id, 'product_cat' );
-	if ( ! empty( $cats ) && count( $ids ) < $limit ) {
-		$collect(
+	$best_sellers = get_posts(
+		array_merge(
+			$base_query,
 			array(
-				array(
-					'taxonomy' => 'product_cat',
-					'field'    => 'term_id',
-					'terms'    => $cats,
-				),
+				'posts_per_page' => 20,
+				'tax_query'      => array( $visibility ), // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
 			)
-		);
-	}
+		)
+	);
 
-	// 3) Fallback: any in-stock catalog products.
-	if ( count( $ids ) < $limit ) {
-		$collect( array() );
-	}
-
-	$ids = array_slice( $ids, 0, $limit );
-	return ! empty( $ids ) ? $ids : $related_posts;
+	return array_merge(
+		array_map( 'absint', $product->get_upsell_ids() ),
+		wp_list_pluck( $scored, 0 ),
+		array_map( 'absint', $best_sellers )
+	);
 }
-add_filter( 'woocommerce_related_products', 'exmart_smart_related_products', 10, 3 );
 
 /**
- * Related products rail: match Figma “You might also like” (up to 6 / 4 cols).
+ * PDP recommendations, replacing WooCommerce's random related products
+ * and its separate Upsells block:
+ * - "Frequently bought together": the product's Cross-sells, then what
+ *   customers actually bought with it (hidden until there are 2+).
+ * - "Similar products": Upsells, then relevance-scored catalog products.
  */
-function exmart_related_products_args( $args ) {
-	$args['posts_per_page'] = 6;
-	$args['columns']        = 4;
-	return $args;
-}
-add_filter( 'woocommerce_output_related_products_args', 'exmart_related_products_args' );
+function exmart_pdp_recommendations() {
+	global $product;
+	if ( ! $product instanceof WC_Product ) {
+		return;
+	}
+	$current = $product;
+	$limit   = 8;
+	$exclude = array_merge( array( $current->get_id() ), exmart_cart_product_ids() );
 
-add_filter( 'woocommerce_product_related_products_heading', function () {
-	return __( 'You may also like', 'exmart' );
-} );
+	$together = exmart_recommendable_products(
+		array_merge( array_map( 'absint', $current->get_cross_sell_ids() ), exmart_co_purchased_ids( $current->get_id() ) ),
+		$exclude,
+		$limit
+	);
+	if ( count( $together ) < 2 ) {
+		$together = array();
+	}
+
+	$similar = exmart_recommendable_products(
+		exmart_similar_product_ids( $current ),
+		array_merge( $exclude, array_keys( $together ) ),
+		$limit
+	);
+
+	$view_all = wc_get_page_permalink( 'shop' );
+	$cats     = wc_get_product_terms( $current->get_id(), 'product_cat', array( 'fields' => 'all' ) );
+	if ( ! empty( $cats ) && ! is_wp_error( $cats ) ) {
+		$link = get_term_link( $cats[0] );
+		if ( ! is_wp_error( $link ) ) {
+			$view_all = $link;
+		}
+	}
+
+	if ( $together ) {
+		echo '<hr class="em-rule" />';
+		exmart_product_rail( __( 'Frequently bought together', 'exmart' ), array_values( $together ), '' );
+	}
+	if ( $similar ) {
+		echo '<hr class="em-rule" />';
+		exmart_product_rail( __( 'Similar products', 'exmart' ), array_values( $similar ), $view_all );
+	}
+}
+remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_upsell_display', 15 );
+remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_output_related_products', 20 );
+add_action( 'woocommerce_after_single_product_summary', 'exmart_pdp_recommendations', 20 );
 
 /**
  * Custom "How to Use" field on the product edit screen (Diagnostics/Health

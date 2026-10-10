@@ -1333,7 +1333,7 @@ function exmart_product_rail( $title, $products, $view_all_url, $empty_message =
 	<section>
 		<div class="em-rail-header">
 			<h2 class="em-h3"><?php echo esc_html( $title ); ?></h2>
-			<?php if ( ! empty( $products ) ) : ?>
+			<?php if ( ! empty( $products ) && $view_all_url ) : ?>
 				<a class="em-view-all" href="<?php echo esc_url( $view_all_url ); ?>"><?php esc_html_e( 'View all →', 'exmart' ); ?></a>
 			<?php endif; ?>
 		</div>
