@@ -19,10 +19,19 @@
 	.em-site-header { background: var(--paper); }
 }
 .em-header-bar { display: flex; align-items: center; min-height: 72px; position: relative; }
-.em-header-left, .em-header-right { display: flex; align-items: center; gap: var(--s1); z-index: 1; }
+.em-header-left, .em-header-right { display: flex; align-items: center; gap: var(--s1); z-index: 1; flex-shrink: 0; }
 .em-header-right { margin-left: auto; }
-.em-header-logo { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; text-decoration: none; }
+.em-header-logo { display: flex; align-items: center; text-decoration: none; flex-shrink: 0; }
 .em-header-logo img { height: 48px; width: auto; display: block; }
+/* Search lives inline in the bar on desktop (left: logo, right: icons),
+   and as its own full-width row below the bar on mobile — toggled here
+   rather than via .em-desktop-only/.em-mobile-only, which force
+   inline-flex and would break this row's full-width block layout. */
+.em-header-search-bar--inline { display: none; }
+@media (min-width: 768px) {
+	.em-header-search-bar--inline { display: flex; align-items: center; flex: 1; max-width: 560px; margin-inline: var(--s6); }
+	.em-header-search-bar { display: none; }
+}
 /* Mobile nav drawer: global img { height:auto } blows the 1540px logo full-width.
    Needs the same !important hardening as .em-footer-logo below — without it,
    this rule loses the cascade to something else and the logo scales back up. */
@@ -83,8 +92,8 @@
 .em-site-footer { border-top: 1px solid var(--ink-200); background: var(--ink-50); margin-top: auto; }
 .em-site-footer .em-footer-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%,180px),1fr)); gap: var(--s8); padding-block: var(--s12); }
 .em-site-footer .em-footer-col-title { color: var(--ink-500); margin-bottom: var(--s4); }
-.em-site-footer .em-footer-link { display: block; font-size: .875rem; color: var(--ink-500); text-decoration: none; padding-block: 3px; line-height: 1.5; }
-.em-site-footer .em-footer-link:hover { color: var(--ink-800); }
+.em-site-footer .em-footer-link { display: block; font-size: .875rem; color: var(--accent-600); text-decoration: none; padding-block: 3px; line-height: 1.5; }
+.em-site-footer .em-footer-link:hover { color: var(--accent-700); font-weight: 700; }
 .em-site-footer .em-footer-about { display: flex; flex-direction: column; gap: var(--s4); }
 .em-newsletter-form { display: flex; gap: var(--s2); }
 .em-newsletter-form input { flex: 1; min-height: 40px; font-size: .875rem; }
@@ -285,10 +294,10 @@
 .em-brand-pill-name { font-size: .875rem; font-weight: 600; color: var(--ink-800); white-space: nowrap; }
 
 /* ── Review band ───────────────────────────────────────── */
-.em-review-band { background: var(--ink-900); color: var(--paper); }
+.em-review-band { background: var(--accent-600); color: var(--paper); }
 .em-review-band .em-h2 { color: var(--paper); margin-bottom: var(--s8); }
 .em-review-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: var(--s4); }
-.em-review-card { border: 1px solid var(--ink-700); border-radius: var(--r-md); padding: var(--s5); }
+.em-review-card { border: 1px solid rgba(255,255,255,.2); border-radius: var(--r-md); padding: var(--s5); }
 .em-review-card-stars { display: flex; gap: var(--s1); margin-bottom: var(--s3); }
 .em-review-card-text { color: var(--ink-200); margin-bottom: var(--s3); font-style: italic; }
 .em-review-card-author { color: var(--ink-400); }

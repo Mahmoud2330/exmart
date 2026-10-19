@@ -24,7 +24,24 @@ $out_of_stock  = ! $product->is_in_stock();
 ?>
 <article <?php wc_product_class( 'em-card', $product ); ?>>
 	<a href="<?php the_permalink(); ?>" class="em-card-img-wrap<?php echo $out_of_stock ? ' oos' : ''; ?>">
-		<div class="em-card-placeholder"><?php exmart_product_image( $product, 'exmart-card' ); ?></div>
+		<div class="em-card-placeholder">
+			<?php
+			exmart_product_image( $product, 'exmart-card' );
+			$gallery_ids = $product->get_gallery_image_ids();
+			$shown       = 0;
+			foreach ( $gallery_ids as $gallery_id ) {
+				if ( $shown >= 4 ) {
+					break;
+				}
+				$gallery_url = wp_get_attachment_image_url( $gallery_id, 'exmart-card' );
+				if ( ! $gallery_url ) {
+					continue;
+				}
+				printf( '<img class="em-card-img-extra" src="%s" alt="" loading="lazy" decoding="async" />', esc_url( $gallery_url ) );
+				$shown++;
+			}
+			?>
+		</div>
 		<div class="em-card-badge-pos">
 			<?php if ( $is_sale ) : ?><span class="em-badge em-badge-sale"><?php echo esc_html( $sale_label ); ?></span><?php endif; ?>
 			<?php if ( $is_new ) : ?><span class="em-badge em-badge-ink"><?php esc_html_e( 'New', 'exmart' ); ?></span><?php endif; ?>

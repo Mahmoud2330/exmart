@@ -80,6 +80,7 @@
 		initWishlistPage();
 		initBrandFilter();
 		initCardAtc();
+		initCardImageSlideshow();
 		initShopBannerSliders();
 		initHeaderHeightVar();
 		initPdpVariationPills();
@@ -405,6 +406,41 @@
 		} );
 
 		window.exmartRefreshCardAtc = fetchCartQtys;
+	}
+
+	// ── Product card hover slideshow ──────────────────────
+	// Cycles through a product's gallery images on hover (crossfade),
+	// layered over the main card image. No-op for cards with no gallery
+	// images (nothing rendered to select) and for prefers-reduced-motion.
+	function initCardImageSlideshow() {
+		if ( window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches ) return;
+
+		document.querySelectorAll( '.em-card-placeholder' ).forEach( function ( wrap ) {
+			var extras = Array.prototype.slice.call( wrap.querySelectorAll( '.em-card-img-extra' ) );
+			if ( ! extras.length ) return;
+
+			var timer = null;
+			var idx = -1;
+
+			function show( i ) {
+				extras.forEach( function ( img, j ) { img.classList.toggle( 'is-active', j === i ); } );
+			}
+
+			wrap.addEventListener( 'mouseenter', function () {
+				idx = 0;
+				show( idx );
+				timer = window.setInterval( function () {
+					idx = ( idx + 1 ) % extras.length;
+					show( idx );
+				}, 900 );
+			} );
+
+			wrap.addEventListener( 'mouseleave', function () {
+				window.clearInterval( timer );
+				timer = null;
+				show( -1 );
+			} );
+		} );
 	}
 
 	/**

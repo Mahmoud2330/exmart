@@ -431,8 +431,9 @@ function exmart_media_url_by_stem( $stem ) {
 function exmart_payment_methods() {
 	return array(
 		array(
-			'label' => 'COD',
+			'label' => 'Cash on Delivery',
 			'file'  => '',
+			'icon'  => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="4" width="14" height="9" rx="1.5" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="8.5" r="2" stroke="currentColor" stroke-width="1.6"/><path d="M3 15c0-1.1.9-2 2-2h11c1.1 0 2.5.4 3.5 1.2.6.5.5 1.4-.2 1.7l-5 2.1H8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 13.5v6.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
 		),
 		array(
 			'label' => 'Fawry',

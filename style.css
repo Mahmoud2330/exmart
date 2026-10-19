@@ -3,7 +3,7 @@ Theme Name: exMart
 Theme URI: https://exmart.eg
 Author: exMart
 Description: Authentic health & hygiene storefront theme for WooCommerce. Ported from the exMart React storefront design system.
-Version: 1.1.25
+Version: 1.1.26
 Requires at least: 6.0
 Tested up to: 6.6
 Requires PHP: 7.4
@@ -221,7 +221,12 @@ input[type="checkbox"]:focus-visible {
 .em-card-img-wrap { position: relative; aspect-ratio: 1/1; background: var(--ink-50); overflow: hidden; flex-shrink: 0; display: block; text-decoration: none; }
 .em-card-img-wrap.oos { opacity: .6; }
 .em-card-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
-.em-card-placeholder { width:100%; height:100%; display:flex; align-items:center; justify-content:center; }
+.em-card-placeholder { width:100%; height:100%; display:flex; align-items:center; justify-content:center; position: relative; }
+/* Hover slideshow: gallery images stacked on top of the main image,
+   crossfaded in by assets/js/site.js. Hidden/no-op when a product has
+   no gallery images (no .em-card-img-extra elements get rendered). */
+.em-card-img-extra { position: absolute; inset: 0; opacity: 0; transition: opacity .35s ease; pointer-events: none; }
+.em-card-img-extra.is-active { opacity: 1; }
 .em-card-badge-pos { position: absolute; top: var(--s2); left: var(--s2); z-index:1; display:flex; flex-direction:column; gap:var(--s1); }
 .em-card-body { padding: var(--s4); display:flex; flex-direction:column; gap: var(--s2); flex:1; min-height: 0; }
 .em-card-body a { text-decoration: none; }
@@ -423,6 +428,7 @@ input[type="checkbox"]:focus-visible {
 .em-payment-icon { display:inline-flex; align-items:center; justify-content:center; height:28px; padding: 4px 10px; border: 1px solid var(--ink-200); border-radius: 6px; background: var(--paper); font-size:.625rem; font-weight:700; color: var(--ink-500); letter-spacing:.04em; }
 .em-payment-icon--logo { height: 40px; padding: 6px 12px; background: #fff; }
 .em-payment-icon--logo img { display:block; height:28px; width:auto; max-width:110px; object-fit:contain; }
+.em-payment-icon--logo svg { display:block; color: var(--accent-600); }
 
 /* ── 2-col layout ──────────────────────────────────────── */
 .em-two-col { display:grid; grid-template-columns: 1fr; gap: var(--s8); }
