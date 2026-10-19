@@ -50,19 +50,19 @@ $new_arrivals = exmart_get_new_arrivals( 8 );
 $trust_items = array(
 	array(
 		'label' => __( '100% authentic — direct from manufacturer', 'exmart' ),
-		'svg'   => '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="var(--accent-600)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="var(--accent-600)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+		'svg'   => '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="color:var(--accent-600)"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><path d="M3 10.4167C3 7.21907 3 5.62028 3.37752 5.08241C3.75503 4.54454 5.25832 4.02996 8.26491 3.00079L8.83772 2.80472C10.405 2.26824 11.1886 2 12 2C12.8114 2 13.595 2.26824 15.1623 2.80472L15.7351 3.00079C18.7417 4.02996 20.245 4.54454 20.6225 5.08241C21 5.62028 21 7.21907 21 10.4167C21 10.8996 21 11.4234 21 11.9914C21 17.6294 16.761 20.3655 14.1014 21.5273C13.38 21.8424 13.0193 22 12 22C10.9807 22 10.62 21.8424 9.89856 21.5273C7.23896 20.3655 3 17.6294 3 11.9914C3 11.4234 3 10.8996 3 10.4167Z"/><path stroke-linejoin="round" d="M9.5 12.4L10.9286 14L14.5 10"/></g></svg>',
 	),
 	array(
 		'label' => __( 'Official sole distributor in Egypt', 'exmart' ),
-		'svg'   => '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" stroke="var(--accent-600)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="10" r="3" stroke="var(--accent-600)" stroke-width="2"/></svg>',
+		'svg'   => '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="color:var(--accent-600)"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><path d="M4 10.1433C4 5.64588 7.58172 2 12 2C16.4183 2 20 5.64588 20 10.1433C20 14.6055 17.4467 19.8124 13.4629 21.6744C12.5343 22.1085 11.4657 22.1085 10.5371 21.6744C6.55332 19.8124 4 14.6055 4 10.1433Z"/><circle cx="12" cy="10" r="3"/></g></svg>',
 	),
 	array(
 		'label' => __( 'Cash on delivery available', 'exmart' ),
-		'svg'   => '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2" stroke="var(--accent-600)" stroke-width="2"/><path d="M2 10h20" stroke="var(--accent-600)" stroke-width="2"/><path d="M6 15h4" stroke="var(--accent-600)" stroke-width="2" stroke-linecap="round"/></svg>',
+		'svg'   => '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="color:var(--accent-600)"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 17V17.5V18"/><path d="M12 6V6.5V7"/><path d="M15 9.5C15 8.11929 13.6569 7 12 7C10.3431 7 9 8.11929 9 9.5C9 10.8807 10.3431 12 12 12C13.6569 12 15 13.1193 15 14.5C15 15.8807 13.6569 17 12 17C10.3431 17 9 15.8807 9 14.5"/></g></svg>',
 	),
 	array(
 		'label' => __( 'Nationwide delivery across Egypt', 'exmart' ),
-		'svg'   => '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M1 3h15v13H1zM16 8h4l3 3v5h-7V8z" stroke="var(--accent-600)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="5.5" cy="18.5" r="2.5" stroke="var(--accent-600)" stroke-width="2"/><circle cx="18.5" cy="18.5" r="2.5" stroke="var(--accent-600)" stroke-width="2"/></svg>',
+		'svg'   => '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="color:var(--accent-600)"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><path d="M9.56541 8.73049C9.0804 6.97492 8.8379 6.09714 9.24954 5.40562C9.66119 4.71409 10.5662 4.47889 12.3763 4.00849L14.2962 3.50955C16.1062 3.03915 17.0113 2.80394 17.7242 3.20319C18.4372 3.60244 18.6797 4.48023 19.1647 6.2358L19.6792 8.09786C20.1642 9.85343 20.4067 10.7312 19.995 11.4227C19.5834 12.1143 18.6784 12.3495 16.8683 12.8199L14.9484 13.3188C13.1384 13.7892 12.2333 14.0244 11.5203 13.6252C10.8073 13.2259 10.5648 12.3481 10.0798 10.5926L9.56541 8.73049Z"/><path d="M8.23 15.0602L6.08 7.27014C5.89453 6.61732 5.38563 6.12036 4.7 5.92L3 5.4502"/><circle cx="8.05" cy="18.1" r="2.9"/><path d="M10.9199 17.36L19.9999 15"/></g></svg>',
 	),
 );
 ?>
@@ -138,10 +138,10 @@ $trust_items = array(
 
 		</div>
 		<button type="button" class="em-hero-nav em-hero-nav--prev" id="em-hero-prev" aria-label="<?php esc_attr_e( 'Previous', 'exmart' ); ?>">
-			<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+			<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 5L9 12L15 19"/></svg>
 		</button>
 		<button type="button" class="em-hero-nav em-hero-nav--next" id="em-hero-next" aria-label="<?php esc_attr_e( 'Next', 'exmart' ); ?>">
-			<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+			<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5L15 12L9 19"/></svg>
 		</button>
 		</div>
 	</div>

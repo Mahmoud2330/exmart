@@ -48,7 +48,7 @@ function exmart_stars( $rating, $size = 14, $variant = 'default' ) {
 	for ( $i = 0; $i < 5; $i++ ) {
 		$fill = $i < $full ? $fill_on : $fill_off;
 		printf(
-			'<svg width="%1$d" height="%1$d" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1.5l1.545 3.13 3.455.502-2.5 2.436.59 3.432L8 9.25l-3.09 1.75.59-3.432L3 5.132l3.455-.502L8 1.5z" fill="%2$s"/></svg>',
+			'<svg width="%1$d" height="%1$d" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path fill="none" stroke="%2$s" stroke-linecap="round" stroke-width="1.5" d="M9.15316 5.40838C10.4198 3.13613 11.0531 2 12 2C12.9469 2 13.5802 3.13612 14.8468 5.40837L15.1745 5.99623C15.5345 6.64193 15.7144 6.96479 15.9951 7.17781C16.2757 7.39083 16.6251 7.4699 17.3241 7.62805L17.9605 7.77203C20.4201 8.32856 21.65 8.60682 21.9426 9.54773C22.2352 10.4886 21.3968 11.4691 19.7199 13.4299L19.2861 13.9372C18.8096 14.4944 18.5713 14.773 18.4641 15.1177C18.357 15.4624 18.393 15.8341 18.465 16.5776L18.5306 17.2544C18.7841 19.8706 18.9109 21.1787 18.1449 21.7602C17.3788 22.3417 16.2273 21.8115 13.9243 20.7512L13.3285 20.4768C12.6741 20.1755 12.3469 20.0248 12 20.0248C11.6531 20.0248 11.3259 20.1755 10.6715 20.4768L10.0757 20.7512C7.77268 21.8115 6.62118 22.3417 5.85515 21.7602C5.08912 21.1787 5.21588 19.8706 5.4694 17.2544L5.53498 16.5776C5.60703 15.8341 5.64305 15.4624 5.53586 15.1177C5.42868 14.773 5.19043 14.4944 4.71392 13.9372L4.2801 13.4299C2.60325 11.4691 1.76482 10.4886 2.05742 9.54773C2.35002 8.60682 3.57986 8.32856 6.03954 7.77203L6.67589 7.62805C7.37485 7.4699 7.72433 7.39083 8.00494 7.17781C8.28555 6.96479 8.46553 6.64194 8.82547 5.99623L9.15316 5.40838Z"/></svg>',
 			absint( $size ),
 			esc_attr( $fill )
 		);
@@ -433,7 +433,7 @@ function exmart_payment_methods() {
 		array(
 			'label' => 'Cash on Delivery',
 			'file'  => '',
-			'icon'  => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="4" width="14" height="9" rx="1.5" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="8.5" r="2" stroke="currentColor" stroke-width="1.6"/><path d="M3 15c0-1.1.9-2 2-2h11c1.1 0 2.5.4 3.5 1.2.6.5.5 1.4-.2 1.7l-5 2.1H8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 13.5v6.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+			'icon'  => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 17V17.5V18"/><path d="M12 6V6.5V7"/><path d="M15 9.5C15 8.11929 13.6569 7 12 7C10.3431 7 9 8.11929 9 9.5C9 10.8807 10.3431 12 12 12C13.6569 12 15 13.1193 15 14.5C15 15.8807 13.6569 17 12 17C10.3431 17 9 15.8807 9 14.5"/></g></svg>',
 		),
 		array(
 			'label' => 'Fawry',

@@ -24,7 +24,7 @@ $faqs = array(
 			<div class="em-faq-item">
 				<button class="em-faq-q" aria-expanded="false">
 					<span><?php echo esc_html( $f['q'] ); ?></span>
-					<svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 7.5l5 5 5-5" stroke="var(--ink-500)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path fill="none" stroke="var(--ink-500)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 9L12 15L5 9"/></svg>
 				</button>
 				<p class="em-body-s em-faq-a"><?php echo esc_html( $f['a'] ); ?></p>
 			</div>

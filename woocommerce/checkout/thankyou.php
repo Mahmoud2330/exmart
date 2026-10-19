@@ -28,9 +28,9 @@ $is_failed = $order->has_status( 'failed' );
 
 	<div class="em-order-confirm-icon<?php echo $is_failed ? ' em-order-confirm-icon--failed' : ''; ?>" aria-hidden="true">
 		<?php if ( $is_failed ) : ?>
-			<svg width="36" height="36" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>
+			<svg width="36" height="36" viewBox="0 0 24 24" fill="none"><g fill="none" stroke="#fff" stroke-linecap="round" stroke-width="2"><path d="M19.0068 5L5.00684 19"/><path d="M19 19L5 5"/></g></svg>
 		<?php else : ?>
-			<svg width="40" height="40" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+			<svg width="40" height="40" viewBox="0 0 24 24" fill="none"><path fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13L9 17L19 7"/></svg>
 		<?php endif; ?>
 	</div>
 

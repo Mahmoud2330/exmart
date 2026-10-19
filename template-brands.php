@@ -14,7 +14,7 @@ $house       = array_filter( $brands, fn( $t ) => exmart_brand_type( $t->term_id
 	<div style="display:flex;align-items:center;justify-content:space-between;gap:var(--s4);flex-wrap:wrap;margin-bottom:var(--s8);">
 		<h1 class="em-h2"><?php esc_html_e( 'Our Brands', 'exmart' ); ?></h1>
 		<div class="em-search-wrap" style="max-width:280px;">
-			<svg class="em-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+			<svg class="em-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><circle cx="11.5" cy="11.5" r="9.5"/><path d="M18.2173 18.2178L21.9999 22.0004"/></g></svg>
 			<input class="em-input em-search-input" id="em-brand-filter" placeholder="<?php esc_attr_e( 'Search brands…', 'exmart' ); ?>" style="min-height:44px;" aria-label="<?php esc_attr_e( 'Search brands', 'exmart' ); ?>" />
 		</div>
 	</div>
@@ -29,7 +29,7 @@ $house       = array_filter( $brands, fn( $t ) => exmart_brand_type( $t->term_id
 						<div class="em-brand-card-avatar" style="background:<?php echo esc_attr( $color ); ?>22;"><span style="color:<?php echo esc_attr( $color ); ?>;"><?php echo esc_html( mb_substr( $brand->name, 0, 1 ) ); ?></span></div>
 						<div>
 							<p class="em-brand-card-name"><?php echo esc_html( $brand->name ); ?></p>
-							<span class="em-trust"><svg class="em-trust-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="em-trust-text"><?php esc_html_e( 'Official & sole distributor in Egypt', 'exmart' ); ?></span></span>
+							<span class="em-trust"><svg class="em-trust-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path stroke-linejoin="round" d="M8.5 12.5L10.5 14.5L15.5 9.5"/></g></svg><span class="em-trust-text"><?php esc_html_e( 'Official & sole distributor in Egypt', 'exmart' ); ?></span></span>
 						</div>
 						<p class="em-body-s em-brand-card-tagline"><?php echo esc_html( exmart_brand_tagline( $brand->term_id ) ); ?></p>
 						<p class="em-caption em-brand-card-count"><?php
@@ -51,7 +51,7 @@ $house       = array_filter( $brands, fn( $t ) => exmart_brand_type( $t->term_id
 						<div class="em-brand-card-avatar" style="background:<?php echo esc_attr( $color ); ?>22;"><span style="color:<?php echo esc_attr( $color ); ?>;"><?php echo esc_html( mb_substr( $brand->name, 0, 1 ) ); ?></span></div>
 						<div>
 							<p class="em-brand-card-name"><?php echo esc_html( $brand->name ); ?></p>
-							<span class="em-trust"><svg class="em-trust-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="em-trust-text"><?php esc_html_e( 'exMart exclusive · our own brand', 'exmart' ); ?></span></span>
+							<span class="em-trust"><svg class="em-trust-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path stroke-linejoin="round" d="M8.5 12.5L10.5 14.5L15.5 9.5"/></g></svg><span class="em-trust-text"><?php esc_html_e( 'exMart exclusive · our own brand', 'exmart' ); ?></span></span>
 						</div>
 						<p class="em-body-s em-brand-card-tagline"><?php echo esc_html( exmart_brand_tagline( $brand->term_id ) ); ?></p>
 						<p class="em-caption em-brand-card-count"><?php

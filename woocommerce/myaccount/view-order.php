@@ -56,7 +56,7 @@ if ( false === $current_idx ) {
 					<div class="<?php echo esc_attr( $cls ); ?>">
 						<div class="<?php echo esc_attr( $dot ); ?>">
 							<?php if ( $done ) : ?>
-								<svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M2 5l2 2 4-4" stroke="var(--paper)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+								<svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path fill="none" stroke="var(--paper)" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13L9 17L19 7"/></svg>
 							<?php endif; ?>
 						</div>
 						<span class="<?php echo esc_attr( $lab ); ?>"><?php echo esc_html( $pipeline_labels[ $slug ] ); ?></span>

@@ -36,7 +36,7 @@ $subjects = array( 'Order issue', 'Product inquiry', 'Authenticity / warranty', 
 			</div>
 			<div class="em-contact-map">
 				<div class="em-contact-map-inner">
-					<svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="var(--ink-400)" stroke-width="1.5"/><circle cx="12" cy="9" r="2.5" stroke="var(--ink-400)" stroke-width="1.5"/></svg>
+					<svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="color:var(--ink-400)"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><path d="M4 10.1433C4 5.64588 7.58172 2 12 2C16.4183 2 20 5.64588 20 10.1433C20 14.6055 17.4467 19.8124 13.4629 21.6744C12.5343 22.1085 11.4657 22.1085 10.5371 21.6744C6.55332 19.8124 4 14.6055 4 10.1433Z"/><circle cx="12" cy="10" r="3"/></g></svg>
 					<p class="em-caption" style="color:var(--ink-400);">12 El-Nozha Street, Heliopolis, Cairo</p>
 				</div>
 			</div>
@@ -46,7 +46,7 @@ $subjects = array( 'Order issue', 'Product inquiry', 'Authenticity / warranty', 
 			<?php if ( 'sent' === $status ) : ?>
 				<div style="display:flex;flex-direction:column;align-items:flex-start;gap:var(--s4);padding-top:var(--s8);">
 					<div style="width:56px;height:56px;border-radius:50%;background:var(--success-bg);display:flex;align-items:center;justify-content:center;">
-						<svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12l4 4 10-10" stroke="var(--success)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+						<svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path fill="none" stroke="var(--success)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 13L9 17L19 7"/></svg>
 					</div>
 					<h2 class="em-h3"><?php esc_html_e( 'Message sent!', 'exmart' ); ?></h2>
 					<p class="em-body" style="color:var(--ink-500);"><?php esc_html_e( 'Thank you for reaching out. We will reply within one business day.', 'exmart' ); ?></p>

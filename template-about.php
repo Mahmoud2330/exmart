@@ -28,7 +28,7 @@ $house       = get_terms( array( 'taxonomy' => 'product_brand', 'hide_empty' => 
 						<div class="em-about-brand-avatar" style="background:<?php echo esc_attr( $color ); ?>22;"><span style="font-weight:700;color:<?php echo esc_attr( $color ); ?>;"><?php echo esc_html( mb_substr( $brand->name, 0, 1 ) ); ?></span></div>
 						<span style="font-weight:700;color:var(--ink-900);"><?php echo esc_html( $brand->name ); ?></span>
 					</div>
-					<span class="em-trust"><svg class="em-trust-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="em-trust-text"><?php esc_html_e( 'Official & sole distributor in Egypt', 'exmart' ); ?></span></span>
+					<span class="em-trust"><svg class="em-trust-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path stroke-linejoin="round" d="M8.5 12.5L10.5 14.5L15.5 9.5"/></g></svg><span class="em-trust-text"><?php esc_html_e( 'Official & sole distributor in Egypt', 'exmart' ); ?></span></span>
 					<p class="em-body-s" style="color:var(--ink-500);"><?php echo esc_html( exmart_brand_tagline( $brand->term_id ) ); ?></p>
 				</a>
 			<?php endforeach; ?>
@@ -44,7 +44,7 @@ $house       = get_terms( array( 'taxonomy' => 'product_brand', 'hide_empty' => 
 						<div class="em-about-brand-avatar" style="background:<?php echo esc_attr( $color ); ?>22;"><span style="font-weight:700;color:<?php echo esc_attr( $color ); ?>;"><?php echo esc_html( mb_substr( $brand->name, 0, 1 ) ); ?></span></div>
 						<span style="font-weight:700;color:var(--ink-900);"><?php echo esc_html( $brand->name ); ?></span>
 					</div>
-					<span class="em-trust"><svg class="em-trust-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="em-trust-text"><?php esc_html_e( 'exMart exclusive · our own brand', 'exmart' ); ?></span></span>
+					<span class="em-trust"><svg class="em-trust-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path stroke-linejoin="round" d="M8.5 12.5L10.5 14.5L15.5 9.5"/></g></svg><span class="em-trust-text"><?php esc_html_e( 'exMart exclusive · our own brand', 'exmart' ); ?></span></span>
 					<p class="em-body-s" style="color:var(--ink-500);"><?php echo esc_html( exmart_brand_tagline( $brand->term_id ) ); ?></p>
 				</a>
 			<?php endforeach; ?>
@@ -63,7 +63,7 @@ $house       = get_terms( array( 'taxonomy' => 'product_brand', 'hide_empty' => 
 			);
 			foreach ( $commitments as $c ) : ?>
 				<div class="em-commitment-item">
-					<svg width="18" height="18" viewBox="0 0 18 18" fill="none" style="flex-shrink:0;margin-top:2px" aria-hidden="true"><circle cx="9" cy="9" r="8" stroke="var(--ink-700)" stroke-width="1.5"/><path d="M6 9l2 2 4-4" stroke="var(--ink-700)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;margin-top:2px;color:var(--ink-700)" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path stroke-linejoin="round" d="M8.5 12.5L10.5 14.5L15.5 9.5"/></g></svg>
 					<p class="em-body-s" style="color:var(--ink-700);"><?php echo esc_html( $c ); ?></p>
 				</div>
 			<?php endforeach; ?>

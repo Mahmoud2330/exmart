@@ -29,7 +29,7 @@ $logo_url = exmart_brand_logo_url( $term->term_id );
 			<div style="flex:1;min-width:240px;">
 				<h1 class="em-h2" style="margin-bottom:var(--s2);"><?php echo esc_html( $term->name ); ?></h1>
 				<span class="em-trust">
-					<svg class="em-trust-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+					<svg class="em-trust-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path stroke-linejoin="round" d="M8.5 12.5L10.5 14.5L15.5 9.5"/></g></svg>
 					<span class="em-trust-text"><?php echo $type === 'distributed' ? esc_html__( 'Official & sole distributor in Egypt', 'exmart' ) : esc_html__( 'exMart exclusive · our own brand', 'exmart' ); ?></span>
 				</span>
 				<p class="em-body em-brand-hero-desc"><?php echo esc_html( $term->description ); ?></p>

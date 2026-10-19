@@ -41,7 +41,7 @@ get_header();
 			);
 			foreach ( $items as $t ) : ?>
 				<div class="em-info-list-item">
-					<svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:2px" aria-hidden="true"><circle cx="8" cy="8" r="7" stroke="var(--ink-700)" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="var(--ink-700)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;margin-top:2px;color:var(--ink-700)" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path stroke-linejoin="round" d="M8.5 12.5L10.5 14.5L15.5 9.5"/></g></svg>
 					<p class="em-body-s" style="color:var(--ink-700);"><?php echo esc_html( $t ); ?></p>
 				</div>
 			<?php endforeach; ?>
