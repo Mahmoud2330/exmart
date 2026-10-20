@@ -101,6 +101,64 @@ function exmart_seed_review_weighted_rating( $min_rating ) {
 }
 
 /**
+ * Recompute and write a product's `_wc_average_rating` / `_wc_review_count`
+ * / `_wc_rating_count` postmeta directly from its approved review comments.
+ *
+ * wp_insert_comment() (used by the seeder, and by wp_delete_comment() during
+ * cleanup) does not fire the `comment_post` hook WooCommerce listens on to
+ * keep these in sync — only a real front-end review submission does. So
+ * after any programmatic insert/delete we recalculate them here ourselves,
+ * the same way WooCommerce's own rating math works, rather than relying on
+ * WC_Comments::clear_transients() alone (it clears the average rating's
+ * cache, which self-heals lazily, but not the review count / per-star
+ * breakdown, which is what was showing "Based on 0 reviews" / 0% bars
+ * despite real seeded reviews being present).
+ */
+function exmart_recalc_product_rating_meta( $product_id ) {
+	global $wpdb;
+
+	$review_count = (int) get_comments( array(
+		'post_id' => $product_id,
+		'status'  => 'approve',
+		'type'    => 'review',
+		'count'   => true,
+	) );
+
+	$rating_rows = $wpdb->get_col( $wpdb->prepare(
+		"SELECT cm.meta_value FROM {$wpdb->commentmeta} cm
+		 INNER JOIN {$wpdb->comments} c ON c.comment_ID = cm.comment_id
+		 WHERE cm.meta_key = 'rating'
+		 AND c.comment_post_ID = %d
+		 AND c.comment_approved = '1'
+		 AND c.comment_type = 'review'",
+		$product_id
+	) );
+
+	$counts = array( 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0 );
+	$sum    = 0;
+	$rated  = 0;
+	foreach ( $rating_rows as $raw ) {
+		$r = (int) $raw;
+		if ( $r < 1 || $r > 5 ) {
+			continue;
+		}
+		$counts[ $r ]++;
+		$sum   += $r;
+		$rated++;
+	}
+
+	$average = $rated ? round( $sum / $rated, 2 ) : 0;
+
+	update_post_meta( $product_id, '_wc_average_rating', $average );
+	update_post_meta( $product_id, '_wc_review_count', $review_count );
+	update_post_meta( $product_id, '_wc_rating_count', $counts );
+
+	if ( class_exists( 'WC_Comments' ) ) {
+		WC_Comments::clear_transients( $product_id );
+	}
+}
+
+/**
  * Insert $count placeholder reviews as normal, approved WooCommerce
  * reviews across $product_ids (or every published product if empty).
  *
@@ -170,9 +228,7 @@ function exmart_seed_reviews_run( $count, $min_rating = 1, $product_ids = array(
 	}
 
 	foreach ( array_keys( $touched ) as $pid ) {
-		if ( class_exists( 'WC_Comments' ) ) {
-			WC_Comments::clear_transients( $pid );
-		}
+		exmart_recalc_product_rating_meta( $pid );
 	}
 
 	return array(
@@ -202,9 +258,7 @@ function exmart_remove_seeded_reviews_run() {
 	}
 
 	foreach ( array_keys( $touched ) as $pid ) {
-		if ( class_exists( 'WC_Comments' ) ) {
-			WC_Comments::clear_transients( $pid );
-		}
+		exmart_recalc_product_rating_meta( $pid );
 	}
 
 	return array(
@@ -266,6 +320,30 @@ function exmart_seed_reviews_admin_page() {
 					(int) $result['products']
 				)
 				. '</p></div>';
+		} elseif ( 'recalc' === $action ) {
+			$product_ids = get_comments( array(
+				'meta_key' => EXMART_SEED_REVIEW_META_KEY,
+				'meta_value' => 1,
+				'type'     => 'review',
+				'number'   => 0,
+				'fields'   => 'ids',
+			) );
+			$product_ids = array_unique( array_map( function ( $cid ) {
+				$c = get_comment( $cid );
+				return $c ? (int) $c->comment_post_ID : 0;
+			}, $product_ids ) );
+			foreach ( $product_ids as $pid ) {
+				if ( $pid ) {
+					exmart_recalc_product_rating_meta( $pid );
+				}
+			}
+			$notice = '<div class="notice notice-success"><p>'
+				. sprintf(
+					/* translators: %d: number of products */
+					esc_html__( 'Recalculated review counts and star breakdown for %d products.', 'exmart' ),
+					count( array_filter( $product_ids ) )
+				)
+				. '</p></div>';
 		}
 	}
 
@@ -311,6 +389,14 @@ function exmart_seed_reviews_admin_page() {
 				</tr>
 			</table>
 			<?php submit_button( __( 'Generate seeded reviews', 'exmart' ) ); ?>
+		</form>
+
+		<h2><?php esc_html_e( 'Fix review counts on already-seeded products', 'exmart' ); ?></h2>
+		<p><?php esc_html_e( 'If reviews you generated before this fix are showing "Based on 0 reviews" or 0% star bars, click this to recalculate without touching the reviews themselves.', 'exmart' ); ?></p>
+		<form method="post">
+			<?php wp_nonce_field( 'exmart_seed_reviews' ); ?>
+			<input type="hidden" name="exmart_seed_action" value="recalc" />
+			<?php submit_button( __( 'Recalculate review counts now', 'exmart' ), 'secondary' ); ?>
 		</form>
 
 		<h2><?php esc_html_e( 'Remove all seeded reviews', 'exmart' ); ?></h2>
