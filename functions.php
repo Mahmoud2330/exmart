@@ -5,7 +5,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'EXMART_VERSION', '1.1.33' );
+define( 'EXMART_VERSION', '1.1.34' );
 define( 'EXMART_DIR', get_template_directory() );
 define( 'EXMART_URI', get_template_directory_uri() );
 
@@ -16,3 +16,4 @@ require EXMART_DIR . '/inc/wishlist.php';
 require EXMART_DIR . '/inc/contact-form.php';
 require EXMART_DIR . '/inc/theme-activation.php';
 require EXMART_DIR . '/inc/template-tags.php';
+require EXMART_DIR . '/inc/dev-tools.php';
