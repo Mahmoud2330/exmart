@@ -29,7 +29,7 @@
    inline-flex and would break this row's full-width block layout. */
 .em-header-search-bar--inline { display: none; }
 @media (min-width: 768px) {
-	.em-header-search-bar--inline { display: flex; align-items: center; flex: 1; max-width: 560px; margin-inline: var(--s6); }
+	.em-header-search-bar--inline { display: flex; align-items: center; flex: 1; margin-inline: var(--s6); }
 	.em-header-search-bar { display: none; }
 }
 /* Mobile nav drawer: global img { height:auto } blows the 1540px logo full-width.
