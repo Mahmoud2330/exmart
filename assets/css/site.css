@@ -1000,6 +1000,10 @@ table.woocommerce-product-attributes th {
 .em-pdp-star-picker button.is-hover {
 	color: #F5A524;
 }
+.em-pdp-star-picker button.is-active svg path,
+.em-pdp-star-picker button.is-hover svg path {
+	fill: currentColor;
+}
 .em-pdp-star-picker button:focus-visible {
 	outline: 2px solid var(--accent-600);
 	outline-offset: 2px;
