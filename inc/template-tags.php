@@ -951,6 +951,11 @@ function exmart_product_banner_slide_keys() {
  * back to its other image when one is missing. Shown on every single
  * product page — reuses exmart_render_shop_banner() for the actual markup.
  *
+ * Until the Product Page Banner section has its own images uploaded, this
+ * reuses whatever is currently live in the Shop Page Banner so the feature
+ * can be demoed immediately; it automatically switches to dedicated images
+ * the moment any are set in Customizer → Product Page Banner.
+ *
  * @return array<int,array{desktop:array,mobile:array,link:string}>
  */
 function exmart_product_banner_slides() {
@@ -967,6 +972,9 @@ function exmart_product_banner_slides() {
 			'mobile'  => $mobile ? $mobile : $desktop,
 			'link'    => '' !== $link ? $link : exmart_rail_view_all_url( 'offers' ),
 		);
+	}
+	if ( empty( $slides ) ) {
+		return exmart_shop_banner_slides();
 	}
 	return $slides;
 }
