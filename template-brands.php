@@ -24,9 +24,15 @@ $house       = array_filter( $brands, fn( $t ) => exmart_brand_type( $t->term_id
 			<h2 class="em-h3" style="margin-bottom:var(--s2);"><?php esc_html_e( 'Brands we distribute', 'exmart' ); ?></h2>
 			<p class="em-body-s" style="color:var(--ink-500);margin-bottom:var(--s6);"><?php esc_html_e( 'exMart is the official and sole distributor of these brands in Egypt — sourcing directly from the manufacturer.', 'exmart' ); ?></p>
 			<div class="em-brand-grid">
-				<?php foreach ( $distributed as $brand ) : $color = exmart_brand_color( $brand->term_id ); $count = $brand->count; ?>
+				<?php foreach ( $distributed as $brand ) : $color = exmart_brand_color( $brand->term_id ); $count = $brand->count; $logo_url = exmart_brand_logo_url( $brand->term_id ); ?>
 					<a class="em-brand-card" data-brand-name="<?php echo esc_attr( strtolower( $brand->name . ' ' . exmart_brand_tagline( $brand->term_id ) ) ); ?>" href="<?php echo esc_url( get_term_link( $brand ) ); ?>">
-						<div class="em-brand-card-avatar" style="background:<?php echo esc_attr( $color ); ?>22;"><span style="color:<?php echo esc_attr( $color ); ?>;"><?php echo esc_html( mb_substr( $brand->name, 0, 1 ) ); ?></span></div>
+						<div class="em-brand-card-avatar<?php echo $logo_url ? ' has-logo' : ''; ?>" style="<?php echo $logo_url ? '' : 'background:' . esc_attr( $color ) . '22;'; ?>">
+							<?php if ( $logo_url ) : ?>
+								<img src="<?php echo esc_url( $logo_url ); ?>" alt="<?php echo esc_attr( $brand->name ); ?>" width="56" height="56" loading="lazy" decoding="async" />
+							<?php else : ?>
+								<span style="color:<?php echo esc_attr( $color ); ?>;"><?php echo esc_html( mb_substr( $brand->name, 0, 1 ) ); ?></span>
+							<?php endif; ?>
+						</div>
 						<div>
 							<p class="em-brand-card-name"><?php echo esc_html( $brand->name ); ?></p>
 							<span class="em-trust"><svg class="em-trust-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path stroke-linejoin="round" d="M8.5 12.5L10.5 14.5L15.5 9.5"/></g></svg><span class="em-trust-text"><?php esc_html_e( 'Official & sole distributor in Egypt', 'exmart' ); ?></span></span>
@@ -46,9 +52,15 @@ $house       = array_filter( $brands, fn( $t ) => exmart_brand_type( $t->term_id
 			<h2 class="em-h3" style="margin-bottom:var(--s2);"><?php esc_html_e( 'exMart brands', 'exmart' ); ?></h2>
 			<p class="em-body-s" style="color:var(--ink-500);margin-bottom:var(--s6);"><?php esc_html_e( 'Developed and quality-tested by our in-house team — made exclusively for exMart customers.', 'exmart' ); ?></p>
 			<div class="em-brand-grid">
-				<?php foreach ( $house as $brand ) : $color = exmart_brand_color( $brand->term_id ); $count = $brand->count; ?>
+				<?php foreach ( $house as $brand ) : $color = exmart_brand_color( $brand->term_id ); $count = $brand->count; $logo_url = exmart_brand_logo_url( $brand->term_id ); ?>
 					<a class="em-brand-card" data-brand-name="<?php echo esc_attr( strtolower( $brand->name . ' ' . exmart_brand_tagline( $brand->term_id ) ) ); ?>" href="<?php echo esc_url( get_term_link( $brand ) ); ?>">
-						<div class="em-brand-card-avatar" style="background:<?php echo esc_attr( $color ); ?>22;"><span style="color:<?php echo esc_attr( $color ); ?>;"><?php echo esc_html( mb_substr( $brand->name, 0, 1 ) ); ?></span></div>
+						<div class="em-brand-card-avatar<?php echo $logo_url ? ' has-logo' : ''; ?>" style="<?php echo $logo_url ? '' : 'background:' . esc_attr( $color ) . '22;'; ?>">
+							<?php if ( $logo_url ) : ?>
+								<img src="<?php echo esc_url( $logo_url ); ?>" alt="<?php echo esc_attr( $brand->name ); ?>" width="56" height="56" loading="lazy" decoding="async" />
+							<?php else : ?>
+								<span style="color:<?php echo esc_attr( $color ); ?>;"><?php echo esc_html( mb_substr( $brand->name, 0, 1 ) ); ?></span>
+							<?php endif; ?>
+						</div>
 						<div>
 							<p class="em-brand-card-name"><?php echo esc_html( $brand->name ); ?></p>
 							<span class="em-trust"><svg class="em-trust-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path stroke-linejoin="round" d="M8.5 12.5L10.5 14.5L15.5 9.5"/></g></svg><span class="em-trust-text"><?php esc_html_e( 'exMart exclusive · our own brand', 'exmart' ); ?></span></span>

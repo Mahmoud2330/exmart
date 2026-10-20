@@ -322,8 +322,22 @@
 .em-brand-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: var(--s4); }
 .em-brand-card { text-decoration: none; border: 1px solid var(--ink-200); border-radius: var(--r-md); padding: var(--s5); display: flex; flex-direction: column; gap: var(--s3); transition: border-color .15s, box-shadow .15s; }
 .em-brand-card:hover { border-color: var(--ink-400); box-shadow: var(--shadow-menu); }
-.em-brand-card-avatar { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.em-brand-card-avatar { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .em-brand-card-avatar span { font-weight: 700; font-size: 1.5rem; }
+.em-brand-card-avatar.has-logo {
+	border-radius: var(--r-md);
+	background: var(--paper);
+	border: 1px solid var(--ink-200);
+	padding: var(--s2);
+	box-sizing: border-box;
+}
+.em-brand-card-avatar.has-logo img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	object-position: center;
+}
 .em-brand-card-name { font-weight: 700; font-size: 1rem; color: var(--ink-900); margin: 0 0 var(--s1); }
 .em-brand-card-tagline { color: var(--ink-500); line-height: 1.45; flex: 1; margin: 0; }
 .em-brand-card-count { color: var(--accent-600); font-weight: 600; margin: 0; }
@@ -357,6 +371,20 @@
 .em-about-brand-card { border: 1px solid var(--ink-200); border-radius: var(--r-md); padding: var(--s5); text-decoration: none; display: flex; flex-direction: column; gap: var(--s2); }
 .em-about-brand-head { display: flex; align-items: center; gap: var(--s3); }
 .em-about-brand-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.em-about-brand-avatar.has-logo {
+	border-radius: var(--r-sm);
+	background: var(--paper);
+	border: 1px solid var(--ink-200);
+	padding: var(--s1);
+	box-sizing: border-box;
+}
+.em-about-brand-avatar.has-logo img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	object-position: center;
+}
 .em-commitment-list { display: flex; flex-direction: column; gap: var(--s3); }
 .em-commitment-item { display: flex; gap: var(--s3); align-items: flex-start; }
 
