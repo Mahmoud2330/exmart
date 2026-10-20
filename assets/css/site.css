@@ -379,6 +379,29 @@
 	/* Slightly wider info column so ATC/trust aren’t cramped (still within 1280 guide). */
 	.em-pdp-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: var(--s10); }
 }
+
+/* Product Page Banner: wide strip below the product on phones/tablets
+   (rendered inside .em-pdp-main so it sits right under the gallery/info
+   grid, before tabs/related); a tall sticky sidebar beside the product at
+   1200px+, same slider markup/JS/CSS as the Shop Page Banner
+   (.em-shop-banner / .em-shop-banner--side). */
+.em-pdp-layout { display: block; }
+.em-pdp-main > .em-shop-banner { margin-top: var(--s8); margin-bottom: 0; }
+.em-pdp-aside { display: none; }
+@media (min-width: 1200px) {
+	.em-pdp-layout--banner {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 260px;
+		gap: var(--s8);
+		align-items: start;
+	}
+	.em-pdp-main > .em-shop-banner { display: none; }
+	.em-pdp-aside {
+		display: block;
+		position: sticky;
+		top: calc(var(--em-header-h, 140px) + var(--s4));
+	}
+}
 /* Kill WooCommerce’s default float + 48% widths on summary/images — they
    nest inside our grid cell and make the right column look “cut off”. */
 .woocommerce div.product.em-pdp,

@@ -288,5 +288,64 @@ function exmart_customize_register( $wp_customize ) {
 			)
 		);
 	}
+
+	/* Product page banner: wide strip below the product on phones/tablets, tall sticky sidebar beside it on desktop. */
+	$wp_customize->add_section(
+		'exmart_product_banner',
+		array(
+			'title'       => __( 'Product Page Banner', 'exmart' ),
+			'description' => __( 'Shoppable banner shown on every product page: a wide strip below the product on phones/tablets, a tall sticky banner beside it on desktop. Up to 3 slides rotate automatically; a slide with no images is skipped. If a slide has only one of its two images, that image is used (cropped) for both.', 'exmart' ),
+			'priority'    => 32,
+		)
+	);
+	foreach ( exmart_product_banner_slide_keys() as $n => $keys ) {
+		$priority = $n * 10;
+		foreach ( array( 'desktop', 'mobile' ) as $variant ) {
+			$wp_customize->add_setting(
+				$keys[ $variant ],
+				array(
+					'default'           => 0,
+					'sanitize_callback' => 'absint',
+				)
+			);
+			$wp_customize->add_control(
+				new WP_Customize_Media_Control(
+					$wp_customize,
+					$keys[ $variant ],
+					array(
+						'label'       => 'desktop' === $variant
+							/* translators: %d: slide number */
+							? sprintf( __( 'Slide %d — desktop banner (tall)', 'exmart' ), $n )
+							/* translators: %d: slide number */
+							: sprintf( __( 'Slide %d — phone banner (wide)', 'exmart' ), $n ),
+						'description' => 'desktop' === $variant
+							? __( 'Portrait, 3:4 — e.g. 900 × 1200 px.', 'exmart' )
+							: __( 'Wide strip, 21:6 — e.g. 1400 × 400 px.', 'exmart' ),
+						'section'     => 'exmart_product_banner',
+						'mime_type'   => 'image',
+						'priority'    => $priority++,
+					)
+				)
+			);
+		}
+		$wp_customize->add_setting(
+			$keys['link'],
+			array(
+				'default'           => '',
+				'sanitize_callback' => 'exmart_sanitize_hero_link',
+			)
+		);
+		$wp_customize->add_control(
+			$keys['link'],
+			array(
+				/* translators: %d: slide number */
+				'label'       => sprintf( __( 'Slide %d — link (optional)', 'exmart' ), $n ),
+				'description' => __( 'Where this slide takes shoppers. Defaults to the Offers collection if left blank.', 'exmart' ),
+				'section'     => 'exmart_product_banner',
+				'type'        => 'text',
+				'priority'    => $priority++,
+			)
+		);
+	}
 }
 add_action( 'customize_register', 'exmart_customize_register' );

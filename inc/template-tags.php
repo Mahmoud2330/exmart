@@ -930,6 +930,48 @@ function exmart_render_shop_banner( $slides, $variant ) {
 }
 
 /**
+ * Customizer setting names for each Product Page Banner slide (1-based).
+ *
+ * @return array<int,array{desktop:string,mobile:string,link:string}>
+ */
+function exmart_product_banner_slide_keys() {
+	$slides = array();
+	for ( $n = 1; $n <= 3; $n++ ) {
+		$slides[ $n ] = array(
+			'desktop' => "exmart_product_banner{$n}_image",
+			'mobile'  => "exmart_product_banner{$n}_mobile_image",
+			'link'    => "exmart_product_banner{$n}_link",
+		);
+	}
+	return $slides;
+}
+
+/**
+ * Product Page Banner slides that have at least one image. Each slide falls
+ * back to its other image when one is missing. Shown on every single
+ * product page — reuses exmart_render_shop_banner() for the actual markup.
+ *
+ * @return array<int,array{desktop:array,mobile:array,link:string}>
+ */
+function exmart_product_banner_slides() {
+	$slides = array();
+	foreach ( exmart_product_banner_slide_keys() as $keys ) {
+		$desktop = exmart_get_promo_image( $keys['desktop'] );
+		$mobile  = exmart_get_promo_image( $keys['mobile'] );
+		if ( ! $desktop && ! $mobile ) {
+			continue;
+		}
+		$link     = trim( (string) get_theme_mod( $keys['link'], '' ) );
+		$slides[] = array(
+			'desktop' => $desktop ? $desktop : $mobile,
+			'mobile'  => $mobile ? $mobile : $desktop,
+			'link'    => '' !== $link ? $link : exmart_rail_view_all_url( 'offers' ),
+		);
+	}
+	return $slides;
+}
+
+/**
  * Homepage hero tiles: Customizer image setting, filename fallback, and
  * the built-in copy each text field shows until someone edits it.
  *
