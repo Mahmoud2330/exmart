@@ -3534,3 +3534,7 @@ html.em-scroll-locked { overflow: hidden; }
 /* Brand logos arrive pre-cropped, so one box size gives them all the same visual weight. */
 .em-brand-pill-logo { width: 104px; height: 40px; }
 .em-brand-pill-logo img { max-width: 104px; max-height: 40px; }
+
+/* Brands strip: logos only, one primary-blue hover for every brand. */
+.em-brand-pill { padding: var(--s3) var(--s4); }
+.em-brand-pill:hover, .em-brand-pill:focus-visible { border-color: var(--accent-600); background: color-mix(in srgb, var(--accent-600) 7%, transparent); }

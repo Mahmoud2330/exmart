@@ -153,20 +153,21 @@ $trust_items = array(
 		<span class="em-overline em-brands-strip-label"><?php esc_html_e( 'Our Brands', 'exmart' ); ?></span>
 		<div class="em-brands-strip-divider" aria-hidden="true"></div>
 		<?php foreach ( $product_brands as $brand ) :
-			$color    = exmart_brand_color( $brand->term_id );
 			$logo_url = exmart_brand_logo_url( $brand->term_id );
 			?>
 			<a
 				class="em-brand-pill"
 				href="<?php echo esc_url( get_term_link( $brand ) ); ?>"
-				style="--brand-hover:<?php echo esc_attr( $color ); ?>;"
+				aria-label="<?php echo esc_attr( $brand->name ); ?>"
+				title="<?php echo esc_attr( $brand->name ); ?>"
 			>
 				<?php if ( $logo_url ) : ?>
 					<span class="em-brand-pill-logo">
 						<img src="<?php echo esc_url( $logo_url ); ?>" alt="<?php echo esc_attr( $brand->name ); ?>" width="72" height="28" loading="lazy" decoding="async" />
 					</span>
+				<?php else : ?>
+					<span class="em-brand-pill-name"><?php echo esc_html( $brand->name ); ?></span>
 				<?php endif; ?>
-				<span class="em-brand-pill-name"><?php echo esc_html( $brand->name ); ?></span>
 			</a>
 		<?php endforeach; ?>
 	</div>
