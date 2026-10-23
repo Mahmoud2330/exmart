@@ -188,11 +188,19 @@ $checkout_url = function_exists( 'wc_get_checkout_url' ) ? wc_get_checkout_url()
 	<!-- Mini-cart drawer -->
 	<div class="em-backdrop" id="em-cart-backdrop" hidden></div>
 	<aside class="em-drawer" id="em-cart-drawer" aria-label="<?php esc_attr_e( 'Shopping cart', 'exmart' ); ?>" hidden>
-		<div class="em-drawer-header">
-			<h2 class="em-h4"><?php esc_html_e( 'Cart', 'exmart' ); ?></h2>
-			<button class="em-btn-icon" id="em-cart-close" aria-label="<?php esc_attr_e( 'Close cart', 'exmart' ); ?>">
-				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><path d="M19.0068 5L5.00684 19"/><path d="M19 19L5 5"/></g></svg>
+		<div class="em-drawer-header em-cart-drawer-head">
+			<button class="em-cart-drawer-back" id="em-cart-close" aria-label="<?php esc_attr_e( 'Close cart', 'exmart' ); ?>">
+				<svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 5L9 12L15 19"/></svg>
 			</button>
+			<div class="em-cart-drawer-titles">
+				<h2 class="em-cart-drawer-title"><?php esc_html_e( 'Cart', 'exmart' ); ?></h2>
+				<p class="em-cart-drawer-sub" id="em-cart-sub"><?php
+					echo esc_html( $cart_count > 0 ? sprintf( /* translators: %d: items */ _n( '%d item', '%d items', $cart_count, 'exmart' ), $cart_count ) : __( 'exMart', 'exmart' ) );
+				?></p>
+			</div>
+			<a class="em-cart-drawer-add" href="<?php echo esc_url( function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' ) ); ?>">
+				<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><path d="M4 12L20 12"/><path d="M12.0204 4L12.0205 20.0003"/></g></svg><span><?php esc_html_e( 'Add items', 'exmart' ); ?></span>
+			</a>
 		</div>
 		<div class="em-drawer-body">
 			<div class="widget_shopping_cart_content">

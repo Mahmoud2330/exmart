@@ -12,6 +12,12 @@
 
 	function updateCartBadges( count ) {
 		count = Math.max( 0, parseInt( count, 10 ) || 0 );
+		var cartSub = document.getElementById( 'em-cart-sub' );
+		if ( cartSub ) {
+			cartSub.textContent = count > 0
+				? count + ' ' + ( count === 1 ? ( data.itemSingular || 'item' ) : ( data.itemPlural || 'items' ) )
+				: ( data.storeName || 'exMart' );
+		}
 		document.querySelectorAll( '.em-cart-count-badge' ).forEach( function ( badge ) {
 			badge.textContent = String( count );
 			if ( count > 0 ) {
@@ -74,6 +80,7 @@
 		initMegaMenus();
 		initMobileNav();
 		initCartDrawer();
+		initDrawerCart();
 		initFaq();
 		initNewsletterForms();
 		initWishlistButtons();
@@ -857,6 +864,7 @@
 		function show() {
 			drawer.hidden = false;
 			backdrop.hidden = false;
+			document.body.classList.add( 'em-cart-open' );
 			// Prefer last synced mini-cart HTML, then confirm with server.
 			if ( latestMiniCartHtml ) {
 				fillMiniCart( latestMiniCartHtml );
@@ -866,10 +874,23 @@
 		function hide() {
 			drawer.hidden = true;
 			backdrop.hidden = true;
+			document.body.classList.remove( 'em-cart-open' );
 		}
 
 		toggles.forEach( function ( btn ) { btn.addEventListener( 'click', show ); } );
 		if ( close ) close.addEventListener( 'click', hide );
+		// "Add items": already on the shop page → just close the drawer, otherwise go shopping.
+		var addItems = drawer.querySelector( '.em-cart-drawer-add' );
+		if ( addItems ) {
+			addItems.addEventListener( 'click', function ( e ) {
+				try {
+					if ( new URL( addItems.href, window.location.href ).pathname === window.location.pathname ) {
+						e.preventDefault();
+						hide();
+					}
+				} catch ( err ) { /* follow the link */ }
+			} );
+		}
 		backdrop.addEventListener( 'click', hide );
 		document.addEventListener( 'keydown', function ( e ) { if ( e.key === 'Escape' ) hide(); } );
 
@@ -878,6 +899,89 @@
 		if ( document.body.classList.contains( 'em-just-added-to-cart' ) ) {
 			show();
 		}
+	}
+
+	// ── Mini-cart drawer: pill qty steppers (incl. variations) + "Popular picks" quick-add ──
+	function initDrawerCart() {
+		var drawer = document.getElementById( 'em-cart-drawer' );
+		var ajaxUrl = data.ajaxUrl || '';
+		var nonce = data.nonce || '';
+		if ( ! drawer || ! ajaxUrl ) return;
+
+		var timers = {};
+		var seq = 0;
+
+		function post( action, fields ) {
+			var body = new FormData();
+			body.append( 'action', action );
+			body.append( 'nonce', nonce );
+			Object.keys( fields ).forEach( function ( k ) { body.append( k, fields[ k ] ); } );
+			return fetch( ajaxUrl, { method: 'POST', body: body, credentials: 'same-origin' } )
+				.then( function ( res ) { return res.json(); } );
+		}
+
+		// Only the newest request may repaint the drawer (older responses are stale).
+		function apply( json, mySeq ) {
+			if ( mySeq !== seq || ! json || ! json.success || ! json.data ) return;
+			var d = json.data;
+			if ( typeof d.count !== 'undefined' ) updateCartBadges( d.count );
+			if ( typeof window.exmartApplyCartSnapshot === 'function' ) {
+				window.exmartApplyCartSnapshot( d );
+			} else if ( typeof d.mini_cart_html === 'string' ) {
+				fillMiniCart( d.mini_cart_html );
+			}
+		}
+
+		function sendQty( key, qty ) {
+			var mySeq = ++seq;
+			post( 'exmart_set_cart_item_qty', { cart_item_key: key, quantity: String( qty ) } )
+				.then( function ( json ) { apply( json, mySeq ); } )
+				.catch( function () { refreshMiniCartFromServer(); } );
+		}
+
+		function changeQty( btn, delta ) {
+			var wrap = btn.closest( '[data-em-mc-qty]' );
+			var item = btn.closest( '[data-em-mc-item]' );
+			if ( ! wrap || ! item ) return;
+			var key = wrap.getAttribute( 'data-key' );
+			var cur = parseInt( wrap.getAttribute( 'data-qty' ), 10 ) || 1;
+			var max = parseInt( wrap.getAttribute( 'data-max' ), 10 ) || 9999;
+			var next = Math.max( 0, Math.min( max, cur + delta ) );
+			if ( next === cur ) return;
+
+			if ( next === 0 ) {
+				item.classList.add( 'is-removing' );
+			} else {
+				wrap.setAttribute( 'data-qty', String( next ) );
+				wrap.querySelector( '[data-em-mc-val]' ).textContent = String( next );
+				wrap.querySelector( '[data-em-mc-minus]' ).classList.toggle( 'is-remove', next === 1 );
+				wrap.querySelector( '[data-em-mc-plus]' ).disabled = next >= max;
+				item.classList.add( 'is-busy' );
+			}
+			window.clearTimeout( timers[ key ] );
+			timers[ key ] = window.setTimeout( function () { sendQty( key, next ); }, next === 0 ? 0 : 300 );
+		}
+
+		function quickAdd( btn ) {
+			if ( btn.classList.contains( 'is-loading' ) ) return;
+			btn.classList.add( 'is-loading' );
+			var mySeq = ++seq;
+			post( 'exmart_set_cart_qty', { product_id: btn.getAttribute( 'data-product-id' ), quantity: '1' } )
+				.then( function ( json ) {
+					if ( ! json || ! json.success ) btn.classList.remove( 'is-loading' );
+					apply( json, mySeq );
+				} )
+				.catch( function () { btn.classList.remove( 'is-loading' ); } );
+		}
+
+		drawer.addEventListener( 'click', function ( e ) {
+			var minus = e.target.closest( '[data-em-mc-minus]' );
+			if ( minus ) { changeQty( minus, -1 ); return; }
+			var plus = e.target.closest( '[data-em-mc-plus]' );
+			if ( plus ) { changeQty( plus, 1 ); return; }
+			var add = e.target.closest( '[data-em-mc-add]' );
+			if ( add ) quickAdd( add );
+		} );
 	}
 
 	// ── FAQ accordion ──────────────────────────────────────

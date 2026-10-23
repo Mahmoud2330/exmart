@@ -2027,6 +2027,95 @@ add_action( 'wp_ajax_exmart_set_cart_qty', 'exmart_ajax_set_cart_qty' );
 add_action( 'wp_ajax_nopriv_exmart_set_cart_qty', 'exmart_ajax_set_cart_qty' );
 
 /**
+ * AJAX: set the quantity of one cart line by its cart item key (0 removes).
+ * Works for variations too, unlike exmart_set_cart_qty (simple products only).
+ */
+function exmart_ajax_set_cart_item_qty() {
+	check_ajax_referer( 'exmart_ajax', 'nonce' );
+
+	if ( ! exmart_ensure_wc_cart() ) {
+		wp_send_json_error( array( 'message' => 'Cart unavailable' ), 400 );
+	}
+
+	$key      = isset( $_POST['cart_item_key'] ) ? wc_clean( wp_unslash( $_POST['cart_item_key'] ) ) : '';
+	$quantity = isset( $_POST['quantity'] ) ? max( 0, (int) $_POST['quantity'] ) : 0;
+	$cart     = WC()->cart;
+	$items    = $cart->get_cart();
+
+	if ( ! $key || ! isset( $items[ $key ] ) ) {
+		wp_send_json_error( array( 'message' => 'Item not found' ), 400 );
+	}
+
+	$product = $items[ $key ]['data'];
+	if ( $product instanceof WC_Product ) {
+		$max = $product->get_max_purchase_quantity();
+		if ( $max > 0 && $quantity > $max ) {
+			$quantity = $max;
+		}
+	}
+
+	if ( 0 === $quantity ) {
+		$cart->remove_cart_item( $key );
+	} else {
+		$cart->set_quantity( $key, $quantity, true );
+	}
+
+	$cart->calculate_totals();
+	if ( method_exists( $cart, 'maybe_set_cart_cookies' ) ) {
+		$cart->maybe_set_cart_cookies();
+	}
+
+	wp_send_json_success(
+		array(
+			'count'          => (int) $cart->get_cart_contents_count(),
+			'quantities'     => exmart_get_cart_qty_map(),
+			'mini_cart_html' => exmart_get_mini_cart_html(),
+			'cart_hash'      => $cart->get_cart_hash(),
+		)
+	);
+}
+add_action( 'wp_ajax_exmart_set_cart_item_qty', 'exmart_ajax_set_cart_item_qty' );
+add_action( 'wp_ajax_nopriv_exmart_set_cart_item_qty', 'exmart_ajax_set_cart_item_qty' );
+
+/**
+ * "Popular picks" for the mini-cart drawer: best sellers (id list cached
+ * 10 min) minus what is already in the cart, limited to simple, in-stock
+ * products so the round + button can add them in one tap.
+ *
+ * @param int[] $exclude Product IDs to skip (already in the cart).
+ * @param int   $limit   Max products.
+ * @return WC_Product[]
+ */
+function exmart_drawer_picks( $exclude = array(), $limit = 8 ) {
+	$ids = get_transient( 'exmart_drawer_picks_v1' );
+	if ( ! is_array( $ids ) ) {
+		$ids = array();
+		if ( function_exists( 'exmart_get_best_sellers' ) ) {
+			foreach ( exmart_get_best_sellers( 24 ) as $p ) {
+				$ids[] = (int) $p->get_id();
+			}
+		}
+		set_transient( 'exmart_drawer_picks_v1', $ids, 10 * MINUTE_IN_SECONDS );
+	}
+
+	$picks = array();
+	foreach ( $ids as $id ) {
+		if ( in_array( (int) $id, array_map( 'intval', $exclude ), true ) ) {
+			continue;
+		}
+		$product = wc_get_product( $id );
+		if ( ! $product || ! $product->is_visible() || ! $product->is_type( 'simple' ) || ! $product->is_purchasable() || ! $product->is_in_stock() ) {
+			continue;
+		}
+		$picks[] = $product;
+		if ( count( $picks ) >= $limit ) {
+			break;
+		}
+	}
+	return $picks;
+}
+
+/**
  * Checkout — Figma 4-step wizard.
  * Payment lives in the Payment step (left), not inside the Order Summary aside.
  */

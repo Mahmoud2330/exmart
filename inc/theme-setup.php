@@ -86,6 +86,9 @@ function exmart_scripts() {
 		'nonce'     => wp_create_nonce( 'exmart_ajax' ),
 		'shopUrl'   => function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/' ),
 		'copiedLabel' => __( 'Copied', 'exmart' ),
+		'itemSingular' => __( 'item', 'exmart' ),
+		'itemPlural'   => __( 'items', 'exmart' ),
+		'storeName'    => __( 'exMart', 'exmart' ),
 	) );
 
 	if ( is_singular( 'product' ) ) {
