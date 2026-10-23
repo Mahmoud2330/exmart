@@ -3429,3 +3429,29 @@ body.admin-bar .em-cutoff { top: 44px; }
 	.em-cutoff-pill.is-wiggle { animation: none; }
 }
 @media (max-width: 480px) { .em-cutoff-text { font-size: .8125rem; } }
+
+/* ── Checkout confirmation: warning copy + duplicate-order guard ───── */
+.em-confirm-terms { border-radius: var(--r-md); background: var(--warning-bg); border: 1px solid color-mix(in srgb, var(--warning) 28%, transparent); padding: var(--s4); }
+.em-confirm-terms-title { display: flex; align-items: center; gap: var(--s2); margin: 0 0 var(--s2); font-size: .875rem; font-weight: 700; color: var(--ink-900); }
+.em-confirm-terms-title svg { color: var(--warning); flex-shrink: 0; }
+.em-confirm-terms ul { margin: 0; padding-left: 1.1em; display: flex; flex-direction: column; gap: var(--s2); }
+.em-confirm-terms li { font-size: .8125rem; line-height: 1.45; color: var(--ink-700); }
+.em-confirm-dup {
+	display: flex; gap: var(--s3); align-items: flex-start; padding: var(--s4);
+	border-radius: var(--r-md); background: var(--sale-bg); border: 1px solid color-mix(in srgb, var(--error) 35%, transparent); color: var(--ink-900);
+}
+.em-confirm-dup[hidden], .em-confirm-sub[hidden] { display: none; }
+.em-confirm-dup svg { flex-shrink: 0; color: var(--error); margin-top: 1px; }
+.em-confirm-dup p { margin: 0; font-size: .875rem; line-height: 1.45; }
+.em-confirm-dup strong { display: block; margin-bottom: 2px; }
+.em-confirm.is-dup .em-confirm-progress { display: none; }
+/* Keep the confirm / cancel sheet buttons reachable when the content scrolls (e.g. duplicate-order warning on a phone).
+   The negative bottom/margin make the bar sit flush with the sheet's bottom edge (past its padding) without changing the end-of-scroll layout. */
+.em-confirm-dialog > .em-confirm-actions {
+	position: sticky; bottom: calc(var(--s6) * -1); margin-top: auto; margin-bottom: calc(var(--s6) * -1);
+	background: var(--paper);
+	padding: var(--s3) 0 calc(var(--s4) + env(safe-area-inset-bottom, 0px));
+	box-shadow: 0 -14px 14px -10px var(--paper);
+}
+#em-confirm .em-confirm-actions { grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr); }
+#em-confirm .em-confirm-actions .em-btn { padding-inline: var(--s3); line-height: 1.2; text-align: center; text-wrap: balance; }

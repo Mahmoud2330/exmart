@@ -99,6 +99,7 @@
 		initCheckoutSteps();
 		initCheckoutConfirm();
 		initOrderCancel();
+		initOrderRemember();
 		initCutoffPill();
 		initCartEmptyReload();
 	} );
@@ -1319,6 +1320,11 @@
 		var bar = modal.querySelector( '[data-em-confirm-bar]' );
 		var secsEl = modal.querySelector( '[data-em-confirm-secs]' );
 		var dialog = modal.querySelector( '.em-confirm-dialog' );
+		var nowBtn = modal.querySelector( '[data-em-confirm-now]' );
+		var dupBox = modal.querySelector( '[data-em-confirm-dup]' );
+		var subTimer = modal.querySelector( '[data-em-confirm-sub-timer]' );
+		var subDup = modal.querySelector( '[data-em-confirm-sub-dup]' );
+		var DUP_WINDOW = 30 * 60 * 1000;
 		var bypass = false;
 		var raf = 0;
 		var startTs = 0;
@@ -1390,16 +1396,35 @@
 			if ( lastFocus && typeof lastFocus.focus === 'function' ) lastFocus.focus();
 		}
 
+		// An order placed from this browser in the last 30 min → likely a duplicate.
+		function recentOrder() {
+			try {
+				var rec = JSON.parse( window.localStorage.getItem( 'exmartLastOrder' ) || 'null' );
+				if ( rec && rec.n && Date.now() - rec.ts < DUP_WINDOW ) return rec;
+			} catch ( err ) { /* ignore */ }
+			return null;
+		}
+
 		function openModal() {
 			fillSummary();
 			startTs = 0;
 			fill.style.width = '0%';
 			secsEl.textContent = String( DURATION / 1000 );
+
+			var dup = recentOrder();
+			modal.classList.toggle( 'is-dup', !! dup );
+			dupBox.hidden = ! dup;
+			subTimer.hidden = !! dup;
+			subDup.hidden = ! dup;
+			if ( dup ) modal.querySelector( '[data-em-confirm-dup-n]' ).textContent = String( dup.n );
+			nowBtn.textContent = nowBtn.getAttribute( dup ? 'data-label-dup' : 'data-label-normal' ) || nowBtn.textContent;
+
 			lastFocus = document.activeElement;
 			modal.hidden = false;
 			document.body.classList.add( 'em-confirm-open' );
 			dialog.focus();
-			raf = window.requestAnimationFrame( tick );
+			// Suspected duplicate: no countdown, no auto-place — the customer must confirm explicitly.
+			if ( ! dup ) raf = window.requestAnimationFrame( tick );
 		}
 
 		function placeNow() {
@@ -1429,6 +1454,19 @@
 		document.addEventListener( 'keydown', function ( e ) {
 			if ( e.key === 'Escape' && ! modal.hidden ) closeModal();
 		} );
+	}
+
+	// ── Remember the last order placed from this browser (feeds the duplicate-order guard) ──
+	function initOrderRemember() {
+		var el = document.querySelector( '[data-em-order-placed]' );
+		if ( ! el ) return;
+		var n = el.getAttribute( 'data-em-order-placed' );
+		try {
+			var prev = JSON.parse( window.localStorage.getItem( 'exmartLastOrder' ) || 'null' );
+			// Reloading the thank-you page must not renew the 30-minute window.
+			if ( prev && String( prev.n ) === String( n ) ) return;
+			window.localStorage.setItem( 'exmartLastOrder', JSON.stringify( { n: n, ts: Date.now() } ) );
+		} catch ( err ) { /* storage blocked — guard simply stays off */ }
 	}
 
 	// ── Thank-you page: "Cancel order" → call / copy customer-service number ──

@@ -53,6 +53,8 @@ $is_failed = $order->has_status( 'failed' );
 
 	<?php else : ?>
 
+		<span data-em-order-placed="<?php echo esc_attr( $order->get_order_number() ); ?>" hidden></span>
+
 		<h1 class="em-h2 em-order-confirm-title"><?php esc_html_e( 'Order confirmed!', 'exmart' ); ?></h1>
 
 		<p class="woocommerce-notice woocommerce-notice--success woocommerce-thankyou-order-received em-order-confirm-sub">
