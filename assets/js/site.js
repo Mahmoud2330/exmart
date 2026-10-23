@@ -1200,7 +1200,6 @@
 		} );
 	}
 
-	// ── Checkout multi-step (Figma: Contact → Address → Shipping → Payment)
 	// ── Checkout: "double-check" review with a countdown before the order is placed ──
 	// Hooks WooCommerce's own `checkout_place_order` event: returning false stops
 	// the submit, we show the review modal, and after the buffer (or "Place order
@@ -1500,6 +1499,7 @@
 		el.addEventListener( 'pointercancel', endDrag );
 	}
 
+	// ── Checkout multi-step (Figma: Contact → Address → Shipping → Payment)
 	function initCheckoutSteps() {
 		var form = document.querySelector( 'form.checkout[data-em-checkout-steps]' );
 		if ( ! form ) return;

@@ -11,8 +11,6 @@ defined( 'ABSPATH' ) || exit;
 
 $item_count = WC()->cart ? WC()->cart->get_cart_contents_count() : 0;
 $subtotal   = WC()->cart ? (float) WC()->cart->get_displayed_subtotal() : 0;
-$threshold  = function_exists( 'exmart_free_shipping_threshold' ) ? exmart_free_shipping_threshold() : 300.0;
-$remaining  = max( 0, $threshold - $subtotal );
 $shop_url   = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
 ?>
 <div class="cart_totals em-cart-summary <?php echo ( WC()->customer->has_calculated_shipping() ) ? 'calculated_shipping' : ''; ?>">
@@ -53,18 +51,6 @@ $shop_url   = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink
 				<span class="em-summary-label"><?php esc_html_e( 'Shipping', 'exmart' ); ?></span>
 				<span class="em-summary-value"><?php woocommerce_shipping_calculator(); ?></span>
 			</div>
-		<?php endif; ?>
-
-		<?php if ( $remaining > 0 && $threshold > 0 ) : ?>
-			<p class="em-caption em-cart-free-ship">
-				<?php
-				printf(
-					/* translators: %s: amount remaining for free shipping */
-					esc_html__( 'Add %s more for free shipping', 'exmart' ),
-					wp_kses_post( wc_price( $remaining ) )
-				);
-				?>
-			</p>
 		<?php endif; ?>
 
 		<?php foreach ( WC()->cart->get_fees() as $fee ) : ?>
@@ -134,6 +120,11 @@ $shop_url   = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink
 	<div class="wc-proceed-to-checkout">
 		<?php do_action( 'woocommerce_proceed_to_checkout' ); ?>
 	</div>
+
+	<ul class="em-cart-trust">
+		<li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path stroke-linejoin="round" d="M8.5 12.5L10.5 14.5L15.5 9.5"/></g></svg><span><?php esc_html_e( 'Authenticated — direct from manufacturer', 'exmart' ); ?></span></li>
+		<li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path stroke-linejoin="round" d="M8.5 12.5L10.5 14.5L15.5 9.5"/></g></svg><span><?php esc_html_e( 'Free returns within 14 days', 'exmart' ); ?></span></li>
+	</ul>
 
 	<a class="em-cart-continue" href="<?php echo esc_url( $shop_url ); ?>">
 		<?php esc_html_e( 'Continue shopping', 'exmart' ); ?>
