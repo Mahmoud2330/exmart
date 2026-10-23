@@ -75,6 +75,18 @@ function exmart_format_card_price( $amount ) {
 }
 
 /**
+ * Price as the shop's "EGP 58.00" lockup (same markup/classes as product cards).
+ *
+ * @param float|string $amount Display amount.
+ * @return string
+ */
+function exmart_price_lockup( $amount ) {
+	$currency = function_exists( 'get_woocommerce_currency' ) ? get_woocommerce_currency() : 'EGP';
+	$label    = ( 'EGP' === $currency ) ? 'EGP' : ( function_exists( 'get_woocommerce_currency_symbol' ) ? get_woocommerce_currency_symbol( $currency ) : $currency );
+	return '<span class="em-price-lockup"><span class="em-price-currency">' . esc_html( $label ) . '</span><span class="em-price-number">' . esc_html( exmart_format_card_price( $amount ) ) . '</span></span>';
+}
+
+/**
  * Price/discount summary across a variable product's variations, using
  * each variation's own regular and active price (so the cheapest price
  * is compared to *its own* regular price, never another size's).

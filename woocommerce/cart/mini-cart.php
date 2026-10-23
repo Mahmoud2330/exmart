@@ -47,8 +47,8 @@ $em_shop  = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 
 			$qty               = (int) $cart_item['quantity'];
 			$product_name      = apply_filters( 'woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key );
 			$thumbnail         = apply_filters( 'woocommerce_cart_item_thumbnail', $_product->get_image( 'woocommerce_thumbnail' ), $cart_item, $cart_item_key );
-			$unit_price        = apply_filters( 'woocommerce_cart_item_price', $em_cart->get_product_price( $_product ), $cart_item, $cart_item_key );
-			$line_price        = apply_filters( 'woocommerce_cart_item_subtotal', $em_cart->get_product_subtotal( $_product, $qty ), $cart_item, $cart_item_key );
+			$unit_amount       = (float) wc_get_price_to_display( $_product );
+			$line_amount       = (float) wc_get_price_to_display( $_product, array( 'qty' => $qty ) );
 			$product_permalink = apply_filters( 'woocommerce_cart_item_permalink', $_product->is_visible() ? $_product->get_permalink( $cart_item ) : '', $cart_item, $cart_item_key );
 
 			$max = $_product->is_sold_individually() ? 1 : (int) $_product->get_max_purchase_quantity();
@@ -71,9 +71,9 @@ $em_shop  = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 
 					<?php endif; ?>
 					<?php echo wc_get_formatted_cart_item_data( $cart_item ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					<div class="em-mc-price">
-						<span class="em-mc-line"><?php echo wp_kses_post( $line_price ); ?></span>
+						<span class="em-mc-line"><?php echo exmart_price_lockup( $line_amount ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 						<?php if ( $qty > 1 ) : ?>
-							<span class="em-mc-each"><?php echo wp_kses_post( $unit_price ); ?> <?php esc_html_e( 'each', 'exmart' ); ?></span>
+							<span class="em-mc-each"><?php echo exmart_price_lockup( $unit_amount ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> <?php esc_html_e( 'each', 'exmart' ); ?></span>
 						<?php endif; ?>
 					</div>
 				</div>
@@ -135,14 +135,15 @@ $em_shop  = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 
 <?php if ( $em_has_items ) : ?>
 	<div class="em-mini-cart-footer">
 		<p class="woocommerce-mini-cart__total total">
-			<?php do_action( 'woocommerce_widget_shopping_cart_total' ); ?>
+			<strong><?php esc_html_e( 'Subtotal', 'exmart' ); ?></strong>
+			<?php echo exmart_price_lockup( (float) $em_cart->get_displayed_subtotal() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		</p>
 		<p class="woocommerce-mini-cart__buttons buttons em-mini-cart-buttons">
-			<a href="<?php echo esc_url( wc_get_checkout_url() ); ?>" class="em-mini-cart-btn em-mini-cart-btn--checkout button checkout wc-forward">
-				<?php esc_html_e( 'Checkout', 'exmart' ); ?>
-			</a>
 			<a href="<?php echo esc_url( wc_get_cart_url() ); ?>" class="em-mini-cart-btn em-mini-cart-btn--view button wc-forward">
 				<?php esc_html_e( 'View cart', 'exmart' ); ?>
+			</a>
+			<a href="<?php echo esc_url( wc_get_checkout_url() ); ?>" class="em-mini-cart-btn em-mini-cart-btn--checkout button checkout wc-forward">
+				<?php esc_html_e( 'Checkout', 'exmart' ); ?>
 			</a>
 		</p>
 	</div>
