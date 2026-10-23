@@ -92,6 +92,7 @@
 		initCheckoutSteps();
 		initCheckoutConfirm();
 		initOrderCancel();
+		initCutoffPill();
 		initCartEmptyReload();
 	} );
 
@@ -1391,6 +1392,112 @@
 		document.addEventListener( 'keydown', function ( e ) {
 			if ( e.key === 'Escape' && ! sheet.hidden ) setOpen( false );
 		} );
+	}
+
+	// ── Delivery cutoff pill: slide in, wiggle, live countdown, X / swipe to dismiss ──
+	function initCutoffPill() {
+		var el = document.getElementById( 'em-cutoff' );
+		if ( ! el ) return;
+		var KEY = 'exmartCutoffDismissed';
+		try {
+			if ( window.sessionStorage.getItem( KEY ) ) { el.remove(); return; }
+		} catch ( err ) { /* storage blocked — just show it */ }
+
+		var cutoff = parseInt( el.getAttribute( 'data-cutoff' ), 10 ) * 1000;
+		var delay = parseInt( el.getAttribute( 'data-delay' ), 10 ) || 3500;
+		var timeEl = el.querySelector( '[data-em-cutoff-time]' );
+		var pill = el.querySelector( '.em-cutoff-pill' );
+		var reduce = window.matchMedia && window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
+		var tickTimer = 0;
+		var wiggleTimer = 0;
+		var dragging = false;
+		var gone = false;
+
+		function pad( n ) { return ( n < 10 ? '0' : '' ) + n; }
+		function fmt( ms ) {
+			var s = Math.max( 0, Math.floor( ms / 1000 ) );
+			return pad( Math.floor( s / 3600 ) ) + ':' + pad( Math.floor( ( s % 3600 ) / 60 ) ) + ':' + pad( s % 60 );
+		}
+
+		if ( cutoff - Date.now() <= 0 ) { el.remove(); return; }
+
+		function dismiss( remember, dx, dy ) {
+			if ( gone ) return;
+			gone = true;
+			window.clearInterval( tickTimer );
+			window.clearInterval( wiggleTimer );
+			if ( remember ) {
+				try { window.sessionStorage.setItem( KEY, '1' ); } catch ( err ) { /* ignore */ }
+			}
+			el.classList.remove( 'is-visible' );
+			el.classList.add( 'is-leaving' );
+			if ( dx || dy ) {
+				el.style.transform = 'translate(' + ( dx * 4 ) + 'px,' + ( dy * 4 ) + 'px)';
+			}
+			window.setTimeout( function () { el.hidden = true; }, 320 );
+		}
+
+		function update() {
+			var left = cutoff - Date.now();
+			if ( left <= 0 ) { dismiss( false ); return; }
+			if ( timeEl ) timeEl.textContent = fmt( left );
+		}
+
+		function wiggle() {
+			if ( reduce || dragging || gone ) return;
+			pill.classList.remove( 'is-wiggle' );
+			void pill.offsetWidth; // restart the animation
+			pill.classList.add( 'is-wiggle' );
+		}
+
+		update();
+		tickTimer = window.setInterval( update, 1000 );
+
+		window.setTimeout( function () {
+			if ( gone ) return;
+			el.hidden = false;
+			window.requestAnimationFrame( function () {
+				el.classList.add( 'is-visible' );
+				window.setTimeout( wiggle, 450 );
+				wiggleTimer = window.setInterval( wiggle, 9000 );
+			} );
+		}, delay );
+
+		el.querySelector( '[data-em-cutoff-close]' ).addEventListener( 'click', function () { dismiss( true ); } );
+
+		// Swipe away: sideways or up.
+		var sx = 0;
+		var sy = 0;
+		var dxNow = 0;
+		var dyNow = 0;
+		el.addEventListener( 'pointerdown', function ( e ) {
+			if ( gone || e.target.closest( '[data-em-cutoff-close]' ) ) return;
+			dragging = true;
+			sx = e.clientX;
+			sy = e.clientY;
+			dxNow = 0;
+			dyNow = 0;
+			el.classList.add( 'is-dragging' );
+			try { el.setPointerCapture( e.pointerId ); } catch ( err ) { /* ignore */ }
+		} );
+		el.addEventListener( 'pointermove', function ( e ) {
+			if ( ! dragging ) return;
+			dxNow = e.clientX - sx;
+			dyNow = Math.min( 0, e.clientY - sy ); // only upward
+			el.style.transform = 'translate(' + dxNow + 'px,' + dyNow + 'px)';
+		} );
+		function endDrag() {
+			if ( ! dragging ) return;
+			dragging = false;
+			el.classList.remove( 'is-dragging' );
+			if ( Math.abs( dxNow ) > 70 || dyNow < -35 ) {
+				dismiss( true, dxNow, dyNow );
+			} else {
+				el.style.transform = '';
+			}
+		}
+		el.addEventListener( 'pointerup', endDrag );
+		el.addEventListener( 'pointercancel', endDrag );
 	}
 
 	function initCheckoutSteps() {

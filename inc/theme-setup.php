@@ -348,5 +348,35 @@ function exmart_customize_register( $wp_customize ) {
 			)
 		);
 	}
+
+	/* Delivery cutoff pill: countdown to the next-day-delivery cutoff. */
+	$wp_customize->add_section(
+		'exmart_cutoff',
+		array(
+			'title'       => __( 'Delivery Cutoff Pill', 'exmart' ),
+			'description' => __( 'A small pill that drops in from the top of the screen with a live countdown to your same-day order cutoff. Uses the site timezone (Settings → General). It disappears automatically once the cutoff has passed.', 'exmart' ),
+			'priority'    => 33,
+		)
+	);
+	$wp_customize->add_setting( 'exmart_cutoff_enabled', array( 'default' => true, 'sanitize_callback' => 'wp_validate_boolean' ) );
+	$wp_customize->add_control( 'exmart_cutoff_enabled', array(
+		'label'   => __( 'Show the delivery cutoff pill', 'exmart' ),
+		'section' => 'exmart_cutoff',
+		'type'    => 'checkbox',
+	) );
+	$wp_customize->add_setting( 'exmart_cutoff_time', array( 'default' => '15:00', 'sanitize_callback' => 'sanitize_text_field' ) );
+	$wp_customize->add_control( 'exmart_cutoff_time', array(
+		'label'       => __( 'Daily cutoff time (24h, HH:MM)', 'exmart' ),
+		'description' => __( 'Orders placed before this time get the next-day promise. Example: 15:00.', 'exmart' ),
+		'section'     => 'exmart_cutoff',
+		'type'        => 'text',
+	) );
+	$wp_customize->add_setting( 'exmart_cutoff_text', array( 'default' => __( 'Get it by tomorrow if you order in {time}', 'exmart' ), 'sanitize_callback' => 'sanitize_text_field' ) );
+	$wp_customize->add_control( 'exmart_cutoff_text', array(
+		'label'       => __( 'Pill text', 'exmart' ),
+		'description' => __( 'Use {time} where the live countdown should appear.', 'exmart' ),
+		'section'     => 'exmart_cutoff',
+		'type'        => 'text',
+	) );
 }
 add_action( 'customize_register', 'exmart_customize_register' );

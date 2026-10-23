@@ -1517,3 +1517,63 @@ function exmart_governorates() {
 		'Red Sea', 'New Valley', 'Matrouh', 'North Sinai', 'South Sinai',
 	);
 }
+
+/**
+ * Delivery cutoff pill: seconds left until today's cutoff in the site
+ * timezone (Settings → General), or null when disabled / already past.
+ *
+ * @return array{cutoff:int,left:int}|null
+ */
+function exmart_cutoff_state() {
+	if ( ! get_theme_mod( 'exmart_cutoff_enabled', true ) ) {
+		return null;
+	}
+	$time = trim( (string) get_theme_mod( 'exmart_cutoff_time', '15:00' ) );
+	if ( ! preg_match( '/^([01]?\d|2[0-3]):([0-5]\d)$/', $time, $m ) ) {
+		$m = array( '', '15', '00' );
+	}
+	$now    = new DateTimeImmutable( 'now', wp_timezone() );
+	$cutoff = $now->setTime( (int) $m[1], (int) $m[2], 0 );
+	$left   = $cutoff->getTimestamp() - $now->getTimestamp();
+	if ( $left <= 0 ) {
+		return null;
+	}
+	return array(
+		'cutoff' => $cutoff->getTimestamp(),
+		'left'   => $left,
+	);
+}
+
+/**
+ * Soft pill that drops in from the top of the screen with a live countdown
+ * to the delivery cutoff. Wiggles for attention; dismissed by its X or by
+ * swiping it away (state kept per browser session in JS).
+ */
+function exmart_render_cutoff_pill() {
+	if ( is_admin() || ( function_exists( 'is_checkout' ) && is_checkout() ) ) {
+		return;
+	}
+	$state = exmart_cutoff_state();
+	if ( ! $state ) {
+		return;
+	}
+	$text = (string) get_theme_mod( 'exmart_cutoff_text', __( 'Get it by tomorrow if you order in {time}', 'exmart' ) );
+	if ( false === strpos( $text, '{time}' ) ) {
+		$text .= ' {time}';
+	}
+	$html = str_replace(
+		'{time}',
+		'<strong class="em-cutoff-time" data-em-cutoff-time>' . esc_html( gmdate( 'H:i:s', $state['left'] ) ) . '</strong>',
+		esc_html( $text )
+	);
+	?>
+	<div class="em-cutoff" id="em-cutoff" role="status" data-cutoff="<?php echo esc_attr( (string) $state['cutoff'] ); ?>" data-delay="3500" hidden>
+		<div class="em-cutoff-pill">
+			<span class="em-cutoff-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><path d="M9.56541 8.73049C9.0804 6.97492 8.8379 6.09714 9.24954 5.40562C9.66119 4.71409 10.5662 4.47889 12.3763 4.00849L14.2962 3.50955C16.1062 3.03915 17.0113 2.80394 17.7242 3.20319C18.4372 3.60244 18.6797 4.48023 19.1647 6.2358L19.6792 8.09786C20.1642 9.85343 20.4067 10.7312 19.995 11.4227C19.5834 12.1143 18.6784 12.3495 16.8683 12.8199L14.9484 13.3188C13.1384 13.7892 12.2333 14.0244 11.5203 13.6252C10.8073 13.2259 10.5648 12.3481 10.0798 10.5926L9.56541 8.73049Z"/><path d="M8.23 15.0602L6.08 7.27014C5.89453 6.61732 5.38563 6.12036 4.7 5.92L3 5.4502"/><circle cx="8.05" cy="18.1" r="2.9"/><path d="M10.9199 17.36L19.9999 15"/></g></svg></span>
+			<span class="em-cutoff-text"><?php echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped — escaped above, markup is ours. ?></span>
+			<button type="button" class="em-cutoff-x" data-em-cutoff-close aria-label="<?php esc_attr_e( 'Dismiss', 'exmart' ); ?>"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><path d="M19.0068 5L5.00684 19"/><path d="M19 19L5 5"/></g></svg></button>
+		</div>
+	</div>
+	<?php
+}
+add_action( 'wp_footer', 'exmart_render_cutoff_pill' );
