@@ -353,7 +353,13 @@ function exmart_brand_logo_url( $term_id ) {
 		return '';
 	}
 
-	$slug      = strtolower( $term->slug );
+	$slug = strtolower( $term->slug );
+
+	// Logos bundled with the theme (already cropped and background-free).
+	if ( file_exists( EXMART_DIR . '/assets/img/brands/' . $slug . '.png' ) ) {
+		return EXMART_URI . '/assets/img/brands/' . $slug . '.png?v=' . EXMART_VERSION;
+	}
+
 	$filenames = exmart_brand_logo_filenames();
 	if ( empty( $filenames[ $slug ] ) ) {
 		return '';
