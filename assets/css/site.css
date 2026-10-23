@@ -3062,8 +3062,8 @@ ul.woocommerce-error li {
 .em-shop-filters.is-open { z-index: 2147483000; }
 body:has(.em-drawer:not([hidden])),
 body.em-cart-open { overflow: hidden; }
-/* Belt and braces: hide third-party floating chat buttons while a drawer is open. */
-body:has(.em-drawer:not([hidden])) :is(
+/* Belt and braces: hide third-party floating chat buttons while a drawer or confirm sheet is open. */
+:is(body:has(.em-drawer:not([hidden])), body.em-confirm-open) :is(
 	#ht-ctc-chat, .ht-ctc, .joinchat, .chaty, #chaty-widget-0, .wa__btn_popup, .wa__popup_chat_box,
 	.qlwapp, #qlwapp, [id*="whatsapp" i], [class*="whatsapp" i], [id*="wa-chat" i]
 ):not(.em-whatsapp-link):not(.em-whatsapp-icon) { display: none !important; }
@@ -3509,3 +3509,8 @@ html.em-scroll-locked { overflow: hidden; }
 .woocommerce-customer-details.em-od-customer .em-od-card .em-od-contact + .em-od-contact { margin-top: var(--s2); }
 .woocommerce-customer-details.em-od-customer .em-od-card .em-od-contact::before { content: none; display: none; }
 .woocommerce-customer-details.em-od-customer .em-od-contact svg { flex-shrink: 0; color: var(--ink-500); }
+
+/* Confirm sheet: the dialog is a scrolling flex column, so children must not shrink
+   (the progress bar collapsed to 0 height) and the sheet sits above any floating chat button. */
+.em-confirm { z-index: 2147483000; }
+.em-confirm-dialog > * { flex-shrink: 0; }
