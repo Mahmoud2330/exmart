@@ -154,6 +154,179 @@ function exmart_brand_logo_filenames() {
 }
 
 /**
+ * Logo URL with empty margins cropped off, so every brand logo fills its box the same way.
+ *
+ * Builds a trimmed PNG once (GD) in uploads/exmart-logos/ and reuses it until the source
+ * file changes. Falls back to the plain medium-size image if GD can't read the file.
+ *
+ * @param int $attachment_id Media Library attachment.
+ * @return string
+ */
+function exmart_brand_logo_trimmed_url( $attachment_id ) {
+	$attachment_id = absint( $attachment_id );
+	$fallback      = $attachment_id ? (string) wp_get_attachment_image_url( $attachment_id, 'medium' ) : '';
+	if ( ! $attachment_id || ! function_exists( 'imagecreatetruecolor' ) ) {
+		return $fallback;
+	}
+
+	$source = get_attached_file( $attachment_id );
+	if ( ! $source || ! file_exists( $source ) ) {
+		return $fallback;
+	}
+
+	$upload = wp_upload_dir();
+	if ( ! empty( $upload['error'] ) ) {
+		return $fallback;
+	}
+	$dir  = trailingslashit( $upload['basedir'] ) . 'exmart-logos';
+	$name = $attachment_id . '-' . filemtime( $source ) . '.png';
+	$path = $dir . '/' . $name;
+	$url  = trailingslashit( $upload['baseurl'] ) . 'exmart-logos/' . $name;
+	if ( file_exists( $path ) ) {
+		return $url;
+	}
+
+	$out = exmart_trim_logo_image( $source, $path );
+	return $out ? $url : $fallback;
+}
+
+/**
+ * Crop transparent / background-coloured margins from an image and save it as a PNG.
+ *
+ * @param string $source Source file path.
+ * @param string $dest   Destination PNG path (directory is created).
+ * @return bool
+ */
+function exmart_trim_logo_image( $source, $dest ) {
+	$info = @getimagesize( $source );
+	if ( ! $info ) {
+		return false;
+	}
+	switch ( $info[2] ) {
+		case IMAGETYPE_PNG:
+			$img = @imagecreatefrompng( $source );
+			break;
+		case IMAGETYPE_JPEG:
+			$img = @imagecreatefromjpeg( $source );
+			break;
+		case IMAGETYPE_WEBP:
+			$img = function_exists( 'imagecreatefromwebp' ) ? @imagecreatefromwebp( $source ) : false;
+			break;
+		case IMAGETYPE_GIF:
+			$img = @imagecreatefromgif( $source );
+			break;
+		default:
+			$img = false;
+	}
+	if ( ! $img ) {
+		return false;
+	}
+
+	// Work on a capped copy so huge originals stay cheap; the output is plenty sharp at logo size.
+	$w = imagesx( $img );
+	$h = imagesy( $img );
+	$max = 900;
+	if ( max( $w, $h ) > $max ) {
+		$scale = $max / max( $w, $h );
+		$nw    = max( 1, (int) round( $w * $scale ) );
+		$nh    = max( 1, (int) round( $h * $scale ) );
+		$small = imagecreatetruecolor( $nw, $nh );
+		imagealphablending( $small, false );
+		imagesavealpha( $small, true );
+		imagefill( $small, 0, 0, imagecolorallocatealpha( $small, 0, 0, 0, 127 ) );
+		imagecopyresampled( $small, $img, 0, 0, 0, 0, $nw, $nh, $w, $h );
+		imagedestroy( $img );
+		$img = $small;
+		$w   = $nw;
+		$h   = $nh;
+	}
+	imagealphablending( $img, false );
+	imagesavealpha( $img, true );
+
+	// Background = transparent, or the colour of the four corners when they agree (usually white).
+	$px = function ( $x, $y ) use ( $img ) {
+		$c = imagecolorat( $img, $x, $y );
+		return array( ( $c >> 24 ) & 0x7F, ( $c >> 16 ) & 0xFF, ( $c >> 8 ) & 0xFF, $c & 0xFF );
+	};
+	$corners = array( $px( 0, 0 ), $px( $w - 1, 0 ), $px( 0, $h - 1 ), $px( $w - 1, $h - 1 ) );
+	$bg      = null;
+	$agree   = true;
+	foreach ( $corners as $c ) {
+		if ( $c[0] > 100 ) { // transparent corner
+			continue;
+		}
+		if ( null === $bg ) {
+			$bg = $c;
+		} elseif ( abs( $c[1] - $bg[1] ) + abs( $c[2] - $bg[2] ) + abs( $c[3] - $bg[3] ) > 60 ) {
+			$agree = false;
+		}
+	}
+	if ( ! $agree ) {
+		$bg = null;
+	}
+
+	$is_content = function ( $x, $y ) use ( $px, $bg ) {
+		$c = $px( $x, $y );
+		if ( $c[0] > 100 ) { // mostly transparent
+			return false;
+		}
+		if ( $bg && abs( $c[1] - $bg[1] ) + abs( $c[2] - $bg[2] ) + abs( $c[3] - $bg[3] ) < 48 ) {
+			return false;
+		}
+		return true;
+	};
+
+	$top = $h; $bottom = -1; $left = $w; $right = -1;
+	for ( $y = 0; $y < $h; $y++ ) {
+		for ( $x = 0; $x < $w; $x++ ) {
+			if ( $is_content( $x, $y ) ) {
+				if ( $y < $top ) { $top = $y; }
+				if ( $y > $bottom ) { $bottom = $y; }
+				if ( $x < $left ) { $left = $x; }
+				if ( $x > $right ) { $right = $x; }
+			}
+		}
+	}
+	if ( $bottom < 0 ) { // nothing found: keep the image as is
+		$top = 0; $left = 0; $bottom = $h - 1; $right = $w - 1;
+	}
+
+	$pad  = 2;
+	$left = max( 0, $left - $pad );
+	$top  = max( 0, $top - $pad );
+	$cw   = min( $w, $right + $pad + 1 ) - $left;
+	$ch   = min( $h, $bottom + $pad + 1 ) - $top;
+
+	$crop = imagecreatetruecolor( $cw, $ch );
+	imagealphablending( $crop, false );
+	imagesavealpha( $crop, true );
+	imagefill( $crop, 0, 0, imagecolorallocatealpha( $crop, 0, 0, 0, 127 ) );
+	imagecopy( $crop, $img, 0, 0, $left, $top, $cw, $ch );
+
+	// Knock the flat white/solid background out so logos sit cleanly on any tile colour.
+	if ( $bg ) {
+		imagealphablending( $crop, false );
+		for ( $y = 0; $y < $ch; $y++ ) {
+			for ( $x = 0; $x < $cw; $x++ ) {
+				$c = imagecolorat( $crop, $x, $y );
+				$d = abs( ( ( $c >> 16 ) & 0xFF ) - $bg[1] ) + abs( ( ( $c >> 8 ) & 0xFF ) - $bg[2] ) + abs( ( $c & 0xFF ) - $bg[3] );
+				if ( ( ( $c >> 24 ) & 0x7F ) < 100 && $d < 24 ) {
+					imagesetpixel( $crop, $x, $y, imagecolorallocatealpha( $crop, 0, 0, 0, 127 ) );
+				}
+			}
+		}
+	}
+
+	if ( ! wp_mkdir_p( dirname( $dest ) ) ) {
+		return false;
+	}
+	$ok = imagepng( $crop, $dest, 6 );
+	imagedestroy( $img );
+	imagedestroy( $crop );
+	return (bool) $ok;
+}
+
+/**
  * Brand logo URL for the “Our Brands” strip (and similar chrome).
  *
  * Priority: term meta attachment → exact filename map in Media Library.
@@ -169,7 +342,7 @@ function exmart_brand_logo_url( $term_id ) {
 
 	$logo_id = absint( get_term_meta( $term_id, 'exmart_brand_logo', true ) );
 	if ( $logo_id ) {
-		$url = wp_get_attachment_image_url( $logo_id, 'medium' );
+		$url = exmart_brand_logo_trimmed_url( $logo_id );
 		if ( $url ) {
 			return $url;
 		}
@@ -209,8 +382,7 @@ function exmart_brand_logo_url( $term_id ) {
 		return '';
 	}
 
-	$url = wp_get_attachment_image_url( $found, 'medium' );
-	return $url ? $url : '';
+	return exmart_brand_logo_trimmed_url( $found );
 }
 
 /**
