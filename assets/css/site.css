@@ -3311,3 +3311,18 @@ body.em-confirm-open { overflow: hidden; }
 	.em-confirm { align-items: flex-end; padding: 0; }
 	.em-confirm-dialog { max-width: none; border-radius: var(--r-lg) var(--r-lg) 0 0; }
 }
+
+/* ── Thank-you: cancel order → call / copy sheet ───────── */
+.em-order-cancel-row { display: flex; flex-direction: column; align-items: center; gap: var(--s2); margin: 0 0 var(--s8); }
+.em-order-cancel-row .em-caption { margin: 0; color: var(--ink-500); }
+.em-order-cancel-btn { border-color: var(--ink-300); color: var(--ink-700); }
+.em-order-cancel-btn:hover:not(:disabled) { background: var(--ink-50); color: var(--error); border-color: var(--error); }
+.em-cancel-sheet .em-confirm-dialog { text-align: left; }
+.em-cancel-x { position: absolute; top: var(--s3); right: var(--s3); width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; border: none; background: transparent; color: var(--ink-500); border-radius: var(--r-full); cursor: pointer; }
+.em-cancel-x:hover { background: var(--ink-100); color: var(--ink-900); }
+.em-cancel-text { margin: 0; color: var(--ink-600); }
+.em-cancel-number { display: flex; align-items: center; justify-content: center; gap: var(--s3); padding: var(--s4); border: 1px solid var(--ink-200); border-radius: var(--r-md); background: var(--ink-50); text-decoration: none; color: var(--accent-600); font-size: 1.375rem; font-weight: 700; letter-spacing: .01em; font-variant-numeric: tabular-nums; }
+.em-cancel-number:hover { border-color: var(--accent-600); }
+.em-cancel-sheet .em-confirm-actions .em-btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--s2); text-decoration: none; }
+.em-cancel-sheet .em-btn.is-copied { background: var(--success-bg); color: var(--success); border-color: var(--success); }
+.em-cancel-order-no { margin: 0; text-align: center; color: var(--ink-500); }

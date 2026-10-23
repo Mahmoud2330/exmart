@@ -91,6 +91,7 @@
 		initCartPageQty();
 		initCheckoutSteps();
 		initCheckoutConfirm();
+		initOrderCancel();
 		initCartEmptyReload();
 	} );
 
@@ -1323,6 +1324,72 @@
 
 		document.addEventListener( 'keydown', function ( e ) {
 			if ( e.key === 'Escape' && ! modal.hidden ) closeModal();
+		} );
+	}
+
+	// ── Thank-you page: "Cancel order" → call / copy customer-service number ──
+	function initOrderCancel() {
+		var sheet = document.getElementById( 'em-cancel-sheet' );
+		var openBtn = document.querySelector( '[data-em-cancel-open]' );
+		if ( ! sheet || ! openBtn ) return;
+		var dialog = sheet.querySelector( '.em-confirm-dialog' );
+		var lastFocus = null;
+
+		function setOpen( open ) {
+			sheet.hidden = ! open;
+			document.body.classList.toggle( 'em-confirm-open', open );
+			if ( open ) {
+				lastFocus = document.activeElement;
+				dialog.focus();
+			} else if ( lastFocus && typeof lastFocus.focus === 'function' ) {
+				lastFocus.focus();
+			}
+		}
+
+		function copyText( text ) {
+			if ( navigator.clipboard && navigator.clipboard.writeText ) {
+				return navigator.clipboard.writeText( text );
+			}
+			return new Promise( function ( resolve, reject ) {
+				var ta = document.createElement( 'textarea' );
+				ta.value = text;
+				ta.setAttribute( 'readonly', '' );
+				ta.style.position = 'fixed';
+				ta.style.opacity = '0';
+				document.body.appendChild( ta );
+				ta.select();
+				try {
+					document.execCommand( 'copy' ) ? resolve() : reject();
+				} catch ( err ) {
+					reject( err );
+				}
+				document.body.removeChild( ta );
+			} );
+		}
+
+		openBtn.addEventListener( 'click', function () { setOpen( true ); } );
+
+		sheet.addEventListener( 'click', function ( e ) {
+			if ( e.target.closest( '[data-em-cancel-close]' ) ) {
+				setOpen( false );
+				return;
+			}
+			var copyBtn = e.target.closest( '[data-em-copy]' );
+			if ( ! copyBtn ) return;
+			var label = copyBtn.querySelector( '[data-em-copy-label]' );
+			var original = label ? label.textContent : '';
+			copyText( copyBtn.getAttribute( 'data-em-copy' ) ).then( function () {
+				if ( label ) label.textContent = ( data.copiedLabel || 'Copied' ) + ' ✓';
+				copyBtn.classList.add( 'is-copied' );
+				window.setTimeout( function () {
+					if ( label ) label.textContent = original;
+					copyBtn.classList.remove( 'is-copied' );
+				}, 2000 );
+			} ).catch( function () { /* clipboard blocked — the number is also a tap-to-call link */ } );
+		} );
+
+		document.addEventListener( 'keydown', function ( e ) {
+			if ( e.key === 'Escape' && ! sheet.hidden ) setOpen( false );
 		} );
 	}
 
