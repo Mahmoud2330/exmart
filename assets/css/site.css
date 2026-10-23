@@ -3452,9 +3452,9 @@ body.admin-bar .em-cutoff { top: 44px; }
 .em-confirm-dup p { margin: 0; font-size: .875rem; line-height: 1.45; }
 .em-confirm-dup strong { display: block; margin-bottom: 2px; }
 .em-confirm.is-dup .em-confirm-progress { display: none; }
-/* Keep the confirm / cancel sheet buttons reachable when the content scrolls (e.g. duplicate-order warning on a phone).
+/* Keep the checkout confirmation buttons reachable when the content scrolls (e.g. duplicate-order warning on a phone). Scoped to #em-confirm: in the cancel-order sheet the order-number caption sits below the buttons and must not be covered.
    The negative bottom/margin make the bar sit flush with the sheet's bottom edge (past its padding) without changing the end-of-scroll layout. */
-.em-confirm-dialog > .em-confirm-actions {
+#em-confirm .em-confirm-dialog > .em-confirm-actions {
 	position: sticky; bottom: calc(var(--s6) * -1); margin-top: auto; margin-bottom: calc(var(--s6) * -1);
 	background: var(--paper);
 	padding: var(--s3) 0 calc(var(--s4) + env(safe-area-inset-bottom, 0px));
