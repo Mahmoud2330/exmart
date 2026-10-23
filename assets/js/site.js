@@ -90,6 +90,7 @@
 		initShopFiltersDrawer();
 		initCartPageQty();
 		initCheckoutSteps();
+		initCheckoutConfirm();
 		initCartEmptyReload();
 	} );
 
@@ -1198,6 +1199,133 @@
 	}
 
 	// ── Checkout multi-step (Figma: Contact → Address → Shipping → Payment)
+	// ── Checkout: "double-check" review with a countdown before the order is placed ──
+	// Hooks WooCommerce's own `checkout_place_order` event: returning false stops
+	// the submit, we show the review modal, and after the buffer (or "Place order
+	// now") we re-trigger the form submit with a one-shot bypass flag.
+	function initCheckoutConfirm() {
+		var $ = window.jQuery;
+		var form = document.querySelector( 'form.em-checkout' );
+		var modal = document.getElementById( 'em-confirm' );
+		if ( ! $ || ! form || ! modal ) return;
+
+		var DURATION = 12000;
+		var fill = modal.querySelector( '[data-em-confirm-fill]' );
+		var bar = modal.querySelector( '[data-em-confirm-bar]' );
+		var secsEl = modal.querySelector( '[data-em-confirm-secs]' );
+		var dialog = modal.querySelector( '.em-confirm-dialog' );
+		var bypass = false;
+		var raf = 0;
+		var startTs = 0;
+		var lastTs = 0;
+		var lastFocus = null;
+
+		function field( name ) {
+			var el = form.querySelector( '[name="' + name + '"]' );
+			if ( ! el ) return '';
+			if ( el.tagName === 'SELECT' && el.selectedOptions && el.selectedOptions[ 0 ] ) {
+				return String( el.selectedOptions[ 0 ].textContent || '' ).trim();
+			}
+			return String( el.value || '' ).trim();
+		}
+
+		function fillSummary() {
+			var list = modal.querySelector( '[data-em-confirm-items]' );
+			list.textContent = '';
+			document.querySelectorAll( '#order_review .em-summary-row.cart_item' ).forEach( function ( row ) {
+				var nameEl = row.querySelector( '.em-checkout-summary-item' );
+				var valEl = row.querySelector( '.em-summary-value' );
+				var li = document.createElement( 'li' );
+				var a = document.createElement( 'span' );
+				var b = document.createElement( 'span' );
+				a.textContent = nameEl ? nameEl.textContent.replace( /\s+/g, ' ' ).trim() : '';
+				b.textContent = valEl ? valEl.textContent.replace( /\s+/g, ' ' ).trim() : '';
+				li.appendChild( a );
+				li.appendChild( b );
+				list.appendChild( li );
+			} );
+
+			var diff = form.querySelector( '#ship-to-different-address-checkbox' );
+			var p = diff && diff.checked ? 'shipping_' : 'billing_';
+			var who = ( field( p + 'first_name' ) + ' ' + field( p + 'last_name' ) ).trim();
+			var where = [ field( p + 'address_1' ), field( p + 'address_2' ), field( p + 'city' ), field( p + 'state' ) ]
+				.filter( Boolean ).join( ', ' );
+			modal.querySelector( '[data-em-confirm-address]' ).textContent = [ who, where ].filter( Boolean ).join( ' — ' ) || '—';
+			modal.querySelector( '[data-em-confirm-phone]' ).textContent = field( 'billing_phone' ) || '—';
+
+			var pm = form.querySelector( 'input[name="payment_method"]:checked' );
+			var pmLabel = pm ? form.querySelector( 'label[for="' + pm.id + '"]' ) : null;
+			modal.querySelector( '[data-em-confirm-payment]' ).textContent = pmLabel ? pmLabel.textContent.replace( /\s+/g, ' ' ).trim() : '—';
+
+			var totalEl = document.querySelector( '#order_review .order-total .em-summary-value' );
+			modal.querySelector( '[data-em-confirm-total]' ).textContent = totalEl ? totalEl.textContent.replace( /\s+/g, ' ' ).trim() : '';
+		}
+
+		function tick( ts ) {
+			if ( ! startTs ) { startTs = ts; lastTs = ts; }
+			// A background tab pauses rAF — don't let the time spent away count against the buffer.
+			if ( ts - lastTs > 1000 ) startTs += ts - lastTs;
+			lastTs = ts;
+			var elapsed = ts - startTs;
+			var pct = Math.min( 100, ( elapsed / DURATION ) * 100 );
+			fill.style.width = pct + '%';
+			bar.setAttribute( 'aria-valuenow', String( Math.round( pct ) ) );
+			secsEl.textContent = String( Math.max( 0, Math.ceil( ( DURATION - elapsed ) / 1000 ) ) );
+			if ( elapsed >= DURATION ) {
+				placeNow();
+				return;
+			}
+			raf = window.requestAnimationFrame( tick );
+		}
+
+		function closeModal() {
+			window.cancelAnimationFrame( raf );
+			modal.hidden = true;
+			document.body.classList.remove( 'em-confirm-open' );
+			if ( lastFocus && typeof lastFocus.focus === 'function' ) lastFocus.focus();
+		}
+
+		function openModal() {
+			fillSummary();
+			startTs = 0;
+			fill.style.width = '0%';
+			secsEl.textContent = String( DURATION / 1000 );
+			lastFocus = document.activeElement;
+			modal.hidden = false;
+			document.body.classList.add( 'em-confirm-open' );
+			dialog.focus();
+			raf = window.requestAnimationFrame( tick );
+		}
+
+		function placeNow() {
+			closeModal();
+			bypass = true;
+			$( form ).trigger( 'submit' );
+			window.setTimeout( function () { bypass = false; }, 0 );
+		}
+
+		$( form ).on( 'checkout_place_order', function () {
+			if ( bypass ) {
+				bypass = false;
+				return true;
+			}
+			openModal();
+			return false;
+		} );
+
+		modal.addEventListener( 'click', function ( e ) {
+			if ( e.target.closest( '[data-em-confirm-now]' ) ) {
+				placeNow();
+			} else if ( e.target.closest( '[data-em-confirm-cancel]' ) ) {
+				closeModal();
+			}
+		} );
+
+		document.addEventListener( 'keydown', function ( e ) {
+			if ( e.key === 'Escape' && ! modal.hidden ) closeModal();
+		} );
+	}
+
 	function initCheckoutSteps() {
 		var form = document.querySelector( 'form.checkout[data-em-checkout-steps]' );
 		if ( ! form ) return;

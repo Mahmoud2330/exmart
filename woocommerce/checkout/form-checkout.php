@@ -100,4 +100,46 @@ $steps = array(
 
 </form>
 
+<div class="em-confirm" id="em-confirm" hidden>
+	<div class="em-confirm-backdrop" data-em-confirm-cancel></div>
+	<div class="em-confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="em-confirm-title" tabindex="-1">
+		<h2 id="em-confirm-title" class="em-h4"><?php esc_html_e( 'Double-check your order', 'exmart' ); ?></h2>
+		<p class="em-body-s em-confirm-sub">
+			<?php esc_html_e( 'We’ll place it automatically in', 'exmart' ); ?>
+			<strong><span data-em-confirm-secs>12</span><?php esc_html_e( 's', 'exmart' ); ?></strong>
+			<?php esc_html_e( '— last chance to make changes.', 'exmart' ); ?>
+		</p>
+		<div class="em-confirm-progress" role="progressbar" aria-label="<?php esc_attr_e( 'Time until your order is placed', 'exmart' ); ?>" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-em-confirm-bar>
+			<span class="em-confirm-progress-fill" data-em-confirm-fill></span>
+		</div>
+
+		<div class="em-confirm-body">
+			<ul class="em-confirm-items" data-em-confirm-items></ul>
+			<dl class="em-confirm-meta">
+				<div>
+					<dt><?php esc_html_e( 'Deliver to', 'exmart' ); ?></dt>
+					<dd data-em-confirm-address></dd>
+				</div>
+				<div>
+					<dt><?php esc_html_e( 'Phone', 'exmart' ); ?></dt>
+					<dd data-em-confirm-phone></dd>
+				</div>
+				<div>
+					<dt><?php esc_html_e( 'Payment', 'exmart' ); ?></dt>
+					<dd data-em-confirm-payment></dd>
+				</div>
+			</dl>
+			<div class="em-confirm-total">
+				<span><?php esc_html_e( 'Total', 'exmart' ); ?></span>
+				<strong data-em-confirm-total></strong>
+			</div>
+		</div>
+
+		<div class="em-confirm-actions">
+			<button type="button" class="em-btn em-btn-secondary em-btn-lg" data-em-confirm-cancel><?php esc_html_e( 'Edit my order', 'exmart' ); ?></button>
+			<button type="button" class="em-btn em-btn-primary em-btn-lg" data-em-confirm-now><?php esc_html_e( 'Place order now', 'exmart' ); ?></button>
+		</div>
+	</div>
+</div>
+
 <?php do_action( 'woocommerce_after_checkout_form', $checkout ); ?>
