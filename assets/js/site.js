@@ -1733,7 +1733,10 @@
 			} );
 		}
 
+		var stepReady = false;
+
 		function showStep( index ) {
+			var prevIndex = stepIndex;
 			stepIndex = Math.max( 0, Math.min( index, STEPS.length - 1 ) );
 			var id = STEPS[ stepIndex ];
 
@@ -1763,6 +1766,15 @@
 			}
 
 			form.setAttribute( 'data-em-step', id );
+
+			// Every step opens at the top, like a new page.
+			if ( stepReady && stepIndex !== prevIndex ) {
+				try {
+					window.scrollTo( { top: 0, left: 0, behavior: 'instant' } );
+				} catch ( err ) {
+					window.scrollTo( 0, 0 );
+				}
+			}
 		}
 
 		function visibleRequired( step ) {
@@ -1835,6 +1847,7 @@
 		}
 
 		showStep( 0 );
+		stepReady = true;
 	}
 
 } )();
