@@ -136,6 +136,7 @@ Theme was at **1.0.17** when this doc was written; current head is **1.0.70**. A
 
 ## Changelog
 
+- **2026-10-23 — v1.1.55** — Footer payment logos enlarged (1.4x, no tile padding) so the empty margins inside the logo images are cropped by the tile; tile size unchanged.
 - **2026-10-23 — v1.1.54** — Footer payment methods (COD, Fawry, Meeza, Visa/Mastercard, InstaPay) are now separate tiles of one fixed size (64x40), logos contained and centred, COD glyph 24px.
 - **2026-10-23 — v1.1.53** — Checkout steps (Contact, Address, Shipping, Payment) now scroll to the top whenever the step changes (Continue, Back, pipeline click), so each step opens at the top instead of staying at the previous step's scroll position.
 - **2026-10-23 — v1.1.52** — New pages always open at the top: fresh navigations (link clicks) disable scroll restoration and scroll to 0 on parse and on load. Back/forward, reload and #anchor links keep native behaviour.

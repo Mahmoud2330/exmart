@@ -3525,3 +3525,8 @@ html.em-scroll-locked { overflow: hidden; }
 }
 .em-site-footer .em-payment-icon--logo img { display: block; width: 100%; height: 100%; max-width: none; object-fit: contain; }
 .em-site-footer .em-payment-icon--logo svg { display: block; width: 24px; height: 24px; flex: none; }
+
+/* Footer payment logos: tiles stay the same size; logos are enlarged so any empty margin
+   baked into the image files is cropped by the tile (overflow: hidden). */
+.em-site-footer .em-payment-icon--logo { padding: 0; }
+.em-site-footer .em-payment-icon--logo img { transform: scale(1.4); transform-origin: center; }
