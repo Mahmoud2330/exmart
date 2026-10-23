@@ -880,18 +880,6 @@
 
 		toggles.forEach( function ( btn ) { btn.addEventListener( 'click', show ); } );
 		if ( close ) close.addEventListener( 'click', hide );
-		// "Add items": already on the shop page → just close the drawer, otherwise go shopping.
-		var addItems = drawer.querySelector( '.em-cart-drawer-add' );
-		if ( addItems ) {
-			addItems.addEventListener( 'click', function ( e ) {
-				try {
-					if ( new URL( addItems.href, window.location.href ).pathname === window.location.pathname ) {
-						e.preventDefault();
-						hide();
-					}
-				} catch ( err ) { /* follow the link */ }
-			} );
-		}
 		backdrop.addEventListener( 'click', hide );
 		document.addEventListener( 'keydown', function ( e ) { if ( e.key === 'Escape' ) hide(); } );
 

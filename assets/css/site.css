@@ -3081,7 +3081,7 @@ body:has(.em-drawer:not([hidden])) :is(
 
 /* Header: round back button · title + subtitle · "Add items" pill */
 #em-cart-drawer .em-cart-drawer-head {
-	display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--s3);
+	display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: var(--s3);
 	padding: calc(var(--s3) + env(safe-area-inset-top, 0px)) var(--s4) var(--s3);
 	border-bottom: none;
 }
@@ -3094,12 +3094,6 @@ body:has(.em-drawer:not([hidden])) :is(
 .em-cart-drawer-titles { min-width: 0; }
 .em-cart-drawer-title { margin: 0; font-size: 1.375rem; font-weight: 700; line-height: 1.15; color: var(--ink-900); }
 .em-cart-drawer-sub { margin: 2px 0 0; font-size: .875rem; color: var(--ink-500); }
-.em-cart-drawer-add {
-	height: 44px; padding: 0 var(--s4); border-radius: var(--r-full); border: 1px solid var(--ink-200); background: var(--paper);
-	display: inline-flex; align-items: center; gap: var(--s2); color: var(--ink-900); font-size: .9375rem; font-weight: 600;
-	text-decoration: none; white-space: nowrap; transition: background .15s, border-color .15s;
-}
-.em-cart-drawer-add:hover { background: var(--ink-50); border-color: var(--ink-300); }
 
 /* Scrollable middle: items + popular picks */
 #em-cart-drawer .em-mc-scroll {

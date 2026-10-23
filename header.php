@@ -198,9 +198,6 @@ $checkout_url = function_exists( 'wc_get_checkout_url' ) ? wc_get_checkout_url()
 					echo esc_html( $cart_count > 0 ? sprintf( /* translators: %d: items */ _n( '%d item', '%d items', $cart_count, 'exmart' ), $cart_count ) : __( 'exMart', 'exmart' ) );
 				?></p>
 			</div>
-			<a class="em-cart-drawer-add" href="<?php echo esc_url( function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' ) ); ?>">
-				<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><path d="M4 12L20 12"/><path d="M12.0204 4L12.0205 20.0003"/></g></svg><span><?php esc_html_e( 'Add items', 'exmart' ); ?></span>
-			</a>
 		</div>
 		<div class="em-drawer-body">
 			<div class="widget_shopping_cart_content">
