@@ -10,6 +10,46 @@
 	var WISHLIST_KEY = 'exmart_wishlist';
 	var latestMiniCartHtml = null;
 
+	// ── Page scroll lock (drawers / sheets) ────────────────
+	// `overflow: hidden` on <body> is ignored by iOS Safari, so the page behind a
+	// drawer could still scroll. Freeze the page in place instead (position: fixed
+	// at the current offset), compensate the scrollbar width so desktop layouts
+	// don't jump, and restore the exact scroll position on unlock. Several
+	// overlays can hold the lock at once; it releases when the last one closes.
+	var scrollLocks = {};
+	var lockedY = 0;
+	function setScrollLock( key, on ) {
+		var wasLocked = Object.keys( scrollLocks ).length > 0;
+		if ( on ) { scrollLocks[ key ] = true; } else { delete scrollLocks[ key ]; }
+		var isLocked = Object.keys( scrollLocks ).length > 0;
+		if ( isLocked === wasLocked ) return;
+
+		var html = document.documentElement;
+		var body = document.body;
+		if ( isLocked ) {
+			lockedY = window.pageYOffset || html.scrollTop || 0;
+			var gap = window.innerWidth - html.clientWidth;
+			body.style.position = 'fixed';
+			body.style.top = ( -lockedY ) + 'px';
+			body.style.left = '0';
+			body.style.right = '0';
+			if ( gap > 0 ) body.style.paddingRight = gap + 'px';
+			html.classList.add( 'em-scroll-locked' );
+		} else {
+			body.style.position = '';
+			body.style.top = '';
+			body.style.left = '';
+			body.style.right = '';
+			body.style.paddingRight = '';
+			html.classList.remove( 'em-scroll-locked' );
+			try {
+				window.scrollTo( { top: lockedY, left: 0, behavior: 'instant' } );
+			} catch ( err ) {
+				window.scrollTo( 0, lockedY );
+			}
+		}
+	}
+
 	function updateCartBadges( count ) {
 		count = Math.max( 0, parseInt( count, 10 ) || 0 );
 		var cartSub = document.getElementById( 'em-cart-sub' );
@@ -845,8 +885,8 @@
 		var backdrop = document.getElementById( 'em-mobile-nav-backdrop' );
 		if ( ! open || ! drawer || ! backdrop ) return;
 
-		function show() { drawer.hidden = false; backdrop.hidden = false; }
-		function hide() { drawer.hidden = true; backdrop.hidden = true; }
+		function show() { drawer.hidden = false; backdrop.hidden = false; setScrollLock( 'nav', true ); }
+		function hide() { drawer.hidden = true; backdrop.hidden = true; setScrollLock( 'nav', false ); }
 
 		open.addEventListener( 'click', show );
 		if ( close ) close.addEventListener( 'click', hide );
@@ -866,6 +906,7 @@
 			drawer.hidden = false;
 			backdrop.hidden = false;
 			document.body.classList.add( 'em-cart-open' );
+			setScrollLock( 'cart', true );
 			// Prefer last synced mini-cart HTML, then confirm with server.
 			if ( latestMiniCartHtml ) {
 				fillMiniCart( latestMiniCartHtml );
@@ -876,6 +917,7 @@
 			drawer.hidden = true;
 			backdrop.hidden = true;
 			document.body.classList.remove( 'em-cart-open' );
+			setScrollLock( 'cart', false );
 		}
 
 		toggles.forEach( function ( btn ) { btn.addEventListener( 'click', show ); } );
@@ -1177,11 +1219,13 @@
 		function show() {
 			drawer.classList.add( 'is-open' );
 			backdrop.hidden = false;
+			setScrollLock( 'filters', true );
 			open.setAttribute( 'aria-expanded', 'true' );
 		}
 		function hide() {
 			drawer.classList.remove( 'is-open' );
 			backdrop.hidden = true;
+			setScrollLock( 'filters', false );
 			open.setAttribute( 'aria-expanded', 'false' );
 		}
 
@@ -1381,6 +1425,7 @@
 			window.cancelAnimationFrame( raf );
 			modal.hidden = true;
 			document.body.classList.remove( 'em-confirm-open' );
+			setScrollLock( 'confirm', false );
 			if ( lastFocus && typeof lastFocus.focus === 'function' ) lastFocus.focus();
 		}
 
@@ -1410,6 +1455,7 @@
 			lastFocus = document.activeElement;
 			modal.hidden = false;
 			document.body.classList.add( 'em-confirm-open' );
+			setScrollLock( 'confirm', true );
 			dialog.focus();
 			// Suspected duplicate: no countdown, no auto-place — the customer must confirm explicitly.
 			if ( ! dup ) raf = window.requestAnimationFrame( tick );
@@ -1468,6 +1514,7 @@
 		function setOpen( open ) {
 			sheet.hidden = ! open;
 			document.body.classList.toggle( 'em-confirm-open', open );
+			setScrollLock( 'cancel', open );
 			if ( open ) {
 				lastFocus = document.activeElement;
 				dialog.focus();

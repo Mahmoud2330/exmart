@@ -3462,3 +3462,6 @@ body.admin-bar .em-cutoff { top: 44px; }
 }
 #em-confirm .em-confirm-actions { grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr); }
 #em-confirm .em-confirm-actions .em-btn { padding-inline: var(--s3); line-height: 1.2; text-align: center; text-wrap: balance; }
+
+/* Scroll lock (see setScrollLock() in site.js): iOS ignores body overflow, so the page is frozen with position: fixed. */
+html.em-scroll-locked { overflow: hidden; }
