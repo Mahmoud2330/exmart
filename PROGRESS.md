@@ -136,6 +136,7 @@ Theme was at **1.0.17** when this doc was written; current head is **1.0.70**. A
 
 ## Changelog
 
+- **2026-10-23 — v1.1.59** — Replaced the Verve brand logo with the full VERVE wordmark version (cropped, transparent background).
 - **2026-10-23 — v1.1.58** — Our Brands strip: brand names removed next to logos (kept as aria-label/title; name shows only if a brand has no logo). Hover is now the primary blue for every brand instead of per-brand colours.
 - **2026-10-23 — v1.1.57** — Added the 7 brand logos supplied by the client (Diversey, Grace, Oview, SureCheck, Qualita, Verve, Eliv) to assets/img/brands/ as cropped transparent PNGs (empty margins and white backgrounds removed). exmart_brand_logo_url() now uses them (term-meta override still wins first). Logo box in the brands strip enlarged to 104x40 so all logos share one size.
 - **2026-10-23 — v1.1.56** — Brand logos (Our Brands strip, Brands/About pages, brand archives) are now auto-trimmed on the server: exmart_brand_logo_url() builds a cropped transparent PNG (GD) with the empty margins and flat background removed, cached in uploads/exmart-logos/ and regenerated when the media file changes. Falls back to the original if GD can't read it. Display box stays one fixed size so all logos fill it equally. Uses the same filename map as before, so re-imported logos with the same filenames are picked up automatically.
