@@ -50,6 +50,12 @@ $em_pdp_banner_slides = exmart_product_banner_slides();
 				</div>
 			</div>
 
+			<?php if ( $em_pdp_banner_slides ) : ?>
+				<div class="em-pdp-banner-strip">
+					<?php exmart_render_shop_banner( $em_pdp_banner_slides, 'mobile' ); ?>
+				</div>
+			<?php endif; ?>
+
 			<?php
 			/**
 			 * Hook: woocommerce_after_single_product_summary.
@@ -61,8 +67,6 @@ $em_pdp_banner_slides = exmart_product_banner_slides();
 			?>
 
 		</div>
-
-		<?php exmart_render_shop_banner( $em_pdp_banner_slides, 'mobile' ); ?>
 	</div>
 
 	<?php if ( $em_pdp_banner_slides ) : ?>

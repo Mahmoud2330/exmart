@@ -414,7 +414,8 @@
    1200px+, same slider markup/JS/CSS as the Shop Page Banner
    (.em-shop-banner / .em-shop-banner--side). */
 .em-pdp-layout { display: block; }
-.em-pdp-main > .em-shop-banner { margin-top: var(--s8); margin-bottom: 0; }
+.em-pdp-banner-strip { margin-top: var(--s6); }
+.em-pdp-banner-strip .em-shop-banner { margin-bottom: 0; }
 .em-pdp-aside { display: none; }
 @media (min-width: 1200px) {
 	.em-pdp-layout--banner {
@@ -423,7 +424,7 @@
 		gap: var(--s8);
 		align-items: start;
 	}
-	.em-pdp-main > .em-shop-banner { display: none; }
+	.em-pdp-banner-strip { display: none; }
 	.em-pdp-aside {
 		display: block;
 		position: sticky;
