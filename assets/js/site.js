@@ -10,6 +10,21 @@
 	var WISHLIST_KEY = 'exmart_wishlist';
 	var latestMiniCartHtml = null;
 
+	// ── Always land at the top of a new page ───────────────
+	// Fresh navigations (link clicks, redirects) start at the top. Back/forward and
+	// reloads keep the browser's own restore; in-page #anchors are left alone.
+	( function () {
+		var navType = '';
+		try {
+			var nav = performance.getEntriesByType( 'navigation' )[ 0 ];
+			navType = nav ? nav.type : '';
+		} catch ( err ) {}
+		if ( navType !== 'navigate' || window.location.hash ) return;
+		if ( 'scrollRestoration' in history ) history.scrollRestoration = 'manual';
+		window.scrollTo( 0, 0 );
+		window.addEventListener( 'load', function () { window.scrollTo( 0, 0 ); } );
+	} )();
+
 	// ── Page scroll lock (drawers / sheets) ────────────────
 	// `overflow: hidden` on <body> is ignored by iOS Safari, so the page behind a
 	// drawer could still scroll. Freeze the page in place instead (position: fixed
