@@ -3514,3 +3514,14 @@ html.em-scroll-locked { overflow: hidden; }
    (the progress bar collapsed to 0 height) and the sheet sits above any floating chat button. */
 .em-confirm { z-index: 2147483000; }
 .em-confirm-dialog > * { flex-shrink: 0; }
+
+/* Footer payment methods: separate, equal-sized tiles (COD glyph + logos). */
+.em-site-footer .em-footer-payments { gap: var(--s2); }
+.em-site-footer .em-payment-icon,
+.em-site-footer .em-payment-icon--logo {
+	box-sizing: border-box; flex: 0 0 auto; width: 64px; height: 40px; padding: 6px 8px;
+	border: 1px solid var(--ink-200); border-radius: var(--r-sm, 6px); background: #fff;
+	display: inline-flex; align-items: center; justify-content: center; overflow: hidden;
+}
+.em-site-footer .em-payment-icon--logo img { display: block; width: 100%; height: 100%; max-width: none; object-fit: contain; }
+.em-site-footer .em-payment-icon--logo svg { display: block; width: 24px; height: 24px; flex: none; }

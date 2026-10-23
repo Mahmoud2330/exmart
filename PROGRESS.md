@@ -136,6 +136,7 @@ Theme was at **1.0.17** when this doc was written; current head is **1.0.70**. A
 
 ## Changelog
 
+- **2026-10-23 — v1.1.54** — Footer payment methods (COD, Fawry, Meeza, Visa/Mastercard, InstaPay) are now separate tiles of one fixed size (64x40), logos contained and centred, COD glyph 24px.
 - **2026-10-23 — v1.1.53** — Checkout steps (Contact, Address, Shipping, Payment) now scroll to the top whenever the step changes (Continue, Back, pipeline click), so each step opens at the top instead of staying at the previous step's scroll position.
 - **2026-10-23 — v1.1.52** — New pages always open at the top: fresh navigations (link clicks) disable scroll restoration and scroll to 0 on parse and on load. Back/forward, reload and #anchor links keep native behaviour.
 - **2026-10-23 — v1.1.51** — Fix double-check sheet: the progress bar collapsed to zero height because the dialog's flex column shrank it once content overflowed (children now flex-shrink:0). Also raised the sheet above floating chat buttons and hide the WhatsApp FAB while it is open, as it overlapped the Edit my order button.
