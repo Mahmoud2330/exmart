@@ -3465,3 +3465,47 @@ body.admin-bar .em-cutoff { top: 44px; }
 
 /* Scroll lock (see setScrollLock() in site.js): iOS ignores body overflow, so the page is frozen with position: fixed. */
 html.em-scroll-locked { overflow: hidden; }
+
+/* ── Order confirmation / view order: themed details + addresses ───── */
+.em-od, .em-od-customer { text-align: left; margin-top: var(--s8); }
+.em-od { border: 1px solid var(--ink-200); border-radius: var(--r-lg); background: var(--paper); overflow: hidden; }
+.em-od-title { margin: 0; padding: var(--s4) var(--s5); font-size: 1.125rem; font-weight: 700; color: var(--ink-900); border-bottom: 1px solid var(--ink-100); }
+.em-od-items { list-style: none; margin: 0; padding: var(--s2) var(--s5); }
+.em-od-item { display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; gap: var(--s3); align-items: center; padding: var(--s3) 0; border-bottom: 1px solid var(--ink-100); }
+.em-od-item:last-child { border-bottom: 0; }
+.em-od-thumb { width: 56px; height: 56px; border-radius: var(--r-md); background: var(--ink-50); overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.em-od-thumb img { width: 100%; height: 100%; object-fit: contain; padding: 4px; box-sizing: border-box; border: 0; border-radius: 0; margin: 0; }
+.em-od-info { min-width: 0; font-size: .9375rem; line-height: 1.4; color: var(--ink-900); }
+.em-od-name a { color: var(--ink-900); font-weight: 500; text-decoration: none; }
+.em-od-name a:hover { color: var(--accent-600); }
+.em-od-qty { color: var(--ink-500); font-weight: 600; white-space: nowrap; }
+.em-od-info .wc-item-meta { list-style: none; margin: 2px 0 0; padding: 0; font-size: .8125rem; color: var(--ink-500); }
+.em-od-info .wc-item-meta li { display: inline; margin: 0; }
+.em-od-info .wc-item-meta p { display: inline; margin: 0; }
+.em-od-price { font-size: .9375rem; font-weight: 600; color: var(--ink-900); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.em-od-note { padding: var(--s2) 0 var(--s3); font-size: .875rem; color: var(--ink-600); }
+.em-od-totals { padding: var(--s4) var(--s5); background: var(--ink-50); border-top: 1px solid var(--ink-100); display: flex; flex-direction: column; gap: var(--s2); }
+.em-od-row { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s4); font-size: .9375rem; color: var(--ink-600); }
+.em-od-row-value { color: var(--ink-900); font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
+.em-od-row-value small { font-weight: 400; color: var(--ink-500); }
+.em-od-row.is-total { margin-top: var(--s1); padding-top: var(--s3); border-top: 1px solid var(--ink-200); font-size: 1.0625rem; color: var(--ink-900); }
+.em-od-row.is-total .em-od-row-label { font-weight: 700; }
+.em-od-row.is-total .em-od-row-value { font-size: 1.25rem; font-weight: 700; }
+.em-od-row--note { align-items: flex-start; }
+.em-od-actions { display: flex; flex-wrap: wrap; gap: var(--s2); padding: var(--s4) var(--s5); border-top: 1px solid var(--ink-100); }
+
+.em-od-cards { display: grid; grid-template-columns: 1fr; gap: var(--s4); }
+@media (min-width: 640px) { .em-od-cards:not(.is-single) { grid-template-columns: 1fr 1fr; } }
+.em-od-card { border: 1px solid var(--ink-200); border-radius: var(--r-lg); background: var(--paper); padding: var(--s5); }
+.em-od-card-title { margin: 0 0 var(--s3); padding: 0; font-size: 1.0625rem; font-weight: 700; color: var(--ink-900); text-align: left; }
+/* Specificity matches WooCommerce's `.woocommerce .woocommerce-customer-details address` box + icon rules. */
+.woocommerce-customer-details.em-od-customer address.em-od-address {
+	font-style: normal; font-size: .9375rem; line-height: 1.6; color: var(--ink-800);
+	border: 0; border-radius: 0; padding: 0; margin: 0; width: auto;
+}
+.woocommerce-customer-details.em-od-customer .em-od-card .em-od-contact {
+	display: flex; align-items: center; gap: var(--s2); margin: var(--s3) 0 0; padding: 0; color: var(--ink-800); word-break: break-word;
+}
+.woocommerce-customer-details.em-od-customer .em-od-card .em-od-contact + .em-od-contact { margin-top: var(--s2); }
+.woocommerce-customer-details.em-od-customer .em-od-card .em-od-contact::before { content: none; display: none; }
+.woocommerce-customer-details.em-od-customer .em-od-contact svg { flex-shrink: 0; color: var(--ink-500); }
