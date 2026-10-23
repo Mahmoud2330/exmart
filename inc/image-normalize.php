@@ -424,19 +424,27 @@ function exmart_img_render_page() {
 				[].concat( data[ k ] ).forEach( function ( v ) { body.append( k, v ); } );
 			} );
 			body.set( 'nonce', nonce );
-			return fetch( ajax, { method: 'POST', credentials: 'same-origin', body: body } ).then( function ( r ) { return r.json(); } );
+			return fetch( ajax, { method: 'POST', credentials: 'same-origin', body: body } ).then( function ( r ) {
+				return r.text().then( function ( t ) {
+					try { return JSON.parse( t ); } catch ( e ) { throw new Error( 'Server answered with: ' + ( t.replace( /<[^>]*>/g, ' ' ).trim().slice( 0, 160 ) || 'nothing (HTTP ' + r.status + ')' ) ); }
+				} );
+			} );
 		}
 		function run( mode ) {
 			if ( busy ) return;
 			if ( mode === 'run' && ! confirm( 'Normalize all product images now? Originals are kept and can be restored.' ) ) return;
 			if ( mode === 'restore' && ! confirm( 'Restore every normalised image to its original?' ) ) return;
 			busy = true;
+			$( 'em-count' ).textContent = 'Looking for product images…';
+			$( 'em-prog' ).style.display = '';
 			var tbody = $( 'em-log' ).querySelector( 'tbody' ); tbody.textContent = '';
 			$( 'em-log' ).style.display = ''; $( 'em-prog' ).style.display = '';
 			var stats = { ok: 0, skipped: 0, error: 0 };
 			post( { action: 'exmart_img_scan' } ).then( function ( res ) {
 				var ids = ( res && res.success ) ? res.data.ids : [];
 				var i = 0;
+				if ( ! ids.length ) { busy = false; $( 'em-count' ).textContent = 'No product images found (products need a main or gallery image).'; return; }
+				$( 'em-count' ).textContent = '0 / ' + ids.length;
 				$( 'em-prog' ).max = Math.max( 1, ids.length ); $( 'em-prog' ).value = 0;
 				function next() {
 					if ( i >= ids.length ) {
@@ -462,7 +470,7 @@ function exmart_img_render_page() {
 					} ).catch( function () { busy = false; $( 'em-count' ).textContent = 'Stopped: request failed. Run again — finished images are skipped.'; } );
 				}
 				next();
-			} );
+			} ).catch( function ( e ) { busy = false; $( 'em-count' ).textContent = 'Could not start: ' + e.message; } );
 		}
 		$( 'em-preview' ).addEventListener( 'click', function () { run( 'preview' ); } );
 		$( 'em-run' ).addEventListener( 'click', function () { run( 'run' ); } );

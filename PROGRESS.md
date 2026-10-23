@@ -136,6 +136,7 @@ Theme was at **1.0.17** when this doc was written; current head is **1.0.70**. A
 
 ## Changelog
 
+- **2026-10-23 — v1.1.61** — Normalize Images page: show progress text immediately and report clearly when no images are found or the server request fails (previously a failed request left the page silent).
 - **2026-10-23 — v1.1.60** — New wp-admin tool Tools → Normalize Images (inc/image-normalize.php): batch-processes every product main/gallery/variation image to a square canvas (default 1200px, 7% margin), centres the product and removes plain backgrounds via edge flood-fill (interior whites kept). Preview mode changes nothing; each image is saved as a new -exmart.png file and the attachment is re-pointed, so Restore originals reverts everything. Busy-background photos are skipped and reported. IMAGE-SIZES.md updated (brand logos row + tool note).
 - **2026-10-23 — v1.1.59** — Replaced the Verve brand logo with the full VERVE wordmark version (cropped, transparent background).
 - **2026-10-23 — v1.1.58** — Our Brands strip: brand names removed next to logos (kept as aria-label/title; name shows only if a brand has no logo). Hover is now the primary blue for every brand instead of per-brand colours.
