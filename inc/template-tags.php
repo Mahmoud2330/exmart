@@ -458,8 +458,12 @@ function exmart_payment_methods() {
 			'file'  => 'Meeza-Digital-.png',
 		),
 		array(
-			'label' => 'Visa / Mastercard',
-			'file'  => 'visa-and-mastercard-logos-logo-visa-png-logo-visa-mastercard-png-visa-logo-white-png-awesome-logos.png',
+			'label' => 'Visa',
+			'local' => 'visa.png',
+		),
+		array(
+			'label' => 'Mastercard',
+			'local' => 'mastercard.png',
 		),
 		array(
 			'label' => 'InstaPay',

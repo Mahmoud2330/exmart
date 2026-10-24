@@ -92,12 +92,15 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 					</div>
 					<div class="em-footer-payments">
 						<?php foreach ( exmart_payment_methods() as $method ) :
-							$url  = ! empty( $method['file'] ) ? exmart_media_url_by_filename( $method['file'] ) : '';
+							$url  = ! empty( $method['local'] ) ? EXMART_URI . '/assets/img/payments/' . $method['local'] . '?v=' . EXMART_VERSION : '';
+							if ( ! $url && ! empty( $method['file'] ) ) {
+								$url = exmart_media_url_by_filename( $method['file'] );
+							}
 							$icon = empty( $url ) ? ( $method['icon'] ?? '' ) : '';
 							?>
 							<span class="em-payment-icon<?php echo ( $url || $icon ) ? ' em-payment-icon--logo' : ''; ?>"<?php echo $icon ? ' aria-label="' . esc_attr( $method['label'] ) . '"' : ''; ?>>
 								<?php if ( $url ) : ?>
-									<img src="<?php echo esc_url( $url ); ?>" alt="<?php echo esc_attr( $method['label'] ); ?>" loading="lazy" decoding="async" />
+									<img<?php echo ! empty( $method['local'] ) ? ' class="em-payment-img-local"' : ''; ?> src="<?php echo esc_url( $url ); ?>" alt="<?php echo esc_attr( $method['label'] ); ?>" loading="lazy" decoding="async" />
 								<?php elseif ( $icon ) : ?>
 									<?php echo $icon; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static SVG markup ?>
 								<?php else : ?>
