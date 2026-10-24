@@ -136,6 +136,7 @@ Theme was at **1.0.17** when this doc was written; current head is **1.0.70**. A
 
 ## Changelog
 
+- **2026-10-24 — v1.1.64** — Delivery cutoff pill: message text and countdown now use the primary colour (timer extra bold) and the truck icon is replaced by a bold Solar carton/box icon.
 - **2026-10-24 — v1.1.63** — Footer payments: the combined 'Visa / Mastercard' image is replaced by two separate tiles, Visa and Mastercard, using the supplied logos (cropped, transparent) bundled in assets/img/payments/. Payment methods can now use a bundled 'local' file; Fawry, Meeza and InstaPay still come from the Media Library until their logos are supplied.
 - **2026-10-24 — v1.1.62** — Wishlist page showed the raw text `[ti_wishlistsview]`: the `/wishlist/` page (ID 1614) was left over from the TI Wishlist plugin — default template, body is only that shortcode — so the theme's wishlist template never loaded. `/wishlist/` now always renders `template-wishlist.php` (`template_include` filter), and the leftover TI shortcodes (`ti_wishlistsview`, `ti_wishlists_addtowishlist`, `ti_wishlist_products_counter`) are registered as empty when the plugin isn't active, so they render nothing anywhere and no longer leak into SEO meta descriptions. Changed `inc/wishlist.php`.
 - **2026-10-23 — v1.1.61** — Normalize Images page: show progress text immediately and report clearly when no images are found or the server request fails (previously a failed request left the page silent).

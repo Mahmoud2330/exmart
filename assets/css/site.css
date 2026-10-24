@@ -3542,3 +3542,7 @@ html.em-scroll-locked { overflow: hidden; }
 /* Bundled payment logos are already cropped: no zoom, a little breathing room inside the tile. */
 .em-site-footer .em-payment-icon--logo { gap: 0; }
 .em-site-footer .em-payment-icon--logo img.em-payment-img-local { transform: none; padding: 5px 6px; box-sizing: border-box; }
+
+/* Delivery cutoff pill: whole message in the primary colour, bold carton icon. */
+.em-cutoff-text { color: var(--accent-600); font-weight: 600; }
+.em-cutoff-time { color: var(--accent-600); font-weight: 800; }
