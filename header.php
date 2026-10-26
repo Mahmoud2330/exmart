@@ -36,7 +36,7 @@ $checkout_url = function_exists( 'wc_get_checkout_url' ) ? wc_get_checkout_url()
 <div id="page" style="min-height:100vh;display:flex;flex-direction:column;">
 
 	<div class="em-announce" id="em-announce" role="banner">
-		<span><?php esc_html_e( 'Free shipping on orders over EGP 300 · Cash on delivery available nationwide', 'exmart' ); ?></span>
+		<span><?php esc_html_e( 'Order soon, we deliver within 2-5 days', 'exmart' ); ?></span>
 		<button class="em-announce-close" id="em-announce-close" aria-label="<?php esc_attr_e( 'Dismiss announcement', 'exmart' ); ?>">
 			<svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><path d="M19.0068 5L5.00684 19"/><path d="M19 19L5 5"/></g></svg>
 		</button>

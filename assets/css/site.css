@@ -3546,3 +3546,8 @@ html.em-scroll-locked { overflow: hidden; }
 /* Delivery cutoff pill: whole message in the primary colour, bold carton icon. */
 .em-cutoff-text { color: var(--accent-600); font-weight: 600; }
 .em-cutoff-time { color: var(--accent-600); font-weight: 800; }
+
+/* Announcement bar: brand blue. */
+.em-announce { background: var(--accent-600); color: var(--paper); }
+.em-announce-close { color: rgba(255, 255, 255, .75); }
+.em-announce-close:hover { color: var(--paper); }
