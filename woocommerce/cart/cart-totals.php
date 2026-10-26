@@ -55,18 +55,6 @@ $shop_url   = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink
 			</div>
 		<?php endif; ?>
 
-		<?php if ( $remaining > 0 && $threshold > 0 ) : ?>
-			<p class="em-caption em-cart-free-ship">
-				<?php
-				printf(
-					/* translators: %s: amount remaining for free shipping */
-					esc_html__( 'Add %s more for free shipping', 'exmart' ),
-					wp_kses_post( wc_price( $remaining ) )
-				);
-				?>
-			</p>
-		<?php endif; ?>
-
 		<?php foreach ( WC()->cart->get_fees() as $fee ) : ?>
 			<div class="em-summary-row fee">
 				<span class="em-summary-label"><?php echo esc_html( $fee->name ); ?></span>

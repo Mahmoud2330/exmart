@@ -16,9 +16,9 @@ get_header();
 			<tbody>
 				<?php
 				$rows = array(
-					array( 'Greater Cairo & Giza', '1–2 working days', 'EGP 25 (free over EGP 300)' ),
-					array( 'Alexandria & Delta', '2–3 working days', 'EGP 35 (free over EGP 300)' ),
-					array( "Upper Egypt & Sa'id", '3–5 working days', 'EGP 45 (free over EGP 500)' ),
+					array( 'Greater Cairo & Giza', '1–2 working days', 'EGP 25' ),
+					array( 'Alexandria & Delta', '2–3 working days', 'EGP 35' ),
+					array( "Upper Egypt & Sa'id", '3–5 working days', 'EGP 45' ),
 					array( 'Sinai, Red Sea & Frontier', '4–6 working days', 'EGP 55' ),
 				);
 				foreach ( $rows as $r ) : ?>

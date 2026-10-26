@@ -913,7 +913,7 @@ function exmart_custom_product_tabs( $tabs ) {
 		'priority' => 35,
 		'callback' => function () {
 			?>
-			<p class="em-body" style="color:var(--ink-700)"><?php esc_html_e( 'Standard delivery: 2–5 working days across Egypt. Free shipping on orders over EGP 300.', 'exmart' ); ?></p>
+			<p class="em-body" style="color:var(--ink-700)"><?php esc_html_e( 'Standard delivery: 2–5 working days across Egypt.', 'exmart' ); ?></p>
 			<p class="em-body" style="color:var(--ink-700)"><?php
 				printf(
 					/* translators: %s: contact email */
