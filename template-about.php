@@ -71,7 +71,7 @@ $house       = get_terms( array( 'taxonomy' => 'product_brand', 'hide_empty' => 
 				__( 'Every product shipped by exMart is authentic — sourced directly from the manufacturer or produced under our own quality protocols.', 'exmart' ),
 				__( 'We never sell counterfeit, expired, or grey-market products. If you suspect a product\'s authenticity, contact us immediately.', 'exmart' ),
 				__( 'Our in-house brands are developed with dermatologist input and follow Egyptian regulatory standards for cosmetics and personal care.', 'exmart' ),
-				__( 'We offer hassle-free returns within 14 days for any product that does not meet your expectations.', 'exmart' ),
+				__( 'If a product does not meet your expectations, contact us and we will do our best to help.', 'exmart' ),
 			);
 			foreach ( $commitments as $c ) : ?>
 				<div class="em-commitment-item">

@@ -917,7 +917,7 @@ function exmart_custom_product_tabs( $tabs ) {
 			<p class="em-body" style="color:var(--ink-700)"><?php
 				printf(
 					/* translators: %s: contact email */
-					esc_html__( 'Returns accepted within 14 days of delivery. Item must be unused and in original packaging. Contact us at %s to initiate a return.', 'exmart' ),
+					esc_html__( 'Returns and exchanges are reviewed case by case. Contact us at %s and we will help you with the next steps.', 'exmart' ),
 					esc_html( function_exists( 'exmart_email' ) ? exmart_email() : 'info@exmartegypt.com' )
 				);
 			?></p>
@@ -940,7 +940,7 @@ function exmart_trust_block() {
 	$items = array(
 		__( 'Authenticated by exMart — direct from manufacturer', 'exmart' ),
 		__( 'Cash on delivery available', 'exmart' ),
-		__( 'Free returns within 14 days', 'exmart' ),
+		__( 'Friendly support if something isn’t right', 'exmart' ),
 		__( 'Delivery 2–5 working days across Egypt', 'exmart' ),
 	);
 	?>

@@ -33,11 +33,11 @@ get_header();
 		<div class="em-info-list">
 			<?php
 			$items = array(
-				__( 'We accept returns within 14 days of delivery for unused items in original, sealed packaging.', 'exmart' ),
-				__( 'To initiate a return, email hello@exmart.eg with your order number and reason. We will send a prepaid return label for orders within Greater Cairo.', 'exmart' ),
-				__( 'Refunds are processed within 3–5 working days after we receive and inspect the item.', 'exmart' ),
-				__( 'Personalised, perishable, or intimate hygiene products (opened) are excluded from the return policy for health and safety reasons.', 'exmart' ),
-				__( 'If you receive a damaged or incorrect product, contact us within 48 hours with a photo and we will arrange a replacement at no cost.', 'exmart' ),
+				__( 'Returns and exchanges are reviewed case by case. Please contact us as soon as possible after your order arrives and we will help.', 'exmart' ),
+				__( 'To start a request, email hello@exmart.eg with your order number and the reason.', 'exmart' ),
+				__( 'If a return is approved, we will confirm the next steps and any refund details with you directly.', 'exmart' ),
+				__( 'Personalised, perishable, or intimate hygiene products (opened) cannot be returned, for health and safety reasons.', 'exmart' ),
+				__( 'If you receive a damaged or incorrect product, contact us right away with a photo and we will make it right.', 'exmart' ),
 			);
 			foreach ( $items as $t ) : ?>
 				<div class="em-info-list-item">
