@@ -136,6 +136,7 @@ Theme was at **1.0.17** when this doc was written; current head is **1.0.70**. A
 
 ## Changelog
 
+- **2026-10-26 — v1.1.72** — Homepage "What customers say" fixes: Karim's review now says Qualita baby wipes (Eliv has no baby wipes); Nour's review now mentions a SureCheck pregnancy test instead of a blood pressure monitor. Default SureCheck brand description (used only when the theme seeds brands) no longer mentions blood pressure monitors. Changed `front-page.php`, `inc/theme-activation.php`. The live SureCheck description is stored in WordPress (Products → Brands) and must be edited there.
 - **2026-10-26 — v1.1.71** — All delivery times are now 3-5 working days: announcement bar, product trust box, product Shipping & Returns tab, checkout delivery estimate, FAQ, and every zone in the Shipping & Returns delivery table (previously 1-2 to 4-6 depending on zone).
 - **2026-10-26 — v1.1.70** — Support contact corrected: the old hello@exmart.eg address in the FAQ and Shipping & Returns page is replaced by info@exmartegypt.com, and all three returns texts (FAQ, Shipping & Returns page, product Shipping & Returns tab) now also point to the WhatsApp button on the left side of the screen.
 - **2026-10-26 — v1.1.69** — Shipping & Returns page delivery table updated with the real rates: Greater Cairo & Giza EGP 90, Alexandria EGP 90, Delta EGP 100, Upper Egypt & Sa'id EGP 120-150, Sinai/Red Sea/Frontier EGP 120-150 (Alexandria and Delta now separate rows). Delivery-time estimates unchanged.

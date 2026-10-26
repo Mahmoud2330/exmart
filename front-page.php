@@ -271,12 +271,12 @@ $trust_items = array(
 				),
 				array(
 					'author' => 'Karim A.',
-					'text'   => __( 'Ordered Eliv baby wipes three times already. Quality is consistent and pricing is fair.', 'exmart' ),
+					'text'   => __( 'Ordered Qualita baby wipes three times already. Quality is consistent and pricing is fair.', 'exmart' ),
 					'rating' => 5,
 				),
 				array(
 					'author' => 'Nour F.',
-					'text'   => __( 'The SureCheck blood pressure monitor I received is exactly the genuine product — box sealed, complete accessories.', 'exmart' ),
+					'text'   => __( 'The SureCheck pregnancy test I received is exactly the genuine product — sealed box and easy-to-read instructions.', 'exmart' ),
 					'rating' => 4,
 				),
 			);
