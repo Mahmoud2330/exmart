@@ -917,7 +917,7 @@ function exmart_custom_product_tabs( $tabs ) {
 			<p class="em-body" style="color:var(--ink-700)"><?php
 				printf(
 					/* translators: %s: contact email */
-					esc_html__( 'Returns and exchanges are reviewed case by case. Contact us at %s and we will help you with the next steps.', 'exmart' ),
+					esc_html__( 'Returns and exchanges are reviewed case by case. Email %s or message us through the WhatsApp button on the left side of the screen and we will help you with the next steps.', 'exmart' ),
 					esc_html( function_exists( 'exmart_email' ) ? exmart_email() : 'info@exmartegypt.com' )
 				);
 			?></p>

@@ -35,7 +35,7 @@ get_header();
 			<?php
 			$items = array(
 				__( 'Returns and exchanges are reviewed case by case. Please contact us as soon as possible after your order arrives and we will help.', 'exmart' ),
-				__( 'To start a request, email hello@exmart.eg with your order number and the reason.', 'exmart' ),
+				__( 'To start a request, email info@exmartegypt.com or message us through the WhatsApp button on the left side of the screen, with your order number and the reason.', 'exmart' ),
 				__( 'If a return is approved, we will confirm the next steps and any refund details with you directly.', 'exmart' ),
 				__( 'Personalised, perishable, or intimate hygiene products (opened) cannot be returned, for health and safety reasons.', 'exmart' ),
 				__( 'If you receive a damaged or incorrect product, contact us right away with a photo and we will make it right.', 'exmart' ),
