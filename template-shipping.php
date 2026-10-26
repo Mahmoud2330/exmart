@@ -16,11 +16,11 @@ get_header();
 			<tbody>
 				<?php
 				$rows = array(
-					array( 'Greater Cairo & Giza', '1–2 working days', 'EGP 90' ),
-					array( 'Alexandria', '2–3 working days', 'EGP 90' ),
-					array( 'Delta', '2–3 working days', 'EGP 100' ),
+					array( 'Greater Cairo & Giza', '3–5 working days', 'EGP 90' ),
+					array( 'Alexandria', '3–5 working days', 'EGP 90' ),
+					array( 'Delta', '3–5 working days', 'EGP 100' ),
 					array( "Upper Egypt & Sa'id", '3–5 working days', 'EGP 120–150' ),
-					array( 'Sinai, Red Sea & Frontier', '4–6 working days', 'EGP 120–150' ),
+					array( 'Sinai, Red Sea & Frontier', '3–5 working days', 'EGP 120–150' ),
 				);
 				foreach ( $rows as $r ) : ?>
 					<tr><td><?php echo esc_html( $r[0] ); ?></td><td><?php echo esc_html( $r[1] ); ?></td><td><?php echo esc_html( $r[2] ); ?></td></tr>

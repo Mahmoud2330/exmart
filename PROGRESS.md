@@ -136,6 +136,7 @@ Theme was at **1.0.17** when this doc was written; current head is **1.0.70**. A
 
 ## Changelog
 
+- **2026-10-26 — v1.1.71** — All delivery times are now 3-5 working days: announcement bar, product trust box, product Shipping & Returns tab, checkout delivery estimate, FAQ, and every zone in the Shipping & Returns delivery table (previously 1-2 to 4-6 depending on zone).
 - **2026-10-26 — v1.1.70** — Support contact corrected: the old hello@exmart.eg address in the FAQ and Shipping & Returns page is replaced by info@exmartegypt.com, and all three returns texts (FAQ, Shipping & Returns page, product Shipping & Returns tab) now also point to the WhatsApp button on the left side of the screen.
 - **2026-10-26 — v1.1.69** — Shipping & Returns page delivery table updated with the real rates: Greater Cairo & Giza EGP 90, Alexandria EGP 90, Delta EGP 100, Upper Egypt & Sa'id EGP 120-150, Sinai/Red Sea/Frontier EGP 120-150 (Alexandria and Delta now separate rows). Delivery-time estimates unchanged.
 - **2026-10-26 — v1.1.68** — Removed all free-delivery messaging: the cart summary's 'Add EGP X more for free shipping' line, the '(free over EGP 300/500)' notes in the Shipping & Returns delivery table, and 'Free shipping on orders over EGP 300' from the product page Shipping & Returns tab. Shipping fees are unchanged; any free-shipping method configured in WooCommerce settings is a store setting and not touched.

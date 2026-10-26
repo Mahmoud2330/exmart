@@ -913,7 +913,7 @@ function exmart_custom_product_tabs( $tabs ) {
 		'priority' => 35,
 		'callback' => function () {
 			?>
-			<p class="em-body" style="color:var(--ink-700)"><?php esc_html_e( 'Standard delivery: 2–5 working days across Egypt.', 'exmart' ); ?></p>
+			<p class="em-body" style="color:var(--ink-700)"><?php esc_html_e( 'Standard delivery: 3–5 working days across Egypt.', 'exmart' ); ?></p>
 			<p class="em-body" style="color:var(--ink-700)"><?php
 				printf(
 					/* translators: %s: contact email */
@@ -941,7 +941,7 @@ function exmart_trust_block() {
 		__( 'Authenticated by exMart — direct from manufacturer', 'exmart' ),
 		__( 'Cash on delivery available', 'exmart' ),
 		__( 'Friendly support if something isn’t right', 'exmart' ),
-		__( 'Delivery 2–5 working days across Egypt', 'exmart' ),
+		__( 'Delivery 3–5 working days across Egypt', 'exmart' ),
 	);
 	?>
 	<div class="em-pdp-trust-block">
@@ -2174,7 +2174,7 @@ function exmart_checkout_shipping_methods() {
 			} elseif ( false !== stripos( $method->get_label(), 'express' ) ) {
 				$eta = __( 'Next working day', 'exmart' );
 			} else {
-				$eta = __( '2–5 working days', 'exmart' );
+				$eta = __( '3–5 working days', 'exmart' );
 			}
 			?>
 			<label class="em-checkout-ship-card" for="<?php echo esc_attr( $input_id ); ?>">
