@@ -257,13 +257,44 @@ function exmart_has_super_socializer() {
  * @return string
  */
 function exmart_super_socializer_google_url( $redirect ) {
+	return exmart_super_socializer_auth_url( 'Google', $redirect );
+}
+
+/**
+ * Super Socializer OAuth start URL for any network.
+ *
+ * @param string $network  Super Socializer network name, e.g. 'Google', 'Facebook'.
+ * @param string $redirect Post-login redirect.
+ * @return string
+ */
+function exmart_super_socializer_auth_url( $network, $redirect ) {
 	return add_query_arg(
 		array(
-			'SuperSocializerAuth'          => 'Google',
+			'SuperSocializerAuth'          => $network,
 			'super_socializer_redirect_to' => $redirect,
 		),
 		home_url( '/' )
 	);
+}
+
+/**
+ * Whether Facebook login is fully set up in Super Socializer — the same check
+ * the plugin makes before starting the Facebook redirect (social login on,
+ * Facebook ticked, App ID and App Secret filled in). Without all of that the
+ * plugin's Facebook link silently reloads the homepage, so no button is shown.
+ *
+ * @return bool
+ */
+function exmart_super_socializer_facebook_ready() {
+	if ( ! exmart_has_super_socializer() ) {
+		return false;
+	}
+	$options = get_option( 'the_champ_login' );
+	return is_array( $options )
+		&& isset( $options['enable'] )
+		&& ! empty( $options['providers'] ) && is_array( $options['providers'] ) && in_array( 'facebook', $options['providers'], true )
+		&& ! empty( $options['fb_key'] )
+		&& ! empty( $options['fb_secret'] );
 }
 
 /**
@@ -321,24 +352,33 @@ function exmart_google_login_url() {
 }
 
 /**
- * Auth-page social login block (Google), styled to match exMart forms.
+ * Auth-page social login block (Google, plus Facebook when it is set up in
+ * Super Socializer), styled to match exMart forms.
  *
- * Wired for Super Socializer (Heateor). Nextend remains a fallback.
+ * Wired for Super Socializer (Heateor). Nextend remains a fallback for Google.
  *
  * @param string $context 'login' or 'register'.
  */
 function exmart_social_auth_block( $context = 'login' ) {
 	$google_url = exmart_google_login_url();
+	$facebook   = exmart_super_socializer_facebook_ready();
+	$redirect   = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'myaccount' ) : '';
+	$redirect   = $redirect ? $redirect : home_url( '/' );
 
 	$label = ( 'register' === $context )
 		? __( 'Sign up with Google', 'exmart' )
 		: __( 'Continue with Google', 'exmart' );
+	$fb_label = ( 'register' === $context )
+		? __( 'Sign up with Facebook', 'exmart' )
+		: __( 'Continue with Facebook', 'exmart' );
 	?>
 	<div class="em-auth-social">
 		<div class="em-auth-divider" role="separator" aria-hidden="true">
 			<span><?php esc_html_e( 'or', 'exmart' ); ?></span>
 		</div>
-		<p class="em-auth-social-label"><?php esc_html_e( 'Continue with your Google account', 'exmart' ); ?></p>
+		<p class="em-auth-social-label">
+			<?php echo $facebook ? esc_html__( 'Continue with your Google or Facebook account', 'exmart' ) : esc_html__( 'Continue with your Google account', 'exmart' ); ?>
+		</p>
 
 		<a class="em-btn em-btn-google" href="<?php echo esc_url( $google_url ); ?>">
 			<span class="em-btn-google-icon" aria-hidden="true">
@@ -346,6 +386,15 @@ function exmart_social_auth_block( $context = 'login' ) {
 			</span>
 			<span><?php echo esc_html( $label ); ?></span>
 		</a>
+
+		<?php if ( $facebook ) : ?>
+			<a class="em-btn em-btn-google em-btn-facebook" href="<?php echo esc_url( exmart_super_socializer_auth_url( 'Facebook', $redirect ) ); ?>">
+				<span class="em-btn-google-icon" aria-hidden="true">
+					<svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M24 12.07C24 5.41 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.7 4.53-4.7 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.96.93-1.96 1.89v2.26h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07z" fill="#1877F2"/></svg>
+				</span>
+				<span><?php echo esc_html( $fb_label ); ?></span>
+			</a>
+		<?php endif; ?>
 	</div>
 	<?php
 }
