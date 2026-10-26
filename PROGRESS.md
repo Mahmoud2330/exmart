@@ -136,6 +136,7 @@ Theme was at **1.0.17** when this doc was written; current head is **1.0.70**. A
 
 ## Changelog
 
+- **2026-10-26 — v1.1.66** — Fix grouped/bundle product pages (e.g. Back to school bundle): the Add to cart button rendered as a tall narrow slab with the qty box and wishlist stacked beneath. The WooCommerce form was a flex column, so the button's flex-basis (180px) became its height. Form is now a wrapping row: product list full width, then qty + Add to cart + wishlist on one line. Applies to grouped and external products only; simple and variable products are unchanged. Verified in headless Chromium (button 614x52).
 - **2026-10-26 — v1.1.65** — Top announcement bar: background changed from black to the primary brand blue and text changed to 'Order soon, we deliver within 2-5 days' (close button recoloured to match).
 - **2026-10-24 — v1.1.64** — Delivery cutoff pill: message text and countdown now use the primary colour (timer extra bold) and the truck icon is replaced by a bold Solar carton/box icon.
 - **2026-10-24 — v1.1.63** — Footer payments: the combined 'Visa / Mastercard' image is replaced by two separate tiles, Visa and Mastercard, using the supplied logos (cropped, transparent) bundled in assets/img/payments/. Payment methods can now use a bundled 'local' file; Fawry, Meeza and InstaPay still come from the Media Library until their logos are supplied.

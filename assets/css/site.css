@@ -3551,3 +3551,12 @@ html.em-scroll-locked { overflow: hidden; }
 .em-announce { background: var(--accent-600); color: var(--paper); }
 .em-announce-close { color: rgba(255, 255, 255, .75); }
 .em-announce-close:hover { color: var(--paper); }
+
+/* Grouped / bundle / external products keep WooCommerce's form. It was laid out as a flex COLUMN, so the
+   Add to cart button's flex-basis became its HEIGHT (a tall, narrow slab). Make it a wrapping ROW:
+   the product list takes the full width, then qty + Add to cart + wishlist sit on one line. */
+.em-pdp-info form.cart:not(.variations_form) { flex-direction: row; align-items: center; }
+.em-pdp-info form.cart:not(.variations_form) > table,
+.em-pdp-info form.cart:not(.variations_form) > .woocommerce-grouped-product-list,
+.em-pdp-info form.cart:not(.variations_form) > .group_table { flex: 0 0 100%; width: 100%; }
+.em-pdp-info form.cart:not(.variations_form) button.single_add_to_cart_button { align-self: center; height: auto; }
