@@ -3560,3 +3560,24 @@ html.em-scroll-locked { overflow: hidden; }
 .em-pdp-info form.cart:not(.variations_form) > .woocommerce-grouped-product-list,
 .em-pdp-info form.cart:not(.variations_form) > .group_table { flex: 0 0 100%; width: 100%; }
 .em-pdp-info form.cart:not(.variations_form) button.single_add_to_cart_button { align-self: center; height: auto; }
+
+/* ── Mobile header: one row — menu, logo, search, wishlist, cart ──
+   Search used to be its own full-width row under the logo bar. On phones it now sits
+   inline between the logo and the icons (like most shopping apps), so the logo is scaled down
+   to leave room for it. Desktop already had the inline search. */
+.em-header-search-bar { display: none; }
+.em-header-search-bar--inline { display: flex; align-items: center; flex: 1; min-width: 0; }
+@media (max-width: 767px) {
+	.em-header-bar { min-height: 60px; gap: var(--s2); }
+	.em-header-left { gap: 0; }
+	.em-header-logo img { height: 30px; }
+	.em-header-search-bar--inline { margin-inline: 0; }
+	.em-header-search-bar--inline .em-header-search-form .em-input {
+		min-height: 40px; height: 40px; padding-inline-start: 34px; padding-inline-end: var(--s2);
+		border-radius: var(--r-full); text-overflow: ellipsis;
+	}
+	.em-header-search-bar--inline .em-header-search-form svg { left: 11px; width: 16px; height: 16px; }
+	.em-header-right { margin-left: 0; gap: 0; }
+	.em-header-right .em-btn-icon { min-width: 38px; min-height: 38px; }
+}
+.em-header-search-form { margin: 0; }
