@@ -25,6 +25,8 @@ function exmart_setup() {
 	set_post_thumbnail_size( 600, 600, true );
 	add_image_size( 'exmart-thumb', 220, 220, true );
 	add_image_size( 'exmart-card', 400, 400, true );
+	// Soft-cropped (fits inside 600x600, never cut) — used by product cards so photos are shown whole.
+	add_image_size( 'exmart-card-fit', 600, 600, false );
 
 	register_nav_menus( array(
 		'primary'        => __( 'Primary Navigation (top links after Categories/Brands)', 'exmart' ),

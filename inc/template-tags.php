@@ -616,12 +616,30 @@ function exmart_category_placeholder_image( $slug, $size = 400 ) {
 }
 
 /**
+ * Image size for showing a product photo whole (never cropped).
+ *
+ * Uses the soft-cropped 'exmart-card-fit' size when this attachment has it. Photos uploaded before
+ * that size existed only have the old hard-cropped card size (which cuts non-square photos), so
+ * they fall back to WordPress's 'large' size (up to 1024px, uncropped) until they are regenerated.
+ *
+ * @param int $attachment_id Attachment ID.
+ * @return string Registered image size name.
+ */
+function exmart_fit_size( $attachment_id ) {
+	$meta = wp_get_attachment_metadata( (int) $attachment_id );
+	return ( is_array( $meta ) && ! empty( $meta['sizes']['exmart-card-fit'] ) ) ? 'exmart-card-fit' : 'large';
+}
+
+/**
  * Output <img> for a product: uses the featured image if one has been
  * uploaded, otherwise falls back to the category placeholder photo.
  */
 function exmart_product_image( $product, $size = 'exmart-card' ) {
 	if ( ! $product ) return;
 	if ( has_post_thumbnail( $product->get_id() ) ) {
+		if ( 'exmart-card' === $size ) {
+			$size = exmart_fit_size( get_post_thumbnail_id( $product->get_id() ) );
+		}
 		echo get_the_post_thumbnail( $product->get_id(), $size, array( 'loading' => 'lazy', 'decoding' => 'async' ) );
 		return;
 	}

@@ -722,10 +722,14 @@
 	display: flex !important;
 	align-items: center;
 	justify-content: center;
-	width: 100% !important;
 	height: 100% !important;
 	max-width: 100% !important;
 }
+.em-pdp-gallery .woocommerce-product-gallery__image a { width: 100% !important; }
+/* Full width only when there is no slider. Inside the slider (.flex-viewport) WooCommerce sets each
+   slide's pixel width itself; forcing 100% there made every slide as wide as the whole strip
+   (6000px+), so the main image sat far off-screen and the frame looked empty. */
+.em-pdp-gallery :not(.flex-viewport) > .woocommerce-product-gallery__wrapper > .woocommerce-product-gallery__image { width: 100% !important; }
 .em-pdp-gallery .woocommerce-product-gallery__wrapper img,
 .em-pdp-gallery .woocommerce-product-gallery__image img,
 .em-pdp-gallery .woocommerce-product-gallery__image a img {
@@ -756,7 +760,8 @@
 .em-pdp-gallery .flex-control-thumbs img {
 	width: 72px !important;
 	height: 72px !important;
-	object-fit: cover;
+	object-fit: contain;
+	background: var(--paper);
 	border-radius: var(--r-sm);
 	border: 1px solid var(--ink-200);
 	cursor: pointer;
@@ -2078,7 +2083,7 @@ ul.products li.product > .em-card { width: 100%; }
 .woocommerce-cart .em-cart-thumb img {
 	width: 64px !important;
 	height: 64px !important;
-	object-fit: cover;
+	object-fit: contain;
 	display: block;
 	border: none !important;
 	border-radius: 0;

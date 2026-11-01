@@ -33,7 +33,7 @@ $out_of_stock  = ! $product->is_in_stock();
 				if ( $shown >= 4 ) {
 					break;
 				}
-				$gallery_url = wp_get_attachment_image_url( $gallery_id, 'exmart-card' );
+				$gallery_url = wp_get_attachment_image_url( $gallery_id, exmart_fit_size( $gallery_id ) );
 				if ( ! $gallery_url ) {
 					continue;
 				}
