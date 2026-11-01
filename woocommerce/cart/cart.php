@@ -49,7 +49,7 @@ do_action( 'woocommerce_before_cart' );
 
 						$product_name      = apply_filters( 'woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key );
 						$product_permalink = apply_filters( 'woocommerce_cart_item_permalink', $_product->is_visible() ? $_product->get_permalink( $cart_item ) : '', $cart_item, $cart_item_key );
-						$thumbnail         = apply_filters( 'woocommerce_cart_item_thumbnail', $_product->get_image( 'woocommerce_thumbnail' ), $cart_item, $cart_item_key );
+						$thumbnail         = apply_filters( 'woocommerce_cart_item_thumbnail', $_product->get_image( 'medium' ), $cart_item, $cart_item_key );
 
 						$brand_name = '';
 						$brands     = get_the_terms( $product_id, 'product_brand' );

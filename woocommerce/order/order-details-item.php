@@ -22,7 +22,7 @@ $refunded_qty      = $order->get_qty_refunded_for_item( $item_id );
 $qty_display       = $refunded_qty ? '<del>' . esc_html( $qty ) . '</del> <ins>' . esc_html( $qty - ( $refunded_qty * -1 ) ) . '</ins>' : esc_html( $qty );
 ?>
 <li class="<?php echo esc_attr( apply_filters( 'woocommerce_order_item_class', 'woocommerce-table__line-item order_item em-od-item', $item, $order ) ); ?>">
-	<span class="em-od-thumb"><?php echo $product ? $product->get_image( 'woocommerce_thumbnail' ) : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+	<span class="em-od-thumb"><?php echo $product ? $product->get_image( 'medium' ) : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 
 	<div class="em-od-info">
 		<span class="em-od-name">

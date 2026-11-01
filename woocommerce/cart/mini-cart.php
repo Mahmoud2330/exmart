@@ -46,7 +46,7 @@ $em_shop  = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 
 
 			$qty               = (int) $cart_item['quantity'];
 			$product_name      = apply_filters( 'woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key );
-			$thumbnail         = apply_filters( 'woocommerce_cart_item_thumbnail', $_product->get_image( 'woocommerce_thumbnail' ), $cart_item, $cart_item_key );
+			$thumbnail         = apply_filters( 'woocommerce_cart_item_thumbnail', $_product->get_image( 'medium' ), $cart_item, $cart_item_key );
 			$unit_amount       = (float) wc_get_price_to_display( $_product );
 			$line_amount       = (float) wc_get_price_to_display( $_product, array( 'qty' => $qty ) );
 			$product_permalink = apply_filters( 'woocommerce_cart_item_permalink', $_product->is_visible() ? $_product->get_permalink( $cart_item ) : '', $cart_item, $cart_item_key );

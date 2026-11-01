@@ -2286,3 +2286,14 @@ function exmart_checkout_gateway_order( $gateways ) {
 	return $ordered;
 }
 add_filter( 'woocommerce_available_payment_gateways', 'exmart_checkout_gateway_order', 40 );
+
+/**
+ * Gallery thumbnails under the main product image: WooCommerce's own thumbnail size is a hard 1:1 crop
+ * (it cuts non-square photos). WordPress's 'medium' size is never cropped and exists for every upload.
+ */
+add_filter(
+	'woocommerce_gallery_thumbnail_size',
+	function () {
+		return 'medium';
+	}
+);

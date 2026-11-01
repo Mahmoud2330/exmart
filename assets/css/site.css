@@ -2473,7 +2473,7 @@ ul.products li.product > .em-card { width: 100%; }
 	}
 }
 
-.woocommerce-cart table.cart img { width: 64px; height: 64px; object-fit: cover; border-radius: var(--r-sm); border: 1px solid var(--ink-200); }
+.woocommerce-cart table.cart img { width: 64px; height: 64px; object-fit: contain; background: var(--paper); border-radius: var(--r-sm); border: 1px solid var(--ink-200); }
 .woocommerce .cart-collaterals .cart_totals { background: var(--ink-50); border: 1px solid var(--ink-200); border-radius: var(--r-md); padding: var(--s5); float: none; width: 100%; max-width: 420px; margin-left: auto; }
 .woocommerce .cart-collaterals .cart_totals table { border: none; }
 .woocommerce .cart-collaterals .cart_totals table td, .woocommerce .cart-collaterals .cart_totals table th { border: none; padding: var(--s2) 0; }
