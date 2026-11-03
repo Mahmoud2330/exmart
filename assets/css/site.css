@@ -2,8 +2,10 @@
    (ported from the React app's inline styles into real classes) */
 
 /* ── Skip link ─────────────────────────────────────────── */
-.em-skip-link { position:absolute; left:-9999px; top:0; background: var(--ink-900); color:#fff; padding: var(--s3) var(--s4); z-index: 9999; border-radius: 0 0 var(--r-sm) 0; }
-.em-skip-link:focus { left:0; }
+/* Hidden above the viewport, not off to the side: on RTL (Arabic) pages a
+   large negative left offset becomes ~10,000px of horizontal scroll. */
+.em-skip-link { position:absolute; left:0; top:0; transform: translateY(-120%); background: var(--ink-900); color:#fff; padding: var(--s3) var(--s4); z-index: 9999; border-radius: 0 0 var(--r-sm) 0; }
+.em-skip-link:focus { transform: none; }
 
 /* ── Header ────────────────────────────────────────────── */
 .em-site-header {
