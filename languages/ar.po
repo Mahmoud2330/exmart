@@ -1,0 +1,1970 @@
+# Arabic translation of the exMart theme.
+# Edit with Poedit / Loco Translate, or by hand then run: python3 languages/compile-mo.py languages/ar.po
+msgid ""
+msgstr ""
+"Project-Id-Version: exMart\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n"
+
+#: template-about.php:12 template-contact.php:12 template-payment.php:17 taxonomy-product_brand.php:17
+msgid "Home"
+msgstr "الرئيسية"
+
+#: template-about.php:12 header.php:183 footer.php:48
+msgid "About"
+msgstr "من نحن"
+
+#: template-about.php:13
+msgid "About exMart"
+msgstr "عن exMart"
+
+#: template-about.php:16
+msgid "Our story"
+msgstr "قصتنا"
+
+#: template-about.php:17
+msgid "exMart was founded in Cairo with a clear mission: to give Egyptian households and healthcare professionals reliable access to authentic, professional-grade health and hygiene products — without the uncertainty of grey-market imports or counterfeits."
+msgstr "تأسست exMart في القاهرة برسالة واضحة: أن توفر للأسر المصرية ولمتخصصي الرعاية الصحية وصولًا موثوقًا إلى منتجات صحة ونظافة أصلية واحترافية — بعيدًا عن مخاطر الاستيراد غير الرسمي أو المنتجات المقلدة."
+
+#: template-about.php:18
+msgid "We began as a distributor, earning sole-distributor agreements with Diversey, Grace, Oview, and SureCheck — four internationally recognised brands in professional cleaning, diagnostics, and health monitoring. Being the sole authorised distributor means every product on our shelves is sourced directly from the manufacturer, sealed and complete, with full warranty support."
+msgstr "بدأنا كموزّع، وحصلنا على حقوق التوزيع الحصري لكل من Diversey وGrace وOview وSureCheck — أربع علامات تجارية عالمية في التنظيف الاحترافي والاختبارات التشخيصية ومتابعة الصحة. كوننا الموزّع المعتمد الوحيد يعني أن كل منتج لدينا يأتي مباشرة من الشركة المصنّعة، مغلقًا وكاملًا، مع ضمان كامل."
+
+#: template-about.php:19
+msgid "As we grew, we identified gaps the imported brands could not fill at accessible price points. That led us to develop our own exclusive brands — Qualita, Vodlia, Eliv, and Verve — formulated in collaboration with specialist laboratories and dermatologist advisors, and developed specifically for the Egyptian climate, water chemistry, and skin types."
+msgstr "ومع نمونا، لاحظنا احتياجات لا تلبيها العلامات المستوردة بأسعار مناسبة. لذلك طوّرنا علاماتنا التجارية الحصرية — Qualita وVodlia وEliv وVerve — بالتعاون مع مختبرات متخصصة واستشاريين في الأمراض الجلدية، وصُممت خصيصًا لمناخ مصر وطبيعة مياهها وأنواع البشرة فيها."
+
+#: template-about.php:23 header.php:130 template-brands.php:24
+msgid "Brands we distribute"
+msgstr "علامات نوزّعها"
+
+#: template-about.php:37 taxonomy-product_brand.php:33 template-brands.php:38 footer.php:89
+msgid "Official & sole distributor in Egypt"
+msgstr "الموزّع الرسمي والوحيد في مصر"
+
+#: template-about.php:45
+msgid "Our own brands"
+msgstr "علاماتنا الخاصة"
+
+#: template-about.php:59 taxonomy-product_brand.php:33 template-brands.php:66 inc/woocommerce-hooks.php:976
+msgid "exMart exclusive · our own brand"
+msgstr "حصري من exMart · علامتنا الخاصة"
+
+#: template-about.php:67
+msgid "Our commitment"
+msgstr "التزامنا"
+
+#: template-about.php:71
+msgid "Every product shipped by exMart is authentic — sourced directly from the manufacturer or produced under our own quality protocols."
+msgstr "كل منتج تشحنه exMart أصلي — مصدره الشركة المصنّعة مباشرة أو مُنتَج وفق معايير الجودة الخاصة بنا."
+
+#: template-about.php:72
+msgid "We never sell counterfeit, expired, or grey-market products. If you suspect a product's authenticity, contact us immediately."
+msgstr "لا نبيع أبدًا منتجات مقلدة أو منتهية الصلاحية أو مستوردة بشكل غير رسمي. إذا شككت في أصالة أي منتج، تواصل معنا فورًا."
+
+#: template-about.php:73
+msgid "Our in-house brands are developed with dermatologist input and follow Egyptian regulatory standards for cosmetics and personal care."
+msgstr "تُطوَّر علاماتنا الخاصة بمشاركة أطباء جلدية، وتلتزم بالمعايير التنظيمية المصرية لمستحضرات التجميل والعناية الشخصية."
+
+#: template-about.php:74
+msgid "If a product does not meet your expectations, contact us and we will do our best to help."
+msgstr "إذا لم يلبِّ المنتج توقعاتك، تواصل معنا وسنبذل قصارى جهدنا لمساعدتك."
+
+#: 404.php:7
+msgid "Page not found"
+msgstr "الصفحة غير موجودة"
+
+#: 404.php:8
+msgid "The page you are looking for does not exist or has been moved."
+msgstr "الصفحة التي تبحث عنها غير موجودة أو تم نقلها."
+
+#: 404.php:9
+msgid "Go home"
+msgstr "العودة للرئيسية"
+
+#: index.php:25
+msgid "Nothing found."
+msgstr "لم يتم العثور على نتائج."
+
+#: template-contact.php:12 header.php:184 woocommerce/checkout/form-checkout.php:23
+msgid "Contact"
+msgstr "تواصل معنا"
+
+#: template-contact.php:13 footer.php:44
+msgid "Contact Us"
+msgstr "اتصل بنا"
+
+#: template-contact.php:18 woocommerce/checkout/form-checkout.php:24
+msgid "Address"
+msgstr "العنوان"
+
+#: template-contact.php:22
+msgid "Phone & WhatsApp"
+msgstr "الهاتف وواتساب"
+
+#: template-contact.php:26
+msgid "Chat on WhatsApp"
+msgstr "تحدث معنا على واتساب"
+
+#: template-contact.php:30 template-login.php:40 template-register.php:56 woocommerce/myaccount/form-edit-account.php:38
+msgid "Email"
+msgstr "البريد الإلكتروني"
+
+#: template-contact.php:34
+msgid "Hours"
+msgstr "مواعيد العمل"
+
+#: template-contact.php:51
+msgid "Message sent!"
+msgstr "تم إرسال رسالتك!"
+
+#: template-contact.php:52
+msgid "Thank you for reaching out. We will reply within one business day."
+msgstr "شكرًا لتواصلك معنا. سنرد عليك خلال يوم عمل واحد."
+
+#: template-contact.php:53
+msgid "Send another message"
+msgstr "إرسال رسالة أخرى"
+
+#: template-contact.php:57
+msgid "Something went wrong — please check the form and try again."
+msgstr "حدث خطأ — يرجى مراجعة البيانات والمحاولة مرة أخرى."
+
+#: template-contact.php:66 template-register.php:43
+msgid "Full name"
+msgstr "الاسم بالكامل"
+
+#: template-contact.php:70
+msgid "Email address"
+msgstr "البريد الإلكتروني"
+
+#: template-contact.php:75
+msgid "Phone (optional)"
+msgstr "الهاتف (اختياري)"
+
+#: template-contact.php:79
+msgid "Subject"
+msgstr "الموضوع"
+
+#: template-contact.php:85
+msgid "Message"
+msgstr "الرسالة"
+
+#: template-contact.php:86
+msgid "Describe your enquiry in detail…"
+msgstr "اكتب استفسارك بالتفصيل…"
+
+#: template-contact.php:88
+msgid "Send message"
+msgstr "إرسال الرسالة"
+
+#: template-payment.php:9
+msgid "Pay in cash when your order arrives. Available across all governorates. No surcharge."
+msgstr "ادفع نقدًا عند استلام طلبك. متاح في جميع المحافظات. بدون رسوم إضافية."
+
+#: template-payment.php:10
+msgid "Pay at any Fawry point across Egypt using your order reference number. Payment valid for 24 hours."
+msgstr "ادفع من أي منفذ فوري في مصر باستخدام الرقم المرجعي لطلبك. الدفع صالح لمدة 24 ساعة."
+
+#: template-payment.php:11
+msgid "Egyptian national debit card — accepted directly at checkout via our secure payment gateway."
+msgstr "بطاقة ميزة المصرية — تُقبل مباشرة عند إتمام الطلب عبر بوابة الدفع الآمنة."
+
+#: template-payment.php:12
+msgid "Visa and Mastercard accepted. Payments are processed via a PCI-DSS-compliant gateway. We do not store card numbers."
+msgstr "نقبل Visa وMastercard. تتم المدفوعات عبر بوابة متوافقة مع معايير PCI-DSS. لا نحتفظ بأرقام البطاقات."
+
+#: template-payment.php:13
+msgid "Send a bank transfer via InstaPay to our registered number. Your order will be confirmed within 30 minutes during business hours."
+msgstr "حوّل المبلغ عبر InstaPay إلى رقمنا المسجّل. سيتم تأكيد طلبك خلال 30 دقيقة في أوقات العمل."
+
+#: template-payment.php:17 template-payment.php:18 footer.php:41
+msgid "Payment Methods"
+msgstr "طرق الدفع"
+
+#: template-payment.php:28
+msgid "Note for the store owner: enable/configure the matching WooCommerce payment gateways under WooCommerce → Settings → Payments so these methods actually work at checkout (COD is built in; Fawry/Meeza/InstaPay/cards need an Egypt-compatible gateway plugin such as Paymob, Fawaterak, or Kashier)."
+msgstr ""
+
+#: taxonomy-product_brand.php:18 search.php:65 header.php:97 header.php:175
+msgid "Brands"
+msgstr "العلامات التجارية"
+
+#: taxonomy-product_brand.php:64
+msgid "No products in this brand yet."
+msgstr "لا توجد منتجات لهذه العلامة التجارية بعد."
+
+#: taxonomy-product_brand.php:50
+msgid "%d product"
+msgid_plural "%d products"
+msgstr[0] "%d منتج"
+msgstr[1] "%d منتج"
+msgstr[2] "%d منتج"
+msgstr[3] "%d منتجات"
+msgstr[4] "%d منتجًا"
+msgstr[5] "%d منتج"
+
+#: search.php:49
+msgid "No results for \"%s\""
+msgstr "لا توجد نتائج لـ \"%s\""
+
+#: search.php:54
+msgid "Try a different search term, or browse by category or brand below."
+msgstr "جرّب كلمة بحث مختلفة، أو تصفح حسب القسم أو العلامة التجارية بالأسفل."
+
+#: search.php:57
+msgid "Popular Categories"
+msgstr "أقسام شائعة"
+
+#: search.php:20
+msgid "%1$d result for \"%2$s\""
+msgid_plural "%1$d results for \"%2$s\""
+msgstr[0] "%1$d نتيجة لـ \"%2$s\""
+msgstr[1] "%1$d نتيجة لـ \"%2$s\""
+msgstr[2] "%1$d نتيجة لـ \"%2$s\""
+msgstr[3] "%1$d نتائج لـ \"%2$s\""
+msgstr[4] "%1$d نتيجة لـ \"%2$s\""
+msgstr[5] "%1$d نتيجة لـ \"%2$s\""
+
+#: template-faq.php:9
+msgid "Are the products authentic?"
+msgstr "هل المنتجات أصلية؟"
+
+#: template-faq.php:9
+msgid "Yes — all products are sourced directly from manufacturers or produced under our own quality protocols. We are the official sole distributor in Egypt for Diversey, Grace, Oview, and SureCheck."
+msgstr "نعم — جميع المنتجات مصدرها الشركات المصنّعة مباشرة أو مُنتجة وفق معايير الجودة الخاصة بنا. نحن الموزّع الرسمي والوحيد في مصر لـ Diversey وGrace وOview وSureCheck."
+
+#: template-faq.php:10
+msgid "Do you offer cash on delivery?"
+msgstr "هل يتوفر الدفع عند الاستلام؟"
+
+#: template-faq.php:10
+msgid "Yes. Cash on delivery is available across all Egyptian governorates at no extra charge."
+msgstr "نعم. الدفع عند الاستلام متاح في جميع محافظات مصر بدون أي رسوم إضافية."
+
+#: template-faq.php:11
+msgid "How long does delivery take?"
+msgstr "كم يستغرق التوصيل؟"
+
+#: template-faq.php:11
+msgid "Delivery takes 3–5 working days across Egypt."
+msgstr "يستغرق التوصيل من 3 إلى 5 أيام عمل في جميع أنحاء مصر."
+
+#: template-faq.php:12
+msgid "Can I return a product?"
+msgstr "هل يمكنني إرجاع منتج؟"
+
+#: template-faq.php:12
+msgid "Returns and exchanges are reviewed case by case, so please contact us as soon as possible after delivery: email info@exmartegypt.com or message us through the WhatsApp button on the left side of the screen. Intimate hygiene and opened products cannot be returned for health and safety reasons."
+msgstr "تتم مراجعة طلبات الإرجاع والاستبدال حسب كل حالة، لذا يرجى التواصل معنا في أسرع وقت بعد الاستلام: راسلنا على info@exmartegypt.com أو عبر زر واتساب على يسار الشاشة. لا يمكن إرجاع منتجات النظافة الشخصية الحساسة أو المنتجات المفتوحة لأسباب صحية."
+
+#: template-faq.php:13
+msgid "What is your warranty policy?"
+msgstr "ما هي سياسة الضمان؟"
+
+#: template-faq.php:13
+msgid "Electronic devices (Oview, SureCheck) carry a 12-month warranty from purchase date. Contact us with your order number and a description of the fault."
+msgstr "الأجهزة الإلكترونية (Oview وSureCheck) عليها ضمان لمدة 12 شهرًا من تاريخ الشراء. تواصل معنا برقم طلبك ووصف للمشكلة."
+
+#: template-faq.php:14
+msgid "Are your house brands safe for sensitive skin?"
+msgstr "هل منتجات علاماتكم الخاصة آمنة للبشرة الحساسة؟"
+
+#: template-faq.php:14
+msgid "All Qualita, Vodlia, Eliv, and Verve products are developed with dermatologist review and are formulated to minimise irritation. However, as with any personal care product, we recommend performing a patch test before first use if you have known skin sensitivities."
+msgstr "جميع منتجات Qualita وVodlia وEliv وVerve تُطوَّر بمراجعة أطباء جلدية وتركيبتها مصممة لتقليل التهيج. ومع ذلك، كما هو الحال مع أي منتج للعناية الشخصية، ننصح بتجربته على جزء صغير من الجلد قبل أول استخدام إذا كانت لديك حساسية معروفة."
+
+#: template-faq.php:15
+msgid "Do you ship outside Egypt?"
+msgstr "هل تشحنون خارج مصر؟"
+
+#: template-faq.php:15
+msgid "Not currently. We ship within Egypt only."
+msgstr "ليس حاليًا. نشحن داخل مصر فقط."
+
+#: template-faq.php:16
+msgid "How do I track my order?"
+msgstr "كيف أتتبع طلبي؟"
+
+#: template-faq.php:16
+msgid "After dispatch you will receive an SMS with your tracking number. You can also track your order from the Account section on our website."
+msgstr "بعد شحن الطلب ستصلك رسالة SMS برقم التتبع. ويمكنك أيضًا تتبع طلبك من قسم الحساب على موقعنا."
+
+#: template-faq.php:20 footer.php:42
+msgid "FAQ"
+msgstr "الأسئلة الشائعة"
+
+#: template-faq.php:21
+msgid "Frequently Asked Questions"
+msgstr "الأسئلة الشائعة"
+
+#: header.php:34
+msgid "Skip to content"
+msgstr "انتقل إلى المحتوى"
+
+#: header.php:39
+msgid "Order soon, we deliver within 3-5 working days"
+msgstr "اطلب الآن، نوصّل خلال 3-5 أيام عمل"
+
+#: header.php:40
+msgid "Dismiss announcement"
+msgstr "إغلاق الإعلان"
+
+#: header.php:48
+msgid "Open menu"
+msgstr "فتح القائمة"
+
+#: header.php:51
+msgid "exMart home"
+msgstr "الصفحة الرئيسية لـ exMart"
+
+#: header.php:52
+msgid "exMart Online Shopping"
+msgstr "exMart للتسوق أونلاين"
+
+#: header.php:60 header.php:85
+msgid "Search products, brands…"
+msgstr "ابحث عن منتجات، علامات تجارية…"
+
+#: header.php:60 header.php:85 searchform.php:7
+msgid "Search"
+msgstr "بحث"
+
+#: header.php:66 header.php:182 template-wishlist.php:13 template-wishlist.php:15
+msgid "Wishlist"
+msgstr "المفضلة"
+
+#: header.php:70 woocommerce/checkout/thankyou.php:50
+msgid "My account"
+msgstr "حسابي"
+
+#: header.php:73 header.php:203 page.php:27 page.php:42
+msgid "Cart"
+msgstr "السلة"
+
+#: header.php:90
+msgid "Main navigation"
+msgstr "القائمة الرئيسية"
+
+#: header.php:93 footer.php:27
+msgid "Categories"
+msgstr "الأقسام"
+
+#: header.php:103
+msgid "Wipes"
+msgstr "مناديل"
+
+#: header.php:104
+msgid "Disinfectants"
+msgstr "مطهرات"
+
+#: header.php:105 front-page.php:238 inc/template-tags.php:1148
+msgid "Offers"
+msgstr "العروض"
+
+#: header.php:106 woocommerce/content-product.php:47
+msgid "New"
+msgstr "جديد"
+
+#: header.php:114
+msgid "Categories menu"
+msgstr "قائمة الأقسام"
+
+#: header.php:126
+msgid "Brands menu"
+msgstr "قائمة العلامات التجارية"
+
+#: header.php:135
+msgid "Sole distributor in Egypt"
+msgstr "الموزّع الوحيد في مصر"
+
+#: header.php:141 template-brands.php:52
+msgid "exMart brands"
+msgstr "علامات exMart"
+
+#: header.php:146
+msgid "exMart exclusive brand"
+msgstr "علامة حصرية من exMart"
+
+#: header.php:159
+msgid "Mobile navigation"
+msgstr "قائمة الجوال"
+
+#: header.php:162
+msgid "Close menu"
+msgstr "إغلاق القائمة"
+
+#: header.php:168 woocommerce/archive-product.php:32 woocommerce/archive-product.php:39
+msgid "Shop"
+msgstr "تسوّق"
+
+#: header.php:169 woocommerce/archive-product.php:36
+msgid "All Products"
+msgstr "كل المنتجات"
+
+#: header.php:181 page.php:20
+msgid "My Account"
+msgstr "حسابي"
+
+#: header.php:188
+msgid "Language"
+msgstr "اللغة"
+
+#: header.php:197
+msgid "Shopping cart"
+msgstr "سلة التسوق"
+
+#: header.php:199
+msgid "Close cart"
+msgstr "إغلاق السلة"
+
+#: header.php:205 inc/theme-setup.php:93
+msgid "exMart"
+msgstr ""
+
+#: header.php:205 woocommerce/myaccount/orders.php:40
+msgid "%d item"
+msgid_plural "%d items"
+msgstr[0] "%d منتج"
+msgstr[1] "%d منتج"
+msgstr[2] "%d منتج"
+msgstr[3] "%d منتجات"
+msgstr[4] "%d منتجًا"
+msgstr[5] "%d منتج"
+
+#: template-shipping.php:9 template-shipping.php:10 footer.php:40 inc/woocommerce-hooks.php:912
+msgid "Shipping & Returns"
+msgstr "الشحن والإرجاع"
+
+#: template-shipping.php:13
+msgid "Delivery"
+msgstr "التوصيل"
+
+#: template-shipping.php:15
+msgid "Zone"
+msgstr "المنطقة"
+
+#: template-shipping.php:15
+msgid "Estimated delivery"
+msgstr "مدة التوصيل المتوقعة"
+
+#: template-shipping.php:15
+msgid "Cost"
+msgstr "التكلفة"
+
+#: template-shipping.php:33
+msgid "Returns & Refunds"
+msgstr "الإرجاع واسترداد المبلغ"
+
+#: template-shipping.php:37
+msgid "Returns and exchanges are reviewed case by case. Please contact us as soon as possible after your order arrives and we will help."
+msgstr "تتم مراجعة طلبات الإرجاع والاستبدال حسب كل حالة. يرجى التواصل معنا في أسرع وقت بعد وصول طلبك وسنساعدك."
+
+#: template-shipping.php:38
+msgid "To start a request, email info@exmartegypt.com or message us through the WhatsApp button on the left side of the screen, with your order number and the reason."
+msgstr "لبدء الطلب، راسلنا على info@exmartegypt.com أو عبر زر واتساب على يسار الشاشة، مع رقم الطلب وسبب الإرجاع."
+
+#: template-shipping.php:39
+msgid "If a return is approved, we will confirm the next steps and any refund details with you directly."
+msgstr "إذا تمت الموافقة على الإرجاع، سنؤكد معك الخطوات التالية وتفاصيل استرداد المبلغ مباشرة."
+
+#: template-shipping.php:40
+msgid "Personalised, perishable, or intimate hygiene products (opened) cannot be returned, for health and safety reasons."
+msgstr "المنتجات المخصصة أو سريعة التلف أو منتجات النظافة الشخصية الحساسة (المفتوحة) لا يمكن إرجاعها لأسباب صحية."
+
+#: template-shipping.php:41
+msgid "If you receive a damaged or incorrect product, contact us right away with a photo and we will make it right."
+msgstr "إذا استلمت منتجًا تالفًا أو غير صحيح، تواصل معنا فورًا مع صورة وسنحل المشكلة."
+
+#: template-brands.php:15 front-page.php:153
+msgid "Our Brands"
+msgstr "علاماتنا التجارية"
+
+#: template-brands.php:18
+msgid "Search brands…"
+msgstr "ابحث عن علامة تجارية…"
+
+#: template-brands.php:18
+msgid "Search brands"
+msgstr "البحث في العلامات التجارية"
+
+#: template-brands.php:25
+msgid "exMart is the official and sole distributor of these brands in Egypt — sourcing directly from the manufacturer."
+msgstr "exMart هي الموزّع الرسمي والوحيد لهذه العلامات في مصر — نستوردها مباشرة من الشركة المصنّعة."
+
+#: template-brands.php:53
+msgid "Developed and quality-tested by our in-house team — made exclusively for exMart customers."
+msgstr "طوّرها فريقنا واختبر جودتها — حصريًا لعملاء exMart."
+
+#: template-brands.php:78
+msgid "No brands match your search."
+msgstr "لا توجد علامات تجارية مطابقة لبحثك."
+
+#: template-brands.php:42 template-brands.php:70
+msgid "%d product →"
+msgid_plural "%d products →"
+msgstr[0] "%d منتج ←"
+msgstr[1] "%d منتج ←"
+msgstr[2] "%d منتج ←"
+msgstr[3] "%d منتجات ←"
+msgstr[4] "%d منتجًا ←"
+msgstr[5] "%d منتج ←"
+
+#: footer.php:39
+msgid "Service"
+msgstr "خدمة العملاء"
+
+#: footer.php:43
+msgid "Track Order"
+msgstr "تتبع الطلب"
+
+#: footer.php:49
+msgid "Our Story"
+msgstr "قصتنا"
+
+#: footer.php:50 template-privacy.php:18
+msgid "Privacy & Terms"
+msgstr "الخصوصية والشروط"
+
+#: footer.php:53 inc/contact-form.php:62
+msgid "Newsletter"
+msgstr "النشرة البريدية"
+
+#: footer.php:56
+msgid "Email address for newsletter"
+msgstr "البريد الإلكتروني للنشرة البريدية"
+
+#: footer.php:57
+msgid "Join"
+msgstr "اشترك"
+
+#: template-wishlist.php:19 inc/woocommerce-hooks.php:1741
+msgid "Loading…"
+msgstr "جارٍ التحميل…"
+
+#: template-wishlist.php:25
+msgid "Your wishlist is empty"
+msgstr "قائمة المفضلة فارغة"
+
+#: template-wishlist.php:26
+msgid "Save products you love by tapping the heart icon on any product card."
+msgstr "احفظ المنتجات التي تعجبك بالضغط على أيقونة القلب في أي منتج."
+
+#: template-wishlist.php:27 woocommerce/myaccount/orders.php:84 inc/woocommerce-hooks.php:1745
+msgid "Discover products"
+msgstr "اكتشف المنتجات"
+
+#: template-privacy.php:9
+msgid "Data we collect"
+msgstr "البيانات التي نجمعها"
+
+#: template-privacy.php:9
+msgid "We collect your name, email, phone number, and delivery address solely to process and deliver your orders. We do not sell or share your data with third parties for marketing purposes."
+msgstr "نجمع اسمك وبريدك الإلكتروني ورقم هاتفك وعنوان التوصيل فقط لتجهيز طلباتك وتوصيلها. لا نبيع بياناتك ولا نشاركها مع أي طرف ثالث لأغراض تسويقية."
+
+#: template-privacy.php:10
+msgid "How we use your data"
+msgstr "كيف نستخدم بياناتك"
+
+#: template-privacy.php:10
+msgid "Your data is used to process orders, send order status updates via SMS or email, respond to customer service requests, and (with your consent) send newsletters. You can unsubscribe at any time."
+msgstr "نستخدم بياناتك لتجهيز الطلبات، وإرسال تحديثات حالة الطلب عبر SMS أو البريد الإلكتروني، والرد على طلبات خدمة العملاء، و(بموافقتك) إرسال النشرة البريدية. يمكنك إلغاء الاشتراك في أي وقت."
+
+#: template-privacy.php:11
+msgid "Data security"
+msgstr "أمان البيانات"
+
+#: template-privacy.php:11
+msgid "All data is stored on encrypted servers. Card payments are processed by our payment gateway and we do not store or have access to card numbers."
+msgstr "تُخزَّن جميع البيانات على خوادم مشفرة. تتم مدفوعات البطاقات عبر بوابة الدفع ولا نحتفظ بأرقام البطاقات ولا يمكننا الاطلاع عليها."
+
+#: template-privacy.php:12
+msgid "Cookies"
+msgstr "ملفات تعريف الارتباط (الكوكيز)"
+
+#: template-privacy.php:12
+msgid "We use essential cookies to maintain your cart and session. We use analytics cookies (anonymised) to improve the site. You can disable non-essential cookies in your browser settings."
+msgstr "نستخدم ملفات تعريف ارتباط أساسية للحفاظ على سلتك وجلستك، وملفات تحليلية (مجهولة الهوية) لتحسين الموقع. يمكنك تعطيل الملفات غير الأساسية من إعدادات متصفحك."
+
+#: template-privacy.php:13
+msgid "Terms of use"
+msgstr "شروط الاستخدام"
+
+#: template-privacy.php:13
+msgid "Products sold on exMart.eg are intended for personal, household, or professional use by competent adults. Diagnostic devices are for informational purposes only and do not substitute for clinical medical advice. Health claims on our own-brand products comply with Egyptian regulatory standards and are not intended to diagnose, treat, or cure any condition."
+msgstr "المنتجات المباعة على exMart.eg مخصصة للاستخدام الشخصي أو المنزلي أو المهني من قِبل البالغين. أجهزة التشخيص لأغراض المعلومات فقط ولا تغني عن الاستشارة الطبية. الادعاءات الصحية على منتجات علاماتنا الخاصة تتوافق مع المعايير التنظيمية المصرية ولا يُقصد بها تشخيص أي حالة أو علاجها أو الشفاء منها."
+
+#: template-privacy.php:14
+msgid "Governing law"
+msgstr "القانون الحاكم"
+
+#: template-privacy.php:14
+msgid "These terms are governed by Egyptian law. Any disputes shall be subject to the jurisdiction of Egyptian courts."
+msgstr "تخضع هذه الشروط للقانون المصري، وتختص المحاكم المصرية بالنظر في أي نزاع."
+
+#: template-privacy.php:19
+msgid "Privacy Policy & Terms of Use"
+msgstr "سياسة الخصوصية وشروط الاستخدام"
+
+#: template-privacy.php:26
+msgid "Note for the store owner: review this copy with counsel and align it with your actual data-handling practices (hosting provider, analytics tools, payment gateway) before launch."
+msgstr ""
+
+#: template-login.php:26
+msgid "Login"
+msgstr "تسجيل الدخول"
+
+#: template-login.php:30 template-login.php:68 template-login.php:69 template-register.php:105
+msgid "Log in"
+msgstr "تسجيل الدخول"
+
+#: template-login.php:52 template-register.php:68
+msgid "Password"
+msgstr "كلمة المرور"
+
+#: template-login.php:74
+msgid "No account?"
+msgstr "ليس لديك حساب؟"
+
+#: template-login.php:75 template-register.php:29 template-register.php:98
+msgid "Register"
+msgstr "إنشاء حساب"
+
+#: template-login.php:78
+msgid "Lost your password?"
+msgstr "نسيت كلمة المرور؟"
+
+#: page.php:19
+msgid "Account"
+msgstr "الحساب"
+
+#: page.php:26
+msgid "Your Cart"
+msgstr "سلتك"
+
+#: page.php:34 page.php:37
+msgid "Order Confirmed"
+msgstr "تم تأكيد الطلب"
+
+#: page.php:40 page.php:43 woocommerce/checkout/form-checkout.php:30 woocommerce/cart/mini-cart.php:146
+msgid "Checkout"
+msgstr "إتمام الطلب"
+
+#: template-register.php:33 template-register.php:99
+msgid "Create account"
+msgstr "إنشاء حساب"
+
+#: template-register.php:51
+msgid "Ahmed Hassan"
+msgstr "أحمد حسن"
+
+#: template-register.php:78
+msgid "Minimum 8 characters."
+msgstr "8 أحرف على الأقل."
+
+#: template-register.php:81 woocommerce/myaccount/form-edit-account.php:43 woocommerce/checkout/form-checkout.php:136
+msgid "Phone"
+msgstr "الهاتف"
+
+#: template-register.php:89 woocommerce/myaccount/form-edit-account.php:44
+msgid "+20 10 0000 0000"
+msgstr ""
+
+#: template-register.php:104 woocommerce/checkout/form-billing.php:47
+msgid "Already have an account?"
+msgstr "لديك حساب بالفعل؟"
+
+#: front-page.php:52
+msgid "100% authentic — direct from manufacturer"
+msgstr "أصلي 100% — مباشرة من الشركة المصنّعة"
+
+#: front-page.php:56
+msgid "Official sole distributor in Egypt"
+msgstr "الموزّع الرسمي الوحيد في مصر"
+
+#: front-page.php:60 inc/woocommerce-hooks.php:942
+msgid "Cash on delivery available"
+msgstr "الدفع عند الاستلام متاح"
+
+#: front-page.php:64
+msgid "Nationwide delivery across Egypt"
+msgstr "توصيل لجميع أنحاء مصر"
+
+#: front-page.php:140
+msgid "Previous"
+msgstr "السابق"
+
+#: front-page.php:143
+msgid "Next"
+msgstr "التالي"
+
+#: front-page.php:198
+msgid "Shop by Category"
+msgstr "تسوّق حسب القسم"
+
+#: front-page.php:215
+msgid "Categories will appear here once products are assigned."
+msgstr "ستظهر الأقسام هنا بمجرد إضافة منتجات إليها."
+
+#: front-page.php:224
+msgid "Best Sellers"
+msgstr "الأكثر مبيعًا"
+
+#: front-page.php:227
+msgid "Tag products with “best-sellers”, or wait until orders generate popularity data."
+msgstr "أضف وسم “best-sellers” للمنتجات، أو انتظر حتى تتكوّن بيانات الطلبات."
+
+#: front-page.php:241
+msgid "No sale products right now. Set a Sale price on products in WooCommerce to fill this rail."
+msgstr "لا توجد منتجات عليها خصم حاليًا."
+
+#: front-page.php:252
+msgid "New Arrivals"
+msgstr "وصل حديثًا"
+
+#: front-page.php:255
+msgid "No new products yet. Publish products (or tag them “new”) to fill this rail."
+msgstr "لا توجد منتجات جديدة بعد."
+
+#: front-page.php:263
+msgid "What customers say"
+msgstr "آراء عملائنا"
+
+#: front-page.php:269
+msgid "Authentic products and fast delivery. Finally a trustworthy Egyptian source for Diversey."
+msgstr "منتجات أصلية وتوصيل سريع. أخيرًا مصدر مصري موثوق لمنتجات Diversey."
+
+#: front-page.php:274
+msgid "Ordered Qualita baby wipes three times already. Quality is consistent and pricing is fair."
+msgstr "طلبت مناديل الأطفال من Qualita ثلاث مرات بالفعل. الجودة ثابتة والسعر مناسب."
+
+#: front-page.php:279
+msgid "The SureCheck pregnancy test I received is exactly the genuine product — sealed box and easy-to-read instructions."
+msgstr "اختبار الحمل من SureCheck الذي استلمته أصلي تمامًا — العلبة مغلقة والتعليمات سهلة القراءة."
+
+#: front-page.php:298
+msgid "Stay in the loop"
+msgstr "ابقَ على اطلاع"
+
+#: front-page.php:299
+msgid "New products, exclusive offers, and health tips — delivered to your inbox."
+msgstr "منتجات جديدة وعروض حصرية ونصائح صحية — تصلك على بريدك الإلكتروني."
+
+#: front-page.php:302
+msgid "Email for newsletter"
+msgstr "البريد الإلكتروني للنشرة البريدية"
+
+#: front-page.php:303
+msgid "Subscribe"
+msgstr "اشترك"
+
+#: front-page.php:309
+msgid "Chat with us on WhatsApp"
+msgstr "تحدث معنا على واتساب"
+
+#: searchform.php:7
+msgid "Search products, brands, categories…"
+msgstr "ابحث عن منتجات، علامات تجارية، أقسام…"
+
+#: woocommerce/content-product.php:18
+msgid "Sale"
+msgstr "خصم"
+
+#: woocommerce/content-product.php:48
+msgid "Best Seller"
+msgstr "الأكثر مبيعًا"
+
+#: woocommerce/content-product.php:66 inc/woocommerce-hooks.php:1113
+msgid "Add to wishlist"
+msgstr "أضف إلى المفضلة"
+
+#: woocommerce/archive-product.php:29
+msgid "Products"
+msgstr "المنتجات"
+
+#: woocommerce/archive-product.php:54 woocommerce/archive-product.php:74
+msgid "Filters"
+msgstr "الفلاتر"
+
+#: woocommerce/archive-product.php:72
+msgid "Product filters"
+msgstr "فلاتر المنتجات"
+
+#: woocommerce/archive-product.php:75
+msgid "Close filters"
+msgstr "إغلاق الفلاتر"
+
+#: woocommerce/archive-product.php:102
+msgid "No products match your filters."
+msgstr "لا توجد منتجات مطابقة للفلاتر."
+
+#: woocommerce/order/order-details.php:51
+msgid "Order details"
+msgstr "تفاصيل الطلب"
+
+#: woocommerce/order/order-details.php:87
+msgid "Note"
+msgstr "ملاحظة"
+
+#: woocommerce/order/order-details.php:100
+msgid "%1$s order number %2$s"
+msgstr "%1$s رقم الطلب %2$s"
+
+#: woocommerce/order/order-details-customer.php:25
+msgid "Delivery details"
+msgstr "بيانات التوصيل"
+
+#: woocommerce/order/order-details-customer.php:25 woocommerce/myaccount/my-address.php:15
+msgid "Billing address"
+msgstr "عنوان الفاتورة"
+
+#: woocommerce/order/order-details-customer.php:28 woocommerce/order/order-details-customer.php:46
+msgid "N/A"
+msgstr "غير متوفر"
+
+#: woocommerce/order/order-details-customer.php:44 woocommerce/myaccount/my-address.php:16
+msgid "Shipping address"
+msgstr "عنوان الشحن"
+
+#: woocommerce/myaccount/form-edit-account.php:13 inc/woocommerce-hooks.php:1693
+msgid "Profile"
+msgstr "الملف الشخصي"
+
+#: woocommerce/myaccount/form-edit-account.php:21
+msgid "First name"
+msgstr "الاسم الأول"
+
+#: woocommerce/myaccount/form-edit-account.php:25
+msgid "Last name"
+msgstr "اسم العائلة"
+
+#: woocommerce/myaccount/form-edit-account.php:32
+msgid "Display name"
+msgstr "الاسم المعروض"
+
+#: woocommerce/myaccount/form-edit-account.php:34
+msgid "This is how your name will appear on orders and reviews."
+msgstr "هكذا سيظهر اسمك في الطلبات والتقييمات."
+
+#: woocommerce/myaccount/form-edit-account.php:49 woocommerce/myaccount/form-edit-account.php:50
+msgid "Save changes"
+msgstr "حفظ التغييرات"
+
+#: woocommerce/myaccount/form-edit-account.php:57
+msgid "Change password"
+msgstr "تغيير كلمة المرور"
+
+#: woocommerce/myaccount/form-edit-account.php:60
+msgid "Current password"
+msgstr "كلمة المرور الحالية"
+
+#: woocommerce/myaccount/form-edit-account.php:64
+msgid "New password"
+msgstr "كلمة المرور الجديدة"
+
+#: woocommerce/myaccount/form-edit-account.php:68
+msgid "Confirm new password"
+msgstr "تأكيد كلمة المرور الجديدة"
+
+#: woocommerce/myaccount/form-edit-account.php:73 woocommerce/myaccount/form-edit-account.php:74
+msgid "Update password"
+msgstr "تحديث كلمة المرور"
+
+#: woocommerce/myaccount/my-address.php:22
+msgid "Saved Addresses"
+msgstr "العناوين المحفوظة"
+
+#: woocommerce/myaccount/my-address.php:34
+msgid "Edit"
+msgstr "تعديل"
+
+#: woocommerce/myaccount/my-address.php:38
+msgid "Not set up yet."
+msgstr "لم تتم إضافته بعد."
+
+#: woocommerce/myaccount/my-address.php:39
+msgid "Add"
+msgstr "إضافة"
+
+#: woocommerce/myaccount/my-address.php:47
+msgid "+ Add new address"
+msgstr "+ إضافة عنوان جديد"
+
+#: woocommerce/myaccount/view-order.php:16 inc/template-tags.php:607
+msgid "Placed"
+msgstr "تم الطلب"
+
+#: woocommerce/myaccount/view-order.php:17 inc/template-tags.php:606
+msgid "Confirmed"
+msgstr "تم التأكيد"
+
+#: woocommerce/myaccount/view-order.php:18 inc/template-tags.php:605
+msgid "Shipped"
+msgstr "تم الشحن"
+
+#: woocommerce/myaccount/view-order.php:19 inc/template-tags.php:604
+msgid "Delivered"
+msgstr "تم التوصيل"
+
+#: woocommerce/myaccount/view-order.php:33
+msgid "Back to orders"
+msgstr "العودة للطلبات"
+
+#: woocommerce/myaccount/view-order.php:40
+msgid "Order #%s — Tracking"
+msgstr "طلب #%s — التتبع"
+
+#: woocommerce/myaccount/view-order.php:77
+msgid "Placed on %1$s · Status: %2$s"
+msgstr "تاريخ الطلب %1$s · الحالة: %2$s"
+
+#: woocommerce/myaccount/view-order.php:85
+msgid "Items"
+msgstr "المنتجات"
+
+#: woocommerce/myaccount/view-order.php:89 woocommerce/cart/cart.php:31 woocommerce/cart/cart.php:62
+msgid "Product"
+msgstr "المنتج"
+
+#: woocommerce/myaccount/view-order.php:90 woocommerce/checkout/review-order.php:121 woocommerce/checkout/form-checkout.php:145 woocommerce/cart/cart-totals.php:91
+msgid "Total"
+msgstr "الإجمالي"
+
+#: woocommerce/myaccount/view-order.php:117
+msgid "Order updates"
+msgstr "تحديثات الطلب"
+
+#: woocommerce/myaccount/navigation.php:14
+msgid "Account navigation"
+msgstr "قائمة الحساب"
+
+#: woocommerce/myaccount/orders.php:26
+msgid "Order History"
+msgstr "سجل الطلبات"
+
+#: woocommerce/myaccount/orders.php:53
+msgid "Track"
+msgstr "تتبع"
+
+#: woocommerce/myaccount/orders.php:82
+msgid "No orders yet."
+msgstr "لا توجد طلبات بعد."
+
+#: woocommerce/checkout/review-order.php:14 woocommerce/cart/cart-totals.php:23
+msgid "Order Summary"
+msgstr "ملخص الطلب"
+
+#: woocommerce/checkout/review-order.php:44 woocommerce/cart/mini-cart.php:138
+msgid "Subtotal"
+msgstr "المجموع الفرعي"
+
+#: woocommerce/checkout/review-order.php:60 woocommerce/checkout/form-checkout.php:25 woocommerce/cart/cart-totals.php:53
+msgid "Shipping"
+msgstr "الشحن"
+
+#: woocommerce/checkout/review-order.php:74 inc/woocommerce-hooks.php:2167
+msgid "Free"
+msgstr "مجاني"
+
+#: woocommerce/checkout/review-order.php:82
+msgid "—"
+msgstr ""
+
+#: woocommerce/checkout/payment.php:26
+msgid "Sorry, it seems that there are no available payment methods. Please contact us if you require assistance or wish to make alternate arrangements."
+msgstr "عذرًا، لا توجد طرق دفع متاحة حاليًا. يرجى التواصل معنا إذا احتجت إلى مساعدة أو أردت ترتيبًا بديلًا."
+
+#: woocommerce/checkout/payment.php:26
+msgid "Please fill in your details above to see available payment methods."
+msgstr "يرجى إدخال بياناتك بالأعلى لعرض طرق الدفع المتاحة."
+
+#: woocommerce/checkout/payment.php:36
+msgid "Since your browser does not support JavaScript, or it is disabled, please ensure you click the %1$sUpdate Totals%2$s button before placing your order. You may be charged more than the amount stated above if you fail to do so."
+msgstr "نظرًا لأن متصفحك لا يدعم JavaScript أو أنه معطّل، يرجى الضغط على زر %1$sتحديث الإجمالي%2$s قبل تأكيد طلبك. قد يتم تحصيل مبلغ أكبر من المذكور إذا لم تفعل ذلك."
+
+#: woocommerce/checkout/payment.php:38 woocommerce/checkout/payment.php:38
+msgid "Update totals"
+msgstr "تحديث الإجمالي"
+
+#: woocommerce/checkout/payment.php:50
+msgid "Place order"
+msgstr "تأكيد الطلب"
+
+#: woocommerce/checkout/payment.php:55
+msgid "Place Order — %s"
+msgstr "تأكيد الطلب — %s"
+
+#: woocommerce/checkout/form-billing.php:33
+msgid "Contact Information"
+msgstr "بيانات التواصل"
+
+#: woocommerce/checkout/form-billing.php:54
+msgid "Delivery Address"
+msgstr "عنوان التوصيل"
+
+#: woocommerce/checkout/form-billing.php:73
+msgid "Create an account?"
+msgstr "إنشاء حساب؟"
+
+#: woocommerce/checkout/form-checkout.php:18
+msgid "You must be logged in to checkout."
+msgstr "يجب تسجيل الدخول لإتمام الطلب."
+
+#: woocommerce/checkout/form-checkout.php:26 woocommerce/checkout/form-checkout.php:140
+msgid "Payment"
+msgstr "الدفع"
+
+#: woocommerce/checkout/form-checkout.php:32
+msgid "Checkout steps"
+msgstr "خطوات إتمام الطلب"
+
+#: woocommerce/checkout/form-checkout.php:66
+msgid "Shipping Method"
+msgstr "طريقة الشحن"
+
+#: woocommerce/checkout/form-checkout.php:77
+msgid "Payment Method"
+msgstr "طريقة الدفع"
+
+#: woocommerce/checkout/form-checkout.php:83
+msgid "Continue"
+msgstr "متابعة"
+
+#: woocommerce/checkout/form-checkout.php:106
+msgid "Double-check your order"
+msgstr "راجع طلبك مرة أخرى"
+
+#: woocommerce/checkout/form-checkout.php:111
+msgid "Did you already order?"
+msgstr "هل طلبت بالفعل؟"
+
+#: woocommerce/checkout/form-checkout.php:112
+msgid "You placed order"
+msgstr "لقد قمت بطلب"
+
+#: woocommerce/checkout/form-checkout.php:112
+msgid "a few minutes ago. Only continue if you really want a second order — each order is shipped and charged separately."
+msgstr "منذ دقائق. تابع فقط إذا كنت تريد طلبًا ثانيًا بالفعل — كل طلب يُشحن ويُحاسب بشكل منفصل."
+
+#: woocommerce/checkout/form-checkout.php:117
+msgid "Your order will be placed automatically in"
+msgstr "سيتم تأكيد طلبك تلقائيًا خلال"
+
+#: woocommerce/checkout/form-checkout.php:118
+msgid "s"
+msgstr "ث"
+
+#: woocommerce/checkout/form-checkout.php:119
+msgid "Take a moment to check everything below."
+msgstr "خذ لحظة لمراجعة كل شيء بالأسفل."
+
+#: woocommerce/checkout/form-checkout.php:122
+msgid "We won’t place this one automatically. Please confirm it isn’t a duplicate."
+msgstr "لن نؤكد هذا الطلب تلقائيًا. يرجى التأكد أنه ليس طلبًا مكررًا."
+
+#: woocommerce/checkout/form-checkout.php:124
+msgid "Time until your order is placed"
+msgstr "الوقت المتبقي لتأكيد طلبك"
+
+#: woocommerce/checkout/form-checkout.php:132
+msgid "Deliver to"
+msgstr "التوصيل إلى"
+
+#: woocommerce/checkout/form-checkout.php:151
+msgid "Before you confirm"
+msgstr "قبل التأكيد"
+
+#: woocommerce/checkout/form-checkout.php:153
+msgid "Once you confirm, your order goes straight to our team — you won’t be able to change the items, address or phone number online."
+msgstr "بمجرد التأكيد، يصل طلبك مباشرة إلى فريقنا — ولن تتمكن من تغيير المنتجات أو العنوان أو رقم الهاتف أونلاين."
+
+#: woocommerce/checkout/form-checkout.php:154
+msgid "Need a change after ordering? Call customer service right away."
+msgstr "تحتاج تعديلًا بعد الطلب؟ اتصل بخدمة العملاء فورًا."
+
+#: woocommerce/checkout/form-checkout.php:155
+msgid "Please don’t place the same order twice — each order is shipped and charged separately."
+msgstr "يرجى عدم تكرار نفس الطلب — كل طلب يُشحن ويُحاسب بشكل منفصل."
+
+#: woocommerce/checkout/form-checkout.php:160
+msgid "Edit my order"
+msgstr "تعديل طلبي"
+
+#: woocommerce/checkout/form-checkout.php:161 woocommerce/checkout/form-checkout.php:161
+msgid "Yes, place my order"
+msgstr "نعم، أكّد طلبي"
+
+#: woocommerce/checkout/form-checkout.php:161
+msgid "Yes, place another order"
+msgstr "نعم، أكّد طلبًا آخر"
+
+#: woocommerce/checkout/thankyou.php:39
+msgid "Payment failed"
+msgstr "فشل الدفع"
+
+#: woocommerce/checkout/thankyou.php:42
+msgid "Unfortunately your order cannot be processed as the originating bank/merchant has declined your transaction. Please attempt your purchase again."
+msgstr "للأسف لا يمكن تنفيذ طلبك لأن البنك أو التاجر رفض المعاملة. يرجى محاولة الشراء مرة أخرى."
+
+#: woocommerce/checkout/thankyou.php:47
+msgid "Pay"
+msgstr "ادفع"
+
+#: woocommerce/checkout/thankyou.php:58
+msgid "Order confirmed!"
+msgstr "تم تأكيد الطلب!"
+
+#: woocommerce/checkout/thankyou.php:65
+msgid "Thank you — your order has been received and is now being processed."
+msgstr "شكرًا لك — تم استلام طلبك وجارٍ تجهيزه."
+
+#: woocommerce/checkout/thankyou.php:75
+msgid "Order number:"
+msgstr "رقم الطلب:"
+
+#: woocommerce/checkout/thankyou.php:80
+msgid "Date:"
+msgstr "التاريخ:"
+
+#: woocommerce/checkout/thankyou.php:86
+msgid "Email:"
+msgstr "البريد الإلكتروني:"
+
+#: woocommerce/checkout/thankyou.php:92
+msgid "Total:"
+msgstr "الإجمالي:"
+
+#: woocommerce/checkout/thankyou.php:98
+msgid "Payment method:"
+msgstr "طريقة الدفع:"
+
+#: woocommerce/checkout/thankyou.php:108
+msgid "Cancel order"
+msgstr "إلغاء الطلب"
+
+#: woocommerce/checkout/thankyou.php:110
+msgid "Made a mistake? We’ll connect you with customer service."
+msgstr "حدث خطأ؟ سنوصلك بخدمة العملاء."
+
+#: woocommerce/checkout/thankyou.php:116
+msgid "Close"
+msgstr "إغلاق"
+
+#: woocommerce/checkout/thankyou.php:121
+msgid "Need to cancel order #%s?"
+msgstr "تريد إلغاء الطلب #%s؟"
+
+#: woocommerce/checkout/thankyou.php:126
+msgid "Cancellations are handled by our customer service team so nothing gets missed. Call us and mention your order number — we’ll take care of it right away."
+msgstr "يتولى فريق خدمة العملاء عمليات الإلغاء حتى لا يفوتنا شيء. اتصل بنا واذكر رقم طلبك — وسنتولى الأمر فورًا."
+
+#: woocommerce/checkout/thankyou.php:136
+msgid "Call now"
+msgstr "اتصل الآن"
+
+#: woocommerce/checkout/thankyou.php:140
+msgid "Copy number"
+msgstr "نسخ الرقم"
+
+#: woocommerce/checkout/thankyou.php:147
+msgid "Keep your order number handy: #%s"
+msgstr "احتفظ برقم طلبك: #%s"
+
+#: woocommerce/checkout/form-shipping.php:20
+msgid "Ship to a different address?"
+msgstr "الشحن إلى عنوان مختلف؟"
+
+#: woocommerce/cart/cart.php:32
+msgid "Qty"
+msgstr "الكمية"
+
+#: woocommerce/cart/cart.php:33 woocommerce/cart/cart.php:127
+msgid "Price"
+msgstr "السعر"
+
+#: woocommerce/cart/cart.php:34
+msgid "Remove item"
+msgstr "حذف المنتج"
+
+#: woocommerce/cart/cart.php:89
+msgid "Available on backorder"
+msgstr "متاح للطلب المسبق"
+
+#: woocommerce/cart/cart.php:96
+msgid "Quantity"
+msgstr "الكمية"
+
+#: woocommerce/cart/cart.php:120 woocommerce/cart/mini-cart.php:82 inc/woocommerce-hooks.php:1078 inc/woocommerce-hooks.php:1938
+msgid "Decrease quantity"
+msgstr "تقليل الكمية"
+
+#: woocommerce/cart/cart.php:122 woocommerce/cart/mini-cart.php:87 inc/woocommerce-hooks.php:1080 inc/woocommerce-hooks.php:1946
+msgid "Increase quantity"
+msgstr "زيادة الكمية"
+
+#: woocommerce/cart/cart.php:140
+msgid "Remove %s from cart"
+msgstr "حذف %s من السلة"
+
+#: woocommerce/cart/cart.php:157 woocommerce/cart/cart.php:157
+msgid "Update cart"
+msgstr "تحديث السلة"
+
+#: woocommerce/cart/cart-totals.php:99 woocommerce/cart/cart-totals.php:99
+msgid "Coupon code"
+msgstr "كود الخصم"
+
+#: woocommerce/cart/cart-totals.php:100
+msgid "Apply coupon"
+msgstr "تطبيق كود الخصم"
+
+#: woocommerce/cart/cart-totals.php:100
+msgid "Apply"
+msgstr "تطبيق"
+
+#: woocommerce/cart/cart-totals.php:119
+msgid "Cash on delivery available at checkout"
+msgstr "الدفع عند الاستلام متاح عند إتمام الطلب"
+
+#: woocommerce/cart/cart-totals.php:127 inc/woocommerce-hooks.php:123
+msgid "Continue shopping"
+msgstr "متابعة التسوق"
+
+#: woocommerce/cart/cart-totals.php:30
+msgid "Subtotal (%d item)"
+msgid_plural "Subtotal (%d items)"
+msgstr[0] "المجموع الفرعي (%d منتج)"
+msgstr[1] "المجموع الفرعي (%d منتج)"
+msgstr[2] "المجموع الفرعي (%d منتج)"
+msgstr[3] "المجموع الفرعي (%d منتجات)"
+msgstr[4] "المجموع الفرعي (%d منتجًا)"
+msgstr[5] "المجموع الفرعي (%d منتج)"
+
+#: woocommerce/cart/mini-cart.php:76
+msgid "each"
+msgstr "للقطعة"
+
+#: woocommerce/cart/mini-cart.php:82 inc/woocommerce-hooks.php:1938
+msgid "Remove from cart"
+msgstr "حذف من السلة"
+
+#: woocommerce/cart/mini-cart.php:101 inc/woocommerce-hooks.php:121
+msgid "Your cart is empty"
+msgstr "سلتك فارغة"
+
+#: woocommerce/cart/mini-cart.php:102
+msgid "Add a few things you like and they’ll show up here."
+msgstr "أضف بعض المنتجات التي تعجبك وستظهر هنا."
+
+#: woocommerce/cart/mini-cart.php:103
+msgid "Start shopping"
+msgstr "ابدأ التسوق"
+
+#: woocommerce/cart/mini-cart.php:110
+msgid "Popular picks"
+msgstr "اختيارات شائعة"
+
+#: woocommerce/cart/mini-cart.php:121
+msgid "Save %d%%"
+msgstr "وفّر %d%%"
+
+#: woocommerce/cart/mini-cart.php:123 inc/woocommerce-hooks.php:1929
+msgid "Add %s to cart"
+msgstr "أضف %s إلى السلة"
+
+#: woocommerce/cart/mini-cart.php:143
+msgid "View cart"
+msgstr "عرض السلة"
+
+#: woocommerce/cart/proceed-to-checkout-button.php:14
+msgid "Proceed to checkout"
+msgstr "إتمام الطلب"
+
+#: woocommerce/single-product/related.php:17 inc/woocommerce-hooks.php:838
+msgid "You may also like"
+msgstr "قد يعجبك أيضًا"
+
+#: inc/theme-setup.php:32
+msgid "Primary Navigation (top links after Categories/Brands)"
+msgstr ""
+
+#: inc/theme-setup.php:33
+msgid "Footer — Service links"
+msgstr ""
+
+#: inc/theme-setup.php:43
+msgid "Shop Sidebar"
+msgstr ""
+
+#: inc/theme-setup.php:45
+msgid "Shown beside the product grid on the Shop page and category/tag archives — add WooCommerce's \"Filter by Price/Rating/Attribute\" widgets here. Empty by default: nothing changes until you add a widget."
+msgstr ""
+
+#: inc/theme-setup.php:90
+msgid "Copied"
+msgstr "تم النسخ"
+
+#: inc/theme-setup.php:91
+msgid "item"
+msgstr "منتج"
+
+#: inc/theme-setup.php:92
+msgid "items"
+msgstr "منتجات"
+
+#: inc/theme-setup.php:160
+msgid "Homepage Hero"
+msgstr ""
+
+#: inc/theme-setup.php:161
+msgid "Image, text and button link for each of the four homepage banners. A dark overlay is applied automatically so the text stays readable. Empty image: falls back to the Media Library file named big-block / top-right / bottom-left / bottom-right. Empty text box: that line is hidden. Empty link: the automatic link is used."
+msgstr ""
+
+#: inc/theme-setup.php:167
+msgid "Small label above the headline"
+msgstr ""
+
+#: inc/theme-setup.php:168
+msgid "Headline"
+msgstr ""
+
+#: inc/theme-setup.php:169
+msgid "Description"
+msgstr ""
+
+#: inc/theme-setup.php:170
+msgid "Button text"
+msgstr ""
+
+#: inc/theme-setup.php:187
+msgid "%s — image"
+msgstr ""
+
+#: inc/theme-setup.php:208
+msgid "%1$s — %2$s"
+msgstr ""
+
+#: inc/theme-setup.php:209
+msgid "Clear the box to hide this text."
+msgstr ""
+
+#: inc/theme-setup.php:228
+msgid "%s — button link"
+msgstr ""
+
+#: inc/theme-setup.php:230
+msgid "Leave empty to use the automatic link: %s"
+msgstr ""
+
+#: inc/theme-setup.php:243
+msgid "Shop Page Banner"
+msgstr ""
+
+#: inc/theme-setup.php:244
+msgid "Shoppable banner shown on the Shop page and every category/tag page: a tall banner beside the filters on desktop, a wide strip above the products on phones. Up to 3 slides rotate automatically; a slide with no images is skipped. If a slide has only one of its two images, that image is used (cropped) for both."
+msgstr ""
+
+#: inc/theme-setup.php:265 inc/theme-setup.php:324
+msgid "Slide %d — desktop banner (tall)"
+msgstr ""
+
+#: inc/theme-setup.php:267 inc/theme-setup.php:326
+msgid "Slide %d — phone banner (wide)"
+msgstr ""
+
+#: inc/theme-setup.php:269 inc/theme-setup.php:328
+msgid "Portrait, 3:4 — e.g. 900 × 1200 px."
+msgstr ""
+
+#: inc/theme-setup.php:270 inc/theme-setup.php:329
+msgid "Wide strip, 21:6 — e.g. 1400 × 400 px."
+msgstr ""
+
+#: inc/theme-setup.php:289 inc/theme-setup.php:348
+msgid "Slide %d — link (optional)"
+msgstr ""
+
+#: inc/theme-setup.php:290 inc/theme-setup.php:349
+msgid "Where this slide takes shoppers. Defaults to the Offers collection if left blank."
+msgstr ""
+
+#: inc/theme-setup.php:302
+msgid "Product Page Banner"
+msgstr ""
+
+#: inc/theme-setup.php:303
+msgid "Shoppable banner shown on every product page: a wide strip below the product on phones/tablets, a tall sticky banner beside it on desktop. Up to 3 slides rotate automatically; a slide with no images is skipped. If a slide has only one of its two images, that image is used (cropped) for both."
+msgstr ""
+
+#: inc/theme-setup.php:361
+msgid "Delivery Cutoff Pill"
+msgstr ""
+
+#: inc/theme-setup.php:362
+msgid "A small pill that drops in from the top of the screen with a live countdown to your same-day order cutoff. Uses the site timezone (Settings → General). It disappears automatically once the cutoff has passed."
+msgstr ""
+
+#: inc/theme-setup.php:368
+msgid "Show the delivery cutoff pill"
+msgstr ""
+
+#: inc/theme-setup.php:374
+msgid "Daily cutoff time (24h, HH:MM)"
+msgstr ""
+
+#: inc/theme-setup.php:375
+msgid "Orders placed before this time get the next-day promise. Example: 15:00."
+msgstr ""
+
+#: inc/theme-setup.php:379 inc/template-tags.php:1702
+msgid "Get it by tomorrow if you order in {time}"
+msgstr "يصلك غدًا إذا طلبت خلال {time}"
+
+#: inc/theme-setup.php:381
+msgid "Pill text"
+msgstr ""
+
+#: inc/theme-setup.php:382
+msgid "Use {time} where the live countdown should appear."
+msgstr ""
+
+#: inc/dev-tools.php:188
+msgid "No products found to attach reviews to."
+msgstr ""
+
+#: inc/dev-tools.php:276 inc/dev-tools.php:277 inc/dev-tools.php:358
+msgid "Seed Reviews"
+msgstr ""
+
+#: inc/dev-tools.php:307
+msgid "Inserted %1$d seeded reviews across %2$d products. They are live on the site now, same as any real review."
+msgstr ""
+
+#: inc/dev-tools.php:318
+msgid "Removed %1$d seeded reviews from %2$d products."
+msgstr ""
+
+#: inc/dev-tools.php:343
+msgid "Recalculated review counts and star breakdown for %d products."
+msgstr ""
+
+#: inc/dev-tools.php:360
+msgid "Generates placeholder product reviews so you can see how the review UI looks on the live site before the real review import. These are normal, fully-approved reviews — remove them with the button below right before importing the real ones."
+msgstr ""
+
+#: inc/dev-tools.php:364
+msgid "Currently seeded: %d review(s)."
+msgstr ""
+
+#: inc/dev-tools.php:370
+msgid "Add seeded reviews"
+msgstr ""
+
+#: inc/dev-tools.php:376
+msgid "How many"
+msgstr ""
+
+#: inc/dev-tools.php:378
+msgid "Up to 300 per click — click Generate again to add more."
+msgstr ""
+
+#: inc/dev-tools.php:381
+msgid "Lowest star rating"
+msgstr ""
+
+#: inc/dev-tools.php:384
+msgid "1 — full realistic spread"
+msgstr ""
+
+#: inc/dev-tools.php:385
+msgid "3 — only 3★ and up"
+msgstr ""
+
+#: inc/dev-tools.php:386
+msgid "4 — only 4★ and up"
+msgstr ""
+
+#: inc/dev-tools.php:391
+msgid "Generate seeded reviews"
+msgstr ""
+
+#: inc/dev-tools.php:394
+msgid "Fix review counts on already-seeded products"
+msgstr ""
+
+#: inc/dev-tools.php:395
+msgid "If reviews you generated before this fix are showing \"Based on 0 reviews\" or 0% star bars, click this to recalculate without touching the reviews themselves."
+msgstr ""
+
+#: inc/dev-tools.php:399
+msgid "Recalculate review counts now"
+msgstr ""
+
+#: inc/dev-tools.php:402
+msgid "Remove all seeded reviews"
+msgstr ""
+
+#: inc/dev-tools.php:403
+msgid "Deletes only the reviews this tool created — real/imported reviews are never touched. Run this right before the real review import."
+msgstr ""
+
+#: inc/dev-tools.php:407
+msgid "Remove seeded reviews"
+msgstr ""
+
+#: inc/custom-taxonomies.php:15 inc/woocommerce-hooks.php:255
+msgid "Brand"
+msgstr ""
+
+#: inc/custom-taxonomies.php:17
+msgid "Add New Brand"
+msgstr ""
+
+#: inc/custom-taxonomies.php:18
+msgid "Search Brands"
+msgstr ""
+
+#: inc/custom-taxonomies.php:38 inc/custom-taxonomies.php:73
+msgid "Accent color"
+msgstr ""
+
+#: inc/custom-taxonomies.php:40
+msgid "Hex color used for brand hover accents and badges."
+msgstr ""
+
+#: inc/custom-taxonomies.php:43 inc/custom-taxonomies.php:77
+msgid "Brand type"
+msgstr ""
+
+#: inc/custom-taxonomies.php:45 inc/custom-taxonomies.php:80
+msgid "Distributed (sole distributor in Egypt)"
+msgstr ""
+
+#: inc/custom-taxonomies.php:46 inc/custom-taxonomies.php:81
+msgid "House brand (exMart exclusive)"
+msgstr ""
+
+#: inc/custom-taxonomies.php:50 inc/custom-taxonomies.php:86
+msgid "Tagline"
+msgstr ""
+
+#: inc/custom-taxonomies.php:54
+msgid "Logo (Media Library attachment ID)"
+msgstr ""
+
+#: inc/custom-taxonomies.php:56
+msgid "Optional. Used in the homepage “Our Brands” strip. Leave empty to auto-match from Media Library by brand name."
+msgstr ""
+
+#: inc/custom-taxonomies.php:90
+msgid "Logo attachment ID"
+msgstr ""
+
+#: inc/custom-taxonomies.php:96
+msgid "Media Library attachment ID for the brand logo. Leave empty to auto-match by brand name/filename."
+msgstr ""
+
+#: inc/woocommerce-hooks.php:122
+msgid "Add products from the shop and they will appear here."
+msgstr "أضف منتجات من المتجر وستظهر هنا."
+
+#: inc/woocommerce-hooks.php:270
+msgid "Category"
+msgstr "القسم"
+
+#: inc/woocommerce-hooks.php:284
+msgid "Availability"
+msgstr "التوفر"
+
+#: inc/woocommerce-hooks.php:288 inc/woocommerce-hooks.php:384
+msgid "In stock only"
+msgstr "المتوفر فقط"
+
+#: inc/woocommerce-hooks.php:292
+msgid "Apply filters"
+msgstr "تطبيق الفلاتر"
+
+#: inc/woocommerce-hooks.php:392
+msgid "Clear all"
+msgstr "مسح الكل"
+
+#: inc/woocommerce-hooks.php:855 inc/woocommerce-hooks.php:889
+msgid "How to Use"
+msgstr "طريقة الاستخدام"
+
+#: inc/woocommerce-hooks.php:856
+msgid "Shown in its own product tab on the front end."
+msgstr ""
+
+#: inc/woocommerce-hooks.php:883
+msgid "Specifications"
+msgstr "المواصفات"
+
+#: inc/woocommerce-hooks.php:900
+msgid "Accuracy"
+msgstr "الدقة"
+
+#: inc/woocommerce-hooks.php:904
+msgid "This device provides readings for informational purposes only. It is not intended to diagnose, treat, cure, or prevent any disease or health condition."
+msgstr "يقدم هذا الجهاز قراءات لأغراض المعلومات فقط، ولا يُقصد به تشخيص أي مرض أو حالة صحية أو علاجها أو الشفاء منها أو الوقاية منها."
+
+#: inc/woocommerce-hooks.php:905
+msgid "Always consult a qualified healthcare professional for clinical decisions. Readings may vary based on usage technique. Refer to the included manual for accuracy specifications and limitations."
+msgstr "استشر دائمًا أخصائي رعاية صحية مؤهلًا في القرارات الطبية. قد تختلف القراءات حسب طريقة الاستخدام. راجع الدليل المرفق لمعرفة مواصفات الدقة وحدودها."
+
+#: inc/woocommerce-hooks.php:916
+msgid "Standard delivery: 3–5 working days across Egypt."
+msgstr "التوصيل العادي: 3–5 أيام عمل في جميع أنحاء مصر."
+
+#: inc/woocommerce-hooks.php:920
+msgid "Returns and exchanges are reviewed case by case. Email %s or message us through the WhatsApp button on the left side of the screen and we will help you with the next steps."
+msgstr "تتم مراجعة طلبات الإرجاع والاستبدال حسب كل حالة. راسلنا على %s أو عبر زر واتساب على يسار الشاشة وسنساعدك في الخطوات التالية."
+
+#: inc/woocommerce-hooks.php:941
+msgid "Authenticated by exMart — direct from manufacturer"
+msgstr "مضمون من exMart — مباشرة من الشركة المصنّعة"
+
+#: inc/woocommerce-hooks.php:943
+msgid "Friendly support if something isn’t right"
+msgstr "دعم ودود إذا واجهتك أي مشكلة"
+
+#: inc/woocommerce-hooks.php:944
+msgid "Delivery 3–5 working days across Egypt"
+msgstr "التوصيل خلال 3–5 أيام عمل في جميع أنحاء مصر"
+
+#: inc/woocommerce-hooks.php:1023
+msgid "%1$s (%2$d reviews)"
+msgstr "%1$s (%2$d تقييم)"
+
+#: inc/woocommerce-hooks.php:1072 inc/woocommerce-hooks.php:1931
+msgid "Add to cart"
+msgstr "أضف إلى السلة"
+
+#: inc/woocommerce-hooks.php:1072 inc/woocommerce-hooks.php:1133 inc/woocommerce-hooks.php:1895
+msgid "Out of stock"
+msgstr "نفد من المخزون"
+
+#: inc/woocommerce-hooks.php:1077
+msgid "Cart quantity"
+msgstr "الكمية في السلة"
+
+#: inc/woocommerce-hooks.php:1083
+msgid "Buy now"
+msgstr "اشترِ الآن"
+
+#: inc/woocommerce-hooks.php:1139
+msgid "Only %d left in stock"
+msgstr "متبقٍ %d فقط في المخزون"
+
+#: inc/woocommerce-hooks.php:1143
+msgid "In stock — ready to ship"
+msgstr "متوفر — جاهز للشحن"
+
+#: inc/woocommerce-hooks.php:1321
+msgid "Customer Reviews"
+msgstr "تقييمات العملاء"
+
+#: inc/woocommerce-hooks.php:1326
+msgid "/ 5"
+msgstr "/ 5"
+
+#: inc/woocommerce-hooks.php:1357
+msgid "No reviews yet. Be the first to share your experience."
+msgstr "لا توجد تقييمات بعد. كن أول من يشارك تجربته."
+
+#: inc/woocommerce-hooks.php:1386 inc/woocommerce-hooks.php:1387
+msgid "Your rating"
+msgstr "تقييمك"
+
+#: inc/woocommerce-hooks.php:1389
+msgid "%d star"
+msgstr "%d نجمة"
+
+#: inc/woocommerce-hooks.php:1399
+msgid "Your review"
+msgstr "رأيك"
+
+#: inc/woocommerce-hooks.php:1405
+msgid "Name"
+msgstr "الاسم"
+
+#: inc/woocommerce-hooks.php:1430 inc/template-tags.php:380
+msgid "Continue with your Google account"
+msgstr "تابع باستخدام حساب Google"
+
+#: inc/woocommerce-hooks.php:1435 inc/template-tags.php:370
+msgid "Continue with Google"
+msgstr "المتابعة باستخدام Google"
+
+#: inc/woocommerce-hooks.php:1444
+msgid "Write a review"
+msgstr "اكتب تقييمًا"
+
+#: inc/woocommerce-hooks.php:1447
+msgid "Submit review"
+msgstr "إرسال التقييم"
+
+#: inc/woocommerce-hooks.php:1637
+msgid "Please enter your full name."
+msgstr "يرجى إدخال اسمك بالكامل."
+
+#: inc/woocommerce-hooks.php:1640
+msgid "Please enter your phone number."
+msgstr "يرجى إدخال رقم هاتفك."
+
+#: inc/woocommerce-hooks.php:1643
+msgid "Password must be at least 8 characters."
+msgstr "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل."
+
+#: inc/woocommerce-hooks.php:1690
+msgid "Orders"
+msgstr "الطلبات"
+
+#: inc/woocommerce-hooks.php:1691
+msgid "Addresses"
+msgstr "العناوين"
+
+#: inc/woocommerce-hooks.php:1744
+msgid "Your wishlist is empty."
+msgstr "قائمة المفضلة فارغة."
+
+#: inc/woocommerce-hooks.php:1905
+msgid "Select options"
+msgstr "اختر الخيارات"
+
+#: inc/woocommerce-hooks.php:2130
+msgid "No shipping is required for this order."
+msgstr "هذا الطلب لا يحتاج إلى شحن."
+
+#: inc/woocommerce-hooks.php:2135 inc/woocommerce-hooks.php:2143
+msgid "Enter your address to see shipping options."
+msgstr "أدخل عنوانك لعرض خيارات الشحن."
+
+#: inc/woocommerce-hooks.php:2152
+msgid "There are no shipping options available for your address."
+msgstr "لا توجد خيارات شحن متاحة لعنوانك."
+
+#: inc/woocommerce-hooks.php:2175
+msgid "Next working day"
+msgstr "يوم العمل التالي"
+
+#: inc/woocommerce-hooks.php:2177
+msgid "3–5 working days"
+msgstr "3–5 أيام عمل"
+
+#: inc/woocommerce-hooks.php:2250
+msgid "Cash on Delivery"
+msgstr "الدفع عند الاستلام"
+
+#: inc/woocommerce-hooks.php:2251
+msgid "Pay when your order arrives. No additional fee."
+msgstr "ادفع عند وصول طلبك. بدون رسوم إضافية."
+
+#: inc/woocommerce-hooks.php:2257
+msgid "Visa | Mastercard | Meeza | Fawry"
+msgstr "Visa | Mastercard | ميزة | فوري"
+
+#: inc/woocommerce-hooks.php:2258
+msgid "Pay securely with card, Meeza, or at any Fawry point via FawryPay."
+msgstr "ادفع بأمان بالبطاقة أو ميزة أو من أي منفذ فوري عبر FawryPay."
+
+#: inc/woocommerce-hooks.php:1333
+msgid "Based on %d review"
+msgid_plural "Based on %d reviews"
+msgstr[0] "بناءً على %d تقييم"
+msgstr[1] "بناءً على تقييم واحد"
+msgstr[2] "بناءً على تقييمين"
+msgstr[3] "بناءً على %d تقييمات"
+msgstr[4] "بناءً على %d تقييمًا"
+msgstr[5] "بناءً على %d تقييم"
+
+#: inc/image-normalize.php:346 inc/image-normalize.php:346 inc/image-normalize.php:400
+msgid "Normalize Images"
+msgstr ""
+
+#: inc/image-normalize.php:401
+msgid "Makes every product photo (main, gallery and variation images) the same square size with the product centred, and removes plain studio backgrounds. Originals are never deleted — “Restore originals” undoes everything. Photos with busy backgrounds are skipped and listed so you can cut them out by hand."
+msgstr ""
+
+#: inc/image-normalize.php:403
+msgid "Canvas size (px)"
+msgstr ""
+
+#: inc/image-normalize.php:404
+msgid "Margin around product (%)"
+msgstr ""
+
+#: inc/image-normalize.php:404
+msgid "Per side. Raise it for more breathing room."
+msgstr ""
+
+#: inc/image-normalize.php:405
+msgid "Background"
+msgstr ""
+
+#: inc/image-normalize.php:405
+msgid "Remove plain backgrounds (transparent PNG)"
+msgstr ""
+
+#: inc/image-normalize.php:406
+msgid "Background tolerance"
+msgstr ""
+
+#: inc/image-normalize.php:406
+msgid "Higher removes more off-white/greyish background but can eat pale products."
+msgstr ""
+
+#: inc/image-normalize.php:409
+msgid "1. Preview (changes nothing)"
+msgstr ""
+
+#: inc/image-normalize.php:410
+msgid "2. Normalize all"
+msgstr ""
+
+#: inc/image-normalize.php:411
+msgid "Restore originals"
+msgstr ""
+
+#: inc/image-normalize.php:414
+msgid "File"
+msgstr ""
+
+#: inc/image-normalize.php:414
+msgid "Result"
+msgstr ""
+
+#: inc/contact-form.php:55 inc/contact-form.php:61
+msgid "Newsletter Subscribers"
+msgstr ""
+
+#: inc/contact-form.php:72
+msgid "Please enter a valid email address."
+msgstr "يرجى إدخال بريد إلكتروني صحيح."
+
+#: inc/template-tags.php:142 inc/template-tags.php:152
+msgid "−%d%%"
+msgstr ""
+
+#: inc/template-tags.php:144
+msgid "Up to −%d%%"
+msgstr "حتى −%d%%"
+
+#: inc/template-tags.php:204
+msgid "From"
+msgstr "يبدأ من"
+
+#: inc/template-tags.php:369
+msgid "Sign up with Google"
+msgstr "إنشاء حساب باستخدام Google"
+
+#: inc/template-tags.php:372
+msgid "Sign up with Facebook"
+msgstr "إنشاء حساب باستخدام Facebook"
+
+#: inc/template-tags.php:373
+msgid "Continue with Facebook"
+msgstr "المتابعة باستخدام Facebook"
+
+#: inc/template-tags.php:377
+msgid "or"
+msgstr "أو"
+
+#: inc/template-tags.php:380
+msgid "Continue with your Google or Facebook account"
+msgstr "تابع باستخدام حساب Google أو Facebook"
+
+#: inc/template-tags.php:608
+msgid "Cancelled"
+msgstr "ملغي"
+
+#: inc/template-tags.php:609
+msgid "Refunded"
+msgstr "مسترد"
+
+#: inc/template-tags.php:610
+msgid "Failed"
+msgstr "فشل"
+
+#: inc/template-tags.php:1067
+msgid "Show banner %d"
+msgstr "عرض البانر %d"
+
+#: inc/template-tags.php:1135
+msgid "Main banner (first)"
+msgstr ""
+
+#: inc/template-tags.php:1138
+msgid "Authentic health & hygiene — Egypt"
+msgstr "منتجات صحة ونظافة أصلية — مصر"
+
+#: inc/template-tags.php:1139
+msgid "Professional-grade health products, delivered to your door."
+msgstr "منتجات صحية احترافية، تصلك حتى باب بيتك."
+
+#: inc/template-tags.php:1140
+msgid "Official sole distributor of Diversey, Grace, Oview & SureCheck in Egypt. Plus our own exclusive brands — Qualita, Eliv, and Verve."
+msgstr "الموزّع الرسمي والوحيد لـ Diversey وGrace وOview وSureCheck في مصر. بالإضافة إلى علاماتنا الحصرية — Qualita وEliv وVerve."
+
+#: inc/template-tags.php:1141 inc/template-tags.php:1151 inc/template-tags.php:1161 inc/template-tags.php:1171
+msgid "Shop all"
+msgstr "تسوّق الكل"
+
+#: inc/template-tags.php:1145
+msgid "Offers banner"
+msgstr ""
+
+#: inc/template-tags.php:1149
+msgid "Save on your everyday essentials"
+msgstr "وفّر على احتياجاتك اليومية"
+
+#: inc/template-tags.php:1150
+msgid "Real markdowns across the catalog, while stock lasts."
+msgstr "تخفيضات حقيقية على المنتجات، لفترة محدودة حتى نفاد الكمية."
+
+#: inc/template-tags.php:1155
+msgid "New in banner"
+msgstr ""
+
+#: inc/template-tags.php:1158
+msgid "New in"
+msgstr "وصل حديثًا"
+
+#: inc/template-tags.php:1159
+msgid "Freshly added to the catalog"
+msgstr "أحدث المنتجات في المتجر"
+
+#: inc/template-tags.php:1165
+msgid "Best sellers banner"
+msgstr ""
+
+#: inc/template-tags.php:1168
+msgid "Best sellers"
+msgstr "الأكثر مبيعًا"
+
+#: inc/template-tags.php:1169
+msgid "Customer favorites"
+msgstr "المفضّلة لدى عملائنا"
+
+#: inc/template-tags.php:1422 inc/template-tags.php:1442 inc/template-tags.php:1452 inc/template-tags.php:1559
+msgid "exMart banner"
+msgstr "بانر exMart"
+
+#: inc/template-tags.php:1619
+msgid "View all →"
+msgstr "عرض الكل ←"
+
+#: inc/template-tags.php:1623
+msgid "No products to show yet."
+msgstr "لا توجد منتجات لعرضها بعد."
+
+#: inc/template-tags.php:1716
+msgid "Dismiss"
+msgstr "إغلاق"
+
+#: inc/contact-form.php:90
+msgid "You're subscribed — thank you!"
+msgstr "تم اشتراكك — شكرًا لك!"
