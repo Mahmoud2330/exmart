@@ -3169,12 +3169,15 @@ body.em-cart-open { overflow: hidden; }
 #em-cart-drawer .em-mc-qty-btn.is-remove .em-mc-minus { display: none; }
 #em-cart-drawer .em-mc-qty-btn.is-remove .em-mc-bin { display: inline-flex; }
 #em-cart-drawer .em-mc-qty-val { min-width: 24px; text-align: center; font-size: 1rem; font-weight: 600; color: var(--ink-900); font-variant-numeric: tabular-nums; }
+/* Phones: stepper on the price line, at the far end of the row (mirrors in RTL).
+   The price reserves room for the stepper so long prices never run under it. */
 @media (max-width: 400px) {
-	#em-cart-drawer .em-mc-item { grid-template-columns: 80px minmax(0, 1fr); row-gap: var(--s3); }
+	#em-cart-drawer .em-mc-item { grid-template-columns: 80px minmax(0, 1fr); }
 	#em-cart-drawer .em-mc-thumb { width: 80px; height: 80px; }
 	#em-cart-drawer .em-mc-info { min-height: 80px; }
-	#em-cart-drawer .em-mc-qty { grid-column: 2; justify-self: start; height: 44px; }
-	#em-cart-drawer .em-mc-qty-btn { width: 36px; height: 36px; }
+	#em-cart-drawer .em-mc-price { min-height: 40px; justify-content: center; padding-inline-end: 116px; }
+	#em-cart-drawer .em-mc-qty { position: absolute; inset-inline-end: 0; bottom: 0; height: 40px; }
+	#em-cart-drawer .em-mc-qty-btn { width: 34px; height: 34px; }
 }
 
 /* Popular picks */
