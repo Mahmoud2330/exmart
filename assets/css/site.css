@@ -67,7 +67,8 @@
 .em-lang-switch:hover { color: var(--ink-900); background: var(--ink-100); }
 .em-lang-switch:focus-visible { outline: 2px solid var(--accent-600); outline-offset: 2px; }
 @media (max-width: 767px) {
-	.em-lang-switch { min-height: 38px; padding-inline: 6px; font-size: .8125rem; }
+	.em-lang-switch { min-height: 38px; gap: 3px; padding-inline: 4px; font-size: .8125rem; }
+	.em-lang-switch svg { width: 16px; height: 16px; }
 }
 
 .em-desktop-only { display: none; }
@@ -3596,7 +3597,7 @@ html.em-scroll-locked { overflow: hidden; }
 		min-height: 40px; height: 40px; padding-inline-start: 34px; padding-inline-end: var(--s2);
 		border-radius: var(--r-full); text-overflow: ellipsis;
 	}
-	.em-header-search-bar--inline .em-header-search-form svg { left: 11px; width: 16px; height: 16px; }
+	.em-header-search-bar--inline .em-header-search-form svg { inset-inline-start: 11px; width: 16px; height: 16px; }
 	.em-header-right { margin-left: 0; gap: 0; }
 	.em-header-right .em-btn-icon { min-width: 38px; min-height: 38px; }
 }
