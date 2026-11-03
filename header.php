@@ -62,6 +62,7 @@ $checkout_url = function_exists( 'wc_get_checkout_url' ) ? wc_get_checkout_url()
 			</div>
 
 			<div class="em-header-right">
+				<?php exmart_language_switcher( 'header' ); ?>
 				<a href="<?php echo esc_url( $wishlist_url ); ?>" class="em-btn-icon em-icon-badge" aria-label="<?php esc_attr_e( 'Wishlist', 'exmart' ); ?>">
 					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2 9.1371C2 14 6.01943 16.5914 8.96173 18.9109C10 19.7294 11 20.5 12 20.5C13 20.5 14 19.7294 15.0383 18.9109C17.9806 16.5914 22 14 22 9.1371C22 4.27416 16.4998 0.825464 12 5.50063C7.50016 0.825464 2 4.27416 2 9.1371Z"/></svg>
 					<span class="em-icon-dot" id="em-wishlist-dot" hidden></span>
@@ -182,6 +183,12 @@ $checkout_url = function_exists( 'wc_get_checkout_url' ) ? wc_get_checkout_url()
 				<a class="em-mobile-nav-link" href="<?php echo esc_url( home_url( '/about/' ) ); ?>"><?php esc_html_e( 'About', 'exmart' ); ?></a>
 				<a class="em-mobile-nav-link" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>"><?php esc_html_e( 'Contact', 'exmart' ); ?></a>
 			</div>
+			<?php if ( exmart_language_links() ) : ?>
+				<div class="em-mobile-nav-section">
+					<p class="em-overline" style="color:var(--ink-500);margin-bottom:var(--s3)"><?php esc_html_e( 'Language', 'exmart' ); ?></p>
+					<?php exmart_language_switcher( 'drawer' ); ?>
+				</div>
+			<?php endif; ?>
 		</div>
 	</nav>
 

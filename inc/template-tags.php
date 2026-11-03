@@ -400,6 +400,65 @@ function exmart_social_auth_block( $context = 'login' ) {
 }
 
 /**
+ * TranslatePress languages other than the one being viewed, each linking to
+ * the current page in that language. Empty when TranslatePress isn't active.
+ *
+ * @return array<int, array{code:string,label:string,short:string,url:string}>
+ */
+function exmart_language_links() {
+	if ( ! function_exists( 'trp_custom_language_switcher' ) ) {
+		return array();
+	}
+	global $TRP_LANGUAGE;
+	$native = array(
+		'ar' => array( 'العربية', 'عربي' ),
+		'en' => array( 'English', 'EN' ),
+	);
+	$links = array();
+	foreach ( (array) trp_custom_language_switcher() as $item ) {
+		if ( empty( $item['language_code'] ) || empty( $item['current_page_url'] ) || $item['language_code'] === $TRP_LANGUAGE ) {
+			continue;
+		}
+		$base    = strtolower( substr( $item['language_code'], 0, 2 ) );
+		$links[] = array(
+			'code'  => str_replace( '_', '-', $item['language_code'] ),
+			'label' => isset( $native[ $base ] ) ? $native[ $base ][0] : $item['language_name'],
+			'short' => isset( $native[ $base ] ) ? $native[ $base ][1] : strtoupper( $item['short_language_name'] ),
+			'url'   => $item['current_page_url'],
+		);
+	}
+	return $links;
+}
+
+/**
+ * Language switcher link(s). `data-no-translation` keeps TranslatePress from
+ * translating the language names or rewriting the URLs.
+ *
+ * @param string $variant 'header' (icon bar) or 'drawer' (mobile menu).
+ */
+function exmart_language_switcher( $variant = 'header' ) {
+	$links = exmart_language_links();
+	if ( empty( $links ) ) {
+		return;
+	}
+	foreach ( $links as $link ) {
+		if ( 'drawer' === $variant ) {
+			?>
+			<a class="em-mobile-nav-link strong" href="<?php echo esc_url( $link['url'] ); ?>" hreflang="<?php echo esc_attr( $link['code'] ); ?>" lang="<?php echo esc_attr( $link['code'] ); ?>" data-no-translation><?php echo esc_html( $link['label'] ); ?></a>
+			<?php
+			continue;
+		}
+		?>
+		<a class="em-lang-switch" href="<?php echo esc_url( $link['url'] ); ?>" hreflang="<?php echo esc_attr( $link['code'] ); ?>" lang="<?php echo esc_attr( $link['code'] ); ?>" data-no-translation>
+			<svg class="em-desktop-only" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2c2.5 2.7 3.9 6.2 4 10-.1 3.8-1.5 7.3-4 10-2.5-2.7-3.9-6.2-4-10 .1-3.8 1.5-7.3 4-10z"/></g></svg>
+			<span class="em-desktop-only"><?php echo esc_html( $link['label'] ); ?></span>
+			<span class="em-mobile-only"><?php echo esc_html( $link['short'] ); ?></span>
+		</a>
+		<?php
+	}
+}
+
+/**
  * Resolve a Media Library attachment URL by exact filename basename.
  *
  * @param string $filename e.g. Fawry.png
