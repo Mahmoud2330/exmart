@@ -3,7 +3,7 @@ Theme Name: exMart
 Theme URI: https://exmart.eg
 Author: exMart
 Description: Authentic health & hygiene storefront theme for WooCommerce. Ported from the exMart React storefront design system.
-Version: 1.1.84
+Version: 1.1.85
 Requires at least: 6.0
 Tested up to: 6.6
 Requires PHP: 7.4
@@ -329,6 +329,9 @@ input[type="checkbox"]:focus-visible {
 .em-drawer:not([hidden]) { display:flex; animation: emSlideInR .25s ease; }
 .em-drawer-l { right:auto; left:0; width: min(360px,100vw); }
 .em-drawer-l:not([hidden]) { animation: emSlideInL .25s ease; }
+/* Arabic (RTL): the menu drawer comes from the right, next to the menu button. */
+[dir="rtl"] .em-drawer-l { left:auto; right:0; }
+[dir="rtl"] .em-drawer-l:not([hidden]) { animation: emSlideInR .25s ease; }
 @keyframes emSlideInR { from{transform:translateX(100%)} to{transform:translateX(0)} }
 @keyframes emSlideInL { from{transform:translateX(-100%)} to{transform:translateX(0)} }
 .em-drawer-header { display:flex; align-items:center; justify-content:space-between; padding: var(--s4) var(--s5); border-bottom: 1px solid var(--ink-200); flex-shrink:0; }

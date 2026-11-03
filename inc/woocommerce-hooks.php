@@ -1515,6 +1515,20 @@ function exmart_cart_count_fragment( $fragments ) {
 add_filter( 'woocommerce_add_to_cart_fragments', 'exmart_cart_count_fragment' );
 
 /**
+ * One browser cache of cart fragments per language. WooCommerce's default key
+ * is the same on /ar/ and English pages, so the mini-cart HTML saved on one
+ * language was shown on the other (e.g. Arabic "سلتك فارغة" on English pages).
+ *
+ * @param string $key sessionStorage key from WooCommerce.
+ * @return string
+ */
+function exmart_cart_fragment_key_per_language( $key ) {
+	return $key . '_' . sanitize_key( get_locale() );
+}
+add_filter( 'woocommerce_cart_fragment_name', 'exmart_cart_fragment_key_per_language' );
+add_filter( 'woocommerce_cart_hash_key', 'exmart_cart_fragment_key_per_language' );
+
+/**
  * Support ?on_sale=1 on the Shop archive so homepage Offers "View all"
  * (and the header Offers quick link) actually filter sale products.
  *
