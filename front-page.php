@@ -68,28 +68,70 @@ $trust_items = array(
 ?>
 
 <section class="em-hero-bento">
-	<h1 class="screen-reader-text"><?php echo esc_html( get_bloginfo( 'name' ) ); ?></h1>
 	<div class="em-container">
 		<div class="em-hero-carousel">
 		<div class="em-hero-bento-grid">
 
 			<?php
-			/*
-			 * Hero banners: each tile is one big link around the admin-uploaded image. The artwork carries
-			 * all the text, so no label, title, description or button is printed on top. (The Customizer
-			 * title is only used as the link's accessible name for screen readers.)
-			 */
 			$em_hero_config = exmart_hero_tiles_config();
-			foreach ( array( 'main', 'offers', 'new', 'best' ) as $em_tile_key ) :
-				$em_tile_image = exmart_get_promo_image( $em_hero_config[ $em_tile_key ]['image_mod'], $em_hero_config[ $em_tile_key ]['image_hint'] );
-				$em_tile_name  = exmart_hero_tile_text( $em_tile_key, 'title' );
-				if ( '' === $em_tile_name && $em_tile_image && ! empty( $em_tile_image['alt'] ) ) {
-					$em_tile_name = $em_tile_image['alt'];
-				}
+			$em_main_kicker = exmart_hero_tile_text( 'main', 'kicker' );
+			$em_main_title  = exmart_hero_tile_text( 'main', 'title' );
+			$em_main_desc   = exmart_hero_tile_text( 'main', 'desc' );
+			$em_main_cta    = exmart_hero_tile_text( 'main', 'cta' );
+			?>
+			<div class="em-hero-tile em-hero-tile--main">
+				<div class="em-hero-tile-content">
+					<?php if ( '' !== $em_main_kicker ) : ?>
+						<p class="em-overline"><?php echo esc_html( $em_main_kicker ); ?></p>
+					<?php endif; ?>
+					<?php if ( '' !== $em_main_title ) : ?>
+						<h1 class="em-h1"><?php echo esc_html( $em_main_title ); ?></h1>
+					<?php endif; ?>
+					<?php if ( '' !== $em_main_desc ) : ?>
+						<p class="em-body"><?php echo esc_html( $em_main_desc ); ?></p>
+					<?php endif; ?>
+					<?php if ( '' !== $em_main_cta ) : ?>
+						<a href="<?php echo esc_url( exmart_hero_tile_link( 'main' ) ); ?>" class="em-btn em-btn-primary em-hero-tile-cta"><?php echo esc_html( $em_main_cta ); ?></a>
+					<?php endif; ?>
+				</div>
+				<?php $em_main_image = exmart_get_promo_image( $em_hero_config['main']['image_mod'], $em_hero_config['main']['image_hint'] ); ?>
+				<?php if ( $em_main_image ) : ?>
+					<img class="em-hero-tile-img em-hero-tile-img--main" src="<?php echo esc_url( $em_main_image['url'] ); ?>" alt="<?php echo esc_attr( $em_main_image['alt'] ); ?>" decoding="async" />
+				<?php endif; ?>
+			</div>
+
+			<?php
+			$em_promo_tiles = array();
+			foreach ( array( 'offers', 'new', 'best' ) as $em_tile_key ) {
+				$em_promo_tiles[] = array(
+					'modifier' => $em_tile_key,
+					'kicker'   => exmart_hero_tile_text( $em_tile_key, 'kicker' ),
+					'title'    => exmart_hero_tile_text( $em_tile_key, 'title' ),
+					'desc'     => exmart_hero_tile_text( $em_tile_key, 'desc' ),
+					'cta'      => exmart_hero_tile_text( $em_tile_key, 'cta' ),
+					'href'     => exmart_hero_tile_link( $em_tile_key ),
+					'image'    => exmart_get_promo_image( $em_hero_config[ $em_tile_key ]['image_mod'], $em_hero_config[ $em_tile_key ]['image_hint'] ),
+				);
+			}
+			foreach ( $em_promo_tiles as $tile ) :
 				?>
-				<a href="<?php echo esc_url( exmart_hero_tile_link( $em_tile_key ) ); ?>" class="em-hero-tile em-hero-tile--<?php echo esc_attr( $em_tile_key ); ?>"<?php echo '' !== $em_tile_name ? ' aria-label="' . esc_attr( $em_tile_name ) . '"' : ''; ?>>
-					<?php if ( $em_tile_image ) : ?>
-						<img class="em-hero-tile-img<?php echo 'main' === $em_tile_key ? ' em-hero-tile-img--main' : ''; ?>" src="<?php echo esc_url( $em_tile_image['url'] ); ?>" alt="<?php echo esc_attr( $em_tile_image['alt'] ); ?>"<?php echo 'main' === $em_tile_key ? '' : ' loading="lazy"'; ?> decoding="async" />
+				<a href="<?php echo esc_url( $tile['href'] ); ?>" class="em-hero-tile em-hero-tile--<?php echo esc_attr( $tile['modifier'] ); ?>">
+					<div class="em-hero-tile-content">
+						<?php if ( '' !== $tile['kicker'] ) : ?>
+							<span class="em-overline"><?php echo esc_html( $tile['kicker'] ); ?></span>
+						<?php endif; ?>
+						<?php if ( '' !== $tile['title'] ) : ?>
+							<h2 class="em-h3 em-hero-tile-title"><?php echo esc_html( $tile['title'] ); ?></h2>
+						<?php endif; ?>
+						<?php if ( '' !== $tile['desc'] ) : ?>
+							<p class="em-body-s em-hero-tile-desc"><?php echo esc_html( $tile['desc'] ); ?></p>
+						<?php endif; ?>
+						<?php if ( '' !== $tile['cta'] ) : ?>
+							<span class="em-btn em-btn-primary em-hero-tile-cta"><?php echo esc_html( $tile['cta'] ); ?></span>
+						<?php endif; ?>
+					</div>
+					<?php if ( $tile['image'] ) : ?>
+						<img class="em-hero-tile-img" src="<?php echo esc_url( $tile['image']['url'] ); ?>" alt="<?php echo esc_attr( $tile['image']['alt'] ); ?>" loading="lazy" decoding="async" />
 					<?php endif; ?>
 				</a>
 			<?php endforeach; ?>

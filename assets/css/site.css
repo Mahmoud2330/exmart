@@ -3599,11 +3599,3 @@ html.em-scroll-locked { overflow: hidden; }
 	.em-header-right .em-btn-icon { min-width: 38px; min-height: 38px; }
 }
 .em-header-search-form { margin: 0; }
-
-/* Hero tiles are image-only links (the artwork carries the text). */
-.em-hero-tile { cursor: pointer; }
-.em-hero-tile:focus-visible { outline: 3px solid var(--accent-600); outline-offset: 3px; }
-.screen-reader-text {
-	position: absolute !important; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0;
-	overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
-}
