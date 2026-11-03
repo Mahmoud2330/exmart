@@ -1,7 +1,7 @@
 # exMart theme progress
 
 Living tracker for the Figma → WordPress/WooCommerce rebuild.  
-**Branch:** `template` · **Deploy:** push → WP Pusher → hard refresh (bump `EXMART_VERSION` on CSS/JS).
+**Branches:** `dev` = work and testing → **staging** site · `template` = approved releases → **live** store. All changes are pushed to `dev` first; `template` only receives what has been checked on staging (merge `dev` → `template`). **Deploy:** push → WP Pusher → hard refresh (bump `EXMART_VERSION` on CSS/JS).
 
 **Source of truth:** [ExMart Figma](https://www.figma.com/design/nscFxXagTMTOIwpgvRFORo/ExMart) + `~/Downloads/figma exmart`
 
