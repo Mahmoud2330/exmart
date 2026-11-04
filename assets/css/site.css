@@ -3169,6 +3169,14 @@ body.em-cart-open { overflow: hidden; }
 #em-cart-drawer .em-mc-qty-btn.is-remove .em-mc-minus { display: none; }
 #em-cart-drawer .em-mc-qty-btn.is-remove .em-mc-bin { display: inline-flex; }
 #em-cart-drawer .em-mc-qty-val { min-width: 24px; text-align: center; font-size: 1rem; font-weight: 600; color: var(--ink-900); font-variant-numeric: tabular-nums; }
+/* Bundle contents under a bundle's line (cart drawer, cart page, checkout summary). */
+.em-bundle-includes {
+	list-style: none; margin: 2px 0 0; padding: 0;
+	display: flex; flex-direction: column; gap: 2px;
+	font-size: .8125rem; line-height: 1.35; color: var(--ink-500);
+}
+.em-bundle-includes li { margin: 0; padding: 0; }
+
 /* Phones: stepper on the price line, at the far end of the row (mirrors in RTL).
    The price reserves room for the stepper so long prices never run under it. */
 @media (max-width: 400px) {

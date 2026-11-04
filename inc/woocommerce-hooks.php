@@ -1844,6 +1844,9 @@ function exmart_cart_qty_for_product( $product_id ) {
 
 	$qty = 0;
 	foreach ( WC()->cart->get_cart() as $item ) {
+		if ( exmart_bundle_is_child( $item ) ) {
+			continue;
+		}
 		if ( (int) $item['product_id'] === $product_id && empty( $item['variation_id'] ) ) {
 			$qty += (int) $item['quantity'];
 		} elseif ( (int) $item['variation_id'] === $product_id ) {
@@ -1864,7 +1867,7 @@ function exmart_get_cart_qty_map() {
 		return $map;
 	}
 	foreach ( WC()->cart->get_cart() as $item ) {
-		if ( ! empty( $item['variation_id'] ) ) {
+		if ( ! empty( $item['variation_id'] ) || exmart_bundle_is_child( $item ) ) {
 			continue;
 		}
 		$pid = (string) absint( $item['product_id'] );
@@ -1875,6 +1878,192 @@ function exmart_get_cart_qty_map() {
 	}
 	return $map;
 }
+
+/*
+ * WPC Product Bundles in the cart: a bundle is one parent line (which carries
+ * only the bundle discount, e.g. −141) plus one line per bundled product at
+ * full price. The lines must stay together — a parent left on its own makes
+ * the cart total negative, which WooCommerce checks out as 0.00.
+ * Detection mirrors WPCleverWoosb_Helper::is_bundle_parent()/is_bundle_child().
+ */
+
+/**
+ * @param array $item Cart item.
+ * @return bool
+ */
+function exmart_bundle_is_parent( $item ) {
+	return is_array( $item ) && ( ! empty( $item['woosb_ids'] ) || 'parent' === ( $item['woosb_bundle']['role'] ?? '' ) );
+}
+
+/**
+ * @param array $item Cart item.
+ * @return bool
+ */
+function exmart_bundle_is_child( $item ) {
+	return is_array( $item ) && ! exmart_bundle_is_parent( $item )
+		&& ( ! empty( $item['woosb_parent_key'] ) || ! empty( $item['woosb_parent_id'] ) || 'child' === ( $item['woosb_bundle']['role'] ?? '' ) );
+}
+
+/**
+ * @param array $item Cart item.
+ * @return string Empty for legacy items without a bundle ID.
+ */
+function exmart_bundle_id( $item ) {
+	if ( ! empty( $item['woosb_bundle']['bundle_id'] ) ) {
+		return (string) $item['woosb_bundle']['bundle_id'];
+	}
+	if ( ! empty( $item['woosb_group_key'] ) ) {
+		return 'woosb_' . $item['woosb_group_key'];
+	}
+	return '';
+}
+
+/**
+ * Whether a bundled line belongs to the given bundle parent line.
+ *
+ * @param string $parent_key
+ * @param array  $parent
+ * @param string $child_key
+ * @param array  $child
+ * @return bool
+ */
+function exmart_bundle_child_of( $parent_key, $parent, $child_key, $child ) {
+	if ( ! exmart_bundle_is_child( $child ) ) {
+		return false;
+	}
+	$parent_bundle = exmart_bundle_id( $parent );
+	if ( '' !== $parent_bundle && exmart_bundle_id( $child ) === $parent_bundle ) {
+		return true;
+	}
+	if ( ! empty( $child['woosb_parent_key'] ) && ( $child['woosb_parent_key'] === $parent_key || ( $parent['woosb_key'] ?? '' ) === $child['woosb_parent_key'] ) ) {
+		return true;
+	}
+	return ! empty( $parent['woosb_keys'] ) && is_array( $parent['woosb_keys'] ) && in_array( $child_key, $parent['woosb_keys'], true );
+}
+
+/**
+ * Bundled lines of a bundle parent line.
+ *
+ * @param string     $parent_key
+ * @param array      $parent
+ * @param array|null $contents Cart contents (defaults to the current cart).
+ * @return array<string, array>
+ */
+function exmart_bundle_children( $parent_key, $parent, $contents = null ) {
+	if ( null === $contents ) {
+		$contents = exmart_ensure_wc_cart() ? WC()->cart->get_cart() : array();
+	}
+	$children = array();
+	foreach ( $contents as $key => $item ) {
+		if ( $key !== $parent_key && exmart_bundle_child_of( $parent_key, $parent, $key, $item ) ) {
+			$children[ $key ] = $item;
+		}
+	}
+	return $children;
+}
+
+/**
+ * Whether a bundled line still has its bundle parent in the cart.
+ *
+ * @param string     $child_key
+ * @param array      $child
+ * @param array|null $contents
+ * @return bool
+ */
+function exmart_bundle_child_has_parent( $child_key, $child, $contents = null ) {
+	if ( ! exmart_bundle_is_child( $child ) ) {
+		return false;
+	}
+	if ( null === $contents ) {
+		$contents = exmart_ensure_wc_cart() ? WC()->cart->get_cart() : array();
+	}
+	foreach ( $contents as $key => $item ) {
+		if ( exmart_bundle_is_parent( $item ) && exmart_bundle_child_of( $key, $item, $child_key, $child ) ) {
+			return true;
+		}
+	}
+	return false;
+}
+
+/**
+ * How many bundled lines a bundle parent should have: one per product in
+ * `woosb_ids` ("id/key/qty,…" or legacy "id/qty,…") with a quantity above 0.
+ *
+ * @param array $parent
+ * @return int|null Null when it can't be determined.
+ */
+function exmart_bundle_expected_children( $parent ) {
+	if ( empty( $parent['woosb_ids'] ) || ! is_string( $parent['woosb_ids'] ) ) {
+		return ! empty( $parent['woosb_keys'] ) && is_array( $parent['woosb_keys'] ) ? count( $parent['woosb_keys'] ) : null;
+	}
+	$count = 0;
+	foreach ( explode( ',', $parent['woosb_ids'] ) as $entry ) {
+		$parts = explode( '/', trim( $entry ) );
+		$qty   = count( $parts ) >= 2 ? (float) end( $parts ) : 1;
+		if ( absint( $parts[0] ) && $qty > 0 ) {
+			$count++;
+		}
+	}
+	return $count ? $count : null;
+}
+
+/**
+ * "Includes" list under a bundle's cart line: each bundled product with its
+ * quantity per bundle, no price (the bundle line shows the bundle price).
+ *
+ * @param string $parent_key
+ * @param array  $parent
+ */
+function exmart_render_bundle_includes( $parent_key, $parent ) {
+	$children = exmart_bundle_children( $parent_key, $parent );
+	if ( ! $children ) {
+		return;
+	}
+	$bundles = max( 1, (int) $parent['quantity'] );
+	echo '<ul class="em-bundle-includes">';
+	foreach ( $children as $child ) {
+		if ( ! ( $child['data'] instanceof WC_Product ) ) {
+			continue;
+		}
+		$per_bundle = max( 1, (int) round( (int) $child['quantity'] / $bundles ) );
+		printf( '<li>%1$d × %2$s</li>', (int) $per_bundle, esc_html( $child['data']->get_name() ) );
+	}
+	echo '</ul>';
+}
+
+/**
+ * Remove bundles that lost some or all of their bundled products (only
+ * possible in carts broken before v1.1.88, or by another plugin), so they
+ * can't be checked out with the bundle discount applied to nothing.
+ */
+function exmart_remove_broken_bundles( $cart = null ) {
+	if ( ! $cart instanceof WC_Cart ) {
+		$cart = function_exists( 'WC' ) ? WC()->cart : null;
+	}
+	if ( ! $cart instanceof WC_Cart ) {
+		return;
+	}
+	$contents = $cart->cart_contents;
+	foreach ( $contents as $key => $item ) {
+		if ( ! exmart_bundle_is_parent( $item ) ) {
+			continue;
+		}
+		$present  = count( exmart_bundle_children( $key, $item, $contents ) );
+		$expected = exmart_bundle_expected_children( $item );
+		if ( $present > 0 && ( null === $expected || $present >= $expected ) ) {
+			continue;
+		}
+		$name = ( isset( $item['data'] ) && $item['data'] instanceof WC_Product ) ? $item['data']->get_name() : __( 'A bundle', 'exmart' );
+		$cart->remove_cart_item( $key );
+		// Notice functions aren't loaded on REST requests.
+		if ( function_exists( 'wc_add_notice' ) ) {
+			/* translators: %s: bundle name */
+			wc_add_notice( sprintf( __( '%s was removed from your cart because some of its products were missing. Please add the bundle again.', 'exmart' ), $name ), 'error' );
+		}
+	}
+}
+add_action( 'woocommerce_check_cart_items', 'exmart_remove_broken_bundles' );
+add_action( 'woocommerce_cart_loaded_from_session', 'exmart_remove_broken_bundles', 20 );
 
 /**
  * AJAX: cart snapshot for card steppers + mini-cart drawer.
@@ -1997,6 +2186,9 @@ function exmart_ajax_set_cart_qty() {
 	$cart      = WC()->cart;
 	$found_key = null;
 	foreach ( $cart->get_cart() as $key => $item ) {
+		if ( exmart_bundle_is_child( $item ) ) {
+			continue;
+		}
 		if ( (int) $item['product_id'] === $product_id && empty( $item['variation_id'] ) ) {
 			$found_key = $key;
 			break;
@@ -2058,6 +2250,11 @@ function exmart_ajax_set_cart_item_qty() {
 
 	if ( ! $key || ! isset( $items[ $key ] ) ) {
 		wp_send_json_error( array( 'message' => 'Item not found' ), 400 );
+	}
+
+	// Bundled products change only through their bundle's line.
+	if ( exmart_bundle_child_has_parent( $key, $items[ $key ], $items ) ) {
+		wp_send_json_error( array( 'message' => 'Part of a bundle' ), 400 );
 	}
 
 	$product = $items[ $key ]['data'];

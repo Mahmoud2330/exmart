@@ -105,7 +105,8 @@ function exmart_amount_from_price_html( $html ) {
 			$text = str_replace( $decimal, '.', $text );
 		}
 	}
-	if ( 1 !== preg_match_all( '/\d+(?:\.\d+)?/', $text, $m ) ) {
+	$text = str_replace( "\u{2212}", '-', $text );
+	if ( 1 !== preg_match_all( '/-?\d+(?:\.\d+)?/', $text, $m ) ) {
 		return null;
 	}
 	return (float) $m[0][0];

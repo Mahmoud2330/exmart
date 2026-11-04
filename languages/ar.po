@@ -1968,3 +1968,11 @@ msgstr "إغلاق"
 #: inc/contact-form.php:90
 msgid "You're subscribed — thank you!"
 msgstr "تم اشتراكك — شكرًا لك!"
+
+#: inc/woocommerce-hooks.php
+msgid "A bundle"
+msgstr "باقة"
+
+#: inc/woocommerce-hooks.php
+msgid "%s was removed from your cart because some of its products were missing. Please add the bundle again."
+msgstr "تمت إزالة %s من سلتك لأن بعض منتجاتها لم تعد موجودة. يرجى إضافة الباقة مرة أخرى."

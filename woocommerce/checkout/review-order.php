@@ -16,8 +16,14 @@ defined( 'ABSPATH' ) || exit;
 	<?php
 	do_action( 'woocommerce_review_order_before_cart_contents' );
 
-	foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
+	$em_contents = WC()->cart->get_cart();
+	foreach ( $em_contents as $cart_item_key => $cart_item ) {
 		$_product = apply_filters( 'woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key );
+
+		// Bundled products are listed under their bundle, not as their own rows.
+		if ( exmart_bundle_child_has_parent( $cart_item_key, $cart_item, $em_contents ) ) {
+			continue;
+		}
 
 		if ( $_product && $_product->exists() && $cart_item['quantity'] > 0 && apply_filters( 'woocommerce_checkout_cart_item_visible', true, $cart_item, $cart_item_key ) ) {
 			?>
@@ -26,6 +32,7 @@ defined( 'ABSPATH' ) || exit;
 					<?php echo wp_kses_post( apply_filters( 'woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key ) ); ?>
 					<?php echo apply_filters( 'woocommerce_checkout_cart_item_quantity', ' <span class="product-quantity">&times;&nbsp;' . esc_html( $cart_item['quantity'] ) . '</span>', $cart_item, $cart_item_key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					<?php echo wc_get_formatted_cart_item_data( $cart_item ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					<?php if ( exmart_bundle_is_parent( $cart_item ) ) { exmart_render_bundle_includes( $cart_item_key, $cart_item ); } ?>
 				</span>
 				<span class="em-summary-value">
 					<?php echo apply_filters( 'woocommerce_cart_item_subtotal', WC()->cart->get_product_subtotal( $_product, $cart_item['quantity'] ), $cart_item, $cart_item_key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>

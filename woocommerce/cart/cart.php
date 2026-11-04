@@ -38,12 +38,17 @@ do_action( 'woocommerce_before_cart' );
 					<?php do_action( 'woocommerce_before_cart_contents' ); ?>
 
 					<?php
-					foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
+					$em_contents = WC()->cart->get_cart();
+					foreach ( $em_contents as $cart_item_key => $cart_item ) {
 						$_product   = apply_filters( 'woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key );
 						$product_id = apply_filters( 'woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key );
 						$visible    = apply_filters( 'woocommerce_cart_item_visible', true, $cart_item, $cart_item_key );
 
 						if ( ! ( $_product instanceof WC_Product ) || ! $_product->exists() || $cart_item['quantity'] <= 0 || ! $visible ) {
+							continue;
+						}
+						// Bundled products are listed under their bundle, not as their own rows.
+						if ( exmart_bundle_child_has_parent( $cart_item_key, $cart_item, $em_contents ) ) {
 							continue;
 						}
 
@@ -85,6 +90,9 @@ do_action( 'woocommerce_before_cart' );
 											echo '<span class="em-caption em-cart-product-brand">' . esc_html( $brand_name ) . '</span>';
 										}
 										echo wc_get_formatted_cart_item_data( $cart_item ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+										if ( exmart_bundle_is_parent( $cart_item ) ) {
+											exmart_render_bundle_includes( $cart_item_key, $cart_item );
+										}
 										if ( $_product->backorders_require_notification() && $_product->is_on_backorder( $cart_item['quantity'] ) ) {
 											echo wp_kses_post( apply_filters( 'woocommerce_cart_item_backorder_notification', '<p class="backorder_notification">' . esc_html__( 'Available on backorder', 'exmart' ) . '</p>', $product_id ) );
 										}

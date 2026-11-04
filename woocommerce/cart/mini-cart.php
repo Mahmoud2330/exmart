@@ -35,12 +35,17 @@ $em_shop  = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 
 		<?php
 		do_action( 'woocommerce_before_mini_cart_contents' );
 
-		foreach ( $em_cart->get_cart() as $cart_item_key => $cart_item ) {
+		$em_contents = $em_cart->get_cart();
+		foreach ( $em_contents as $cart_item_key => $cart_item ) {
 			$_product   = apply_filters( 'woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key );
 			$product_id = apply_filters( 'woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key );
 			$visible    = apply_filters( 'woocommerce_widget_cart_item_visible', true, $cart_item, $cart_item_key );
 
 			if ( ! ( $_product instanceof WC_Product ) || ! $_product->exists() || $cart_item['quantity'] <= 0 || ! $visible ) {
+				continue;
+			}
+			// Bundled products are listed under their bundle, not as their own lines.
+			if ( exmart_bundle_child_has_parent( $cart_item_key, $cart_item, $em_contents ) ) {
 				continue;
 			}
 
@@ -75,6 +80,7 @@ $em_shop  = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 
 						<span class="em-mc-name"><?php echo wp_kses_post( $product_name ); ?></span>
 					<?php endif; ?>
 					<?php echo wc_get_formatted_cart_item_data( $cart_item ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					<?php if ( exmart_bundle_is_parent( $cart_item ) ) { exmart_render_bundle_includes( $cart_item_key, $cart_item ); } ?>
 					<div class="em-mc-price">
 						<span class="em-mc-line"><?php echo null !== $line_amount ? exmart_price_lockup( $line_amount ) : wp_kses_post( $line_html ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 						<?php if ( $qty > 1 ) : ?>
