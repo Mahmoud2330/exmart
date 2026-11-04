@@ -2032,9 +2032,9 @@ function exmart_render_bundle_includes( $parent_key, $parent ) {
 }
 
 /**
- * Remove bundles that lost some or all of their bundled products (only
- * possible in carts broken before v1.1.88, or by another plugin), so they
- * can't be checked out with the bundle discount applied to nothing.
+ * Silently remove bundles that lost some or all of their bundled products
+ * (only possible in carts broken before v1.1.88, or by another plugin), so
+ * they can't be checked out with the bundle discount applied to nothing.
  */
 function exmart_remove_broken_bundles( $cart = null ) {
 	if ( ! $cart instanceof WC_Cart ) {
@@ -2053,13 +2053,7 @@ function exmart_remove_broken_bundles( $cart = null ) {
 		if ( $present > 0 && ( null === $expected || $present >= $expected ) ) {
 			continue;
 		}
-		$name = ( isset( $item['data'] ) && $item['data'] instanceof WC_Product ) ? $item['data']->get_name() : __( 'A bundle', 'exmart' );
 		$cart->remove_cart_item( $key );
-		// Notice functions aren't loaded on REST requests.
-		if ( function_exists( 'wc_add_notice' ) ) {
-			/* translators: %s: bundle name */
-			wc_add_notice( sprintf( __( '%s was removed from your cart because some of its products were missing. Please add the bundle again.', 'exmart' ), $name ), 'error' );
-		}
 	}
 }
 add_action( 'woocommerce_check_cart_items', 'exmart_remove_broken_bundles' );
