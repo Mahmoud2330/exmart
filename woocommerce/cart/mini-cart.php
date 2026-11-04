@@ -47,8 +47,13 @@ $em_shop  = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 
 			$qty               = (int) $cart_item['quantity'];
 			$product_name      = apply_filters( 'woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key );
 			$thumbnail         = apply_filters( 'woocommerce_cart_item_thumbnail', $_product->get_image( 'medium' ), $cart_item, $cart_item_key );
-			$unit_amount       = (float) wc_get_price_to_display( $_product );
-			$line_amount       = (float) wc_get_price_to_display( $_product, array( 'qty' => $qty ) );
+			/* Same filters as WooCommerce's cart/checkout, so plugins that store a
+			   line's price elsewhere (e.g. WPC bundles keep only the discount on
+			   the bundle line) still show the right amount. */
+			$unit_html         = apply_filters( 'woocommerce_cart_item_price', $em_cart->get_product_price( $_product ), $cart_item, $cart_item_key );
+			$line_html         = apply_filters( 'woocommerce_cart_item_subtotal', $em_cart->get_product_subtotal( $_product, $qty ), $cart_item, $cart_item_key );
+			$unit_amount       = exmart_amount_from_price_html( $unit_html );
+			$line_amount       = exmart_amount_from_price_html( $line_html );
 			$product_permalink = apply_filters( 'woocommerce_cart_item_permalink', $_product->is_visible() ? $_product->get_permalink( $cart_item ) : '', $cart_item, $cart_item_key );
 
 			$max = $_product->is_sold_individually() ? 1 : (int) $_product->get_max_purchase_quantity();
@@ -71,9 +76,9 @@ $em_shop  = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 
 					<?php endif; ?>
 					<?php echo wc_get_formatted_cart_item_data( $cart_item ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					<div class="em-mc-price">
-						<span class="em-mc-line"><?php echo exmart_price_lockup( $line_amount ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+						<span class="em-mc-line"><?php echo null !== $line_amount ? exmart_price_lockup( $line_amount ) : wp_kses_post( $line_html ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 						<?php if ( $qty > 1 ) : ?>
-							<span class="em-mc-each"><?php echo exmart_price_lockup( $unit_amount ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> <?php esc_html_e( 'each', 'exmart' ); ?></span>
+							<span class="em-mc-each"><?php echo null !== $unit_amount ? exmart_price_lockup( $unit_amount ) : wp_kses_post( $unit_html ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> <?php esc_html_e( 'each', 'exmart' ); ?></span>
 						<?php endif; ?>
 					</div>
 				</div>

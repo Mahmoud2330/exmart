@@ -87,6 +87,31 @@ function exmart_price_lockup( $amount ) {
 }
 
 /**
+ * The single amount inside a WooCommerce price HTML string (e.g. the filtered
+ * cart line price), or null when it holds zero or several amounts.
+ *
+ * @param string $html
+ * @return float|null
+ */
+function exmart_amount_from_price_html( $html ) {
+	$text = html_entity_decode( wp_strip_all_tags( (string) $html ), ENT_QUOTES, 'UTF-8' );
+	if ( function_exists( 'wc_get_price_thousand_separator' ) ) {
+		$thousand = wc_get_price_thousand_separator();
+		$decimal  = wc_get_price_decimal_separator();
+		if ( '' !== $thousand ) {
+			$text = str_replace( $thousand, '', $text );
+		}
+		if ( '.' !== $decimal ) {
+			$text = str_replace( $decimal, '.', $text );
+		}
+	}
+	if ( 1 !== preg_match_all( '/\d+(?:\.\d+)?/', $text, $m ) ) {
+		return null;
+	}
+	return (float) $m[0][0];
+}
+
+/**
  * Price/discount summary across a variable product's variations, using
  * each variation's own regular and active price (so the cheapest price
  * is compared to *its own* regular price, never another size's).
