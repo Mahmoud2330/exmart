@@ -2032,3 +2032,15 @@ msgstr "تعذّر تحميل العرض ثلاثي الأبعاد."
 #: inc/product-3d-viewer.php
 msgid "View product image"
 msgstr "عرض صورة المنتج"
+
+#: inc/product-3d-viewer.php
+msgid "Product images"
+msgstr "صور المنتج"
+
+#: inc/product-3d-viewer.php
+msgid "Show 3D view"
+msgstr "عرض ثلاثي الأبعاد"
+
+#: inc/product-3d-viewer.php
+msgid "Show image %d"
+msgstr "عرض الصورة %d"

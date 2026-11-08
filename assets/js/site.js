@@ -1031,11 +1031,29 @@
 		} );
 	}
 
-	// ── 3D packaging viewer (inc/product-3d-viewer.php) ────
+	// ── 3D packaging gallery (inc/product-3d-viewer.php) ───
 	function init3dViewers() {
 		document.querySelectorAll( '[data-em-3d]' ).forEach( function ( wrap ) {
 			var viewer = wrap.querySelector( 'model-viewer' );
 			if ( ! viewer ) return;
+			var panes = wrap.querySelectorAll( '[data-em-3d-pane]' );
+			var thumbs = wrap.querySelectorAll( '[data-em-3d-show]' );
+			var controls = wrap.querySelector( '[data-em-3d-controls]' );
+			thumbs.forEach( function ( thumb ) {
+				thumb.addEventListener( 'click', function () {
+					var target = thumb.getAttribute( 'data-em-3d-show' );
+					panes.forEach( function ( pane ) {
+						var on = pane.getAttribute( 'data-em-3d-pane' ) === target;
+						pane.hidden = ! on;
+						pane.classList.toggle( 'is-active', on );
+					} );
+					thumbs.forEach( function ( t ) {
+						t.classList.toggle( 'is-active', t === thumb );
+						t.setAttribute( 'aria-pressed', String( t === thumb ) );
+					} );
+					if ( controls ) controls.hidden = target !== 'model';
+				} );
+			} );
 			var buttons = wrap.querySelectorAll( '[data-em-3d-orbit]' );
 			var reduce = window.matchMedia && window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
 			buttons.forEach( function ( btn ) {
