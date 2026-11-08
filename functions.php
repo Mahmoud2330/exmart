@@ -5,7 +5,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'EXMART_VERSION', '1.1.89' );
+define( 'EXMART_VERSION', '1.1.90' );
 define( 'EXMART_DIR', get_template_directory() );
 define( 'EXMART_URI', get_template_directory_uri() );
 
@@ -18,3 +18,4 @@ require EXMART_DIR . '/inc/theme-activation.php';
 require EXMART_DIR . '/inc/template-tags.php';
 require EXMART_DIR . '/inc/dev-tools.php';
 require EXMART_DIR . '/inc/image-normalize.php';
+require EXMART_DIR . '/inc/product-3d-viewer.php';

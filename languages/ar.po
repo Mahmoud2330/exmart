@@ -1333,7 +1333,7 @@ msgstr ""
 
 #: inc/theme-setup.php:169
 msgid "Description"
-msgstr ""
+msgstr "الوصف"
 
 #: inc/theme-setup.php:170
 msgid "Button text"
@@ -1976,3 +1976,59 @@ msgstr "باقة"
 #: inc/woocommerce-hooks.php
 msgid "%s was removed from your cart because some of its products were missing. Please add the bundle again."
 msgstr "تمت إزالة %s من سلتك لأن بعض منتجاتها لم تعد موجودة. يرجى إضافة الباقة مرة أخرى."
+
+#: inc/product-3d-viewer.php
+msgid "Front"
+msgstr "الأمام"
+
+#: inc/product-3d-viewer.php
+msgid "Back"
+msgstr "الخلف"
+
+#: inc/product-3d-viewer.php
+msgid "Top"
+msgstr "الأعلى"
+
+#: inc/product-3d-viewer.php
+msgid "Bottom"
+msgstr "الأسفل"
+
+#: inc/product-3d-viewer.php
+msgid "Barcode end"
+msgstr "جانب الباركود"
+
+#: inc/product-3d-viewer.php
+msgid "Symbols end"
+msgstr "جانب الرموز"
+
+#: inc/product-3d-viewer.php
+msgid "3D view"
+msgstr "عرض ثلاثي الأبعاد"
+
+#: inc/product-3d-viewer.php
+msgid "Interactive 3D packaging"
+msgstr "العبوة التفاعلية ثلاثية الأبعاد"
+
+#: inc/product-3d-viewer.php
+msgid "Explore the packaging in 3D"
+msgstr "استكشف العبوة بتقنية ثلاثية الأبعاد"
+
+#: inc/product-3d-viewer.php
+msgid "%s packaging. Rotate to inspect the front, back, top, bottom and both ends."
+msgstr "عبوة %s. قم بالتدوير لرؤية الأمام والخلف والأعلى والأسفل والجانبين."
+
+#: inc/product-3d-viewer.php
+msgid "Drag to rotate · Pinch or scroll to zoom"
+msgstr "اسحب للتدوير · قرّب بإصبعين أو بعجلة الفأرة"
+
+#: inc/product-3d-viewer.php
+msgid "View each side"
+msgstr "عرض كل جانب"
+
+#: inc/product-3d-viewer.php
+msgid "The 3D preview could not load."
+msgstr "تعذّر تحميل العرض ثلاثي الأبعاد."
+
+#: inc/product-3d-viewer.php
+msgid "View product image"
+msgstr "عرض صورة المنتج"

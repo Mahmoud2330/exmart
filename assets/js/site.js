@@ -147,6 +147,7 @@
 		initHeaderHeightVar();
 		initPdpVariationPills();
 		initPdpVariationPrice();
+		init3dViewers();
 		initPdpStarPicker();
 		initShopFilters();
 		initShopFiltersDrawer();
@@ -1027,6 +1028,28 @@
 			if ( plus ) { changeQty( plus, 1 ); return; }
 			var add = e.target.closest( '[data-em-mc-add]' );
 			if ( add ) quickAdd( add );
+		} );
+	}
+
+	// ── 3D packaging viewer (inc/product-3d-viewer.php) ────
+	function init3dViewers() {
+		document.querySelectorAll( '[data-em-3d]' ).forEach( function ( wrap ) {
+			var viewer = wrap.querySelector( 'model-viewer' );
+			if ( ! viewer ) return;
+			var buttons = wrap.querySelectorAll( '[data-em-3d-orbit]' );
+			var reduce = window.matchMedia && window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
+			buttons.forEach( function ( btn ) {
+				btn.addEventListener( 'click', function () {
+					// Attribute (not property) so it also works before the element has upgraded.
+					viewer.setAttribute( 'camera-orbit', btn.getAttribute( 'data-em-3d-orbit' ) );
+					buttons.forEach( function ( b ) { b.setAttribute( 'aria-pressed', String( b === btn ) ); } );
+					if ( reduce && typeof viewer.jumpCameraToGoal === 'function' ) viewer.jumpCameraToGoal();
+				} );
+			} );
+			viewer.addEventListener( 'error', function () {
+				var err = wrap.querySelector( '.em-3d-error' );
+				if ( err ) err.hidden = false;
+			} );
 		} );
 	}
 

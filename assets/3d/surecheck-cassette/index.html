@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Surecheck Cassette — 3D view | exMart</title>
+<script type="module" src="https://unpkg.com/@google/model-viewer@4.1.0/dist/model-viewer.min.js"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#fff;color:#302338;font-family:Arial,sans-serif}.product-3d{max-width:960px;margin:auto;padding:20px}model-viewer{display:block;width:100%;height:clamp(300px,65vh,650px);background:#fff;--poster-color:#fff}.hint{text-align:center;color:#75697a;font-size:14px;margin:8px 0 20px}.views{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}button{font:inherit;border:1px solid #e0d7e5;background:white;border-radius:24px;padding:10px 17px;color:#643580;cursor:pointer}button:hover,button[aria-pressed=true]{background:#643580;color:#fff}button:focus-visible{outline:3px solid #bd81d6;outline-offset:3px}.error{display:none;text-align:center;color:#643580}.error a{color:inherit}@media(prefers-reduced-motion:reduce){model-viewer{--interaction-prompt-animation:none}}
+</style>
+</head>
+<body>
+<section class="product-3d" aria-label="Surecheck Cassette interactive packaging">
+<model-viewer id="box" src="./surecheck-cassette.glb" poster="./poster.png" alt="Surecheck Cassette packaging. Rotate to inspect the front, back, top, bottom, and both ends." camera-controls touch-action="pan-y" camera-orbit="28deg 70deg 0.29m" camera-target="0m 0m 0m" min-camera-orbit="auto 0deg 0.15m" max-camera-orbit="auto 180deg 0.6m" field-of-view="35deg" shadow-intensity="0.7" shadow-softness="0.9" environment-image="neutral" exposure="1" interaction-prompt="auto" loading="eager"></model-viewer>
+<p class="hint">Drag to rotate · Pinch or scroll to zoom</p>
+<nav class="views" aria-label="View each side">
+<button data-orbit="0deg 90deg 0.29m" aria-pressed="false">Front</button>
+<button data-orbit="180deg 90deg 0.29m" aria-pressed="false">Back</button>
+<button data-orbit="0deg 0deg 0.29m" aria-pressed="false">Top</button>
+<button data-orbit="0deg 180deg 0.29m" aria-pressed="false">Bottom</button>
+<button data-orbit="-90deg 90deg 0.24m" aria-pressed="false">Barcode end</button>
+<button data-orbit="90deg 90deg 0.24m" aria-pressed="false">Symbols end</button>
+<button data-orbit="28deg 70deg 0.29m" aria-pressed="true">3D view</button>
+</nav>
+<p class="error" role="status">The 3D preview could not load. <a href="./poster.png">View product image</a></p>
+</section>
+<script>
+const box=document.querySelector('#box');
+document.querySelectorAll('[data-orbit]').forEach(button=>button.addEventListener('click',()=>{
+box.cameraOrbit=button.dataset.orbit;
+document.querySelectorAll('[data-orbit]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));
+if(matchMedia('(prefers-reduced-motion: reduce)').matches)box.jumpCameraToGoal();
+}));
+box.addEventListener('error',()=>document.querySelector('.error').style.display='block');
+</script>
+</body></html>
