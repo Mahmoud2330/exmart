@@ -1064,6 +1064,11 @@
 					if ( reduce && typeof viewer.jumpCameraToGoal === 'function' ) viewer.jumpCameraToGoal();
 				} );
 			} );
+			viewer.addEventListener( 'camera-change', function ( e ) {
+				if ( e.detail && e.detail.source === 'user-interaction' ) {
+					buttons.forEach( function ( b ) { b.setAttribute( 'aria-pressed', 'false' ); } );
+				}
+			} );
 			viewer.addEventListener( 'error', function () {
 				var err = wrap.querySelector( '.em-3d-error' );
 				if ( err ) err.hidden = false;

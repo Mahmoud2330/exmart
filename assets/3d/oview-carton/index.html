@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Oview Ovulation Tests | ExMart 3D packaging</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #fff; color: #233c62; font: 16px/1.45 system-ui, sans-serif; }
+  main { display: flex; flex-direction: column; min-height: 100svh; max-width: 960px; margin: auto; padding: 10px 12px 16px; }
+  model-viewer { display: block; width: 100%; flex: 1; min-height: min(64svh, 340px); background: #fff; --poster-color: #fff; }
+  model-viewer:not(:defined) { background: #fff url('./poster.jpg') center / contain no-repeat; }
+  p { margin: 8px 0; text-align: center; }
+  .hint { color: #435571; font-size: 14px; }
+  nav { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px; }
+  [hidden] { display: none !important; }
+  button { border: 1px solid #cbd4e3; border-radius: 22px; padding: 8px 13px; min-height: 42px; background: #fff; color: inherit; font: 600 14px system-ui, sans-serif; cursor: pointer; }
+  button:hover { border-color: #233c62; }
+  button[aria-pressed="true"] { background: #233c62; border-color: #233c62; color: #fff; }
+  button:focus-visible, a:focus-visible { outline: 2px solid #a43770; outline-offset: 2px; }
+  a { color: inherit; }
+</style>
+</head>
+<body>
+<main aria-label="Interactive Oview carton">
+  <model-viewer id="carton" src="./oview-carton.glb" poster="./poster.jpg"
+    alt="Oview box for five ovulation tests. Rotate to see the front, back, top, bottom, and both ends."
+    camera-controls disable-pan touch-action="pan-y" camera-orbit="33deg 73deg 103%"
+    min-camera-orbit="auto 0deg auto" max-camera-orbit="auto 180deg 145%"
+    environment-image="neutral" shadow-intensity="0.55" shadow-softness="0.85"
+    tone-mapping="neutral" interaction-prompt="none" loading="eager"></model-viewer>
+  <p id="status" class="hint" role="status">Loading the 3D carton… <a href="./poster.jpg">View product photo</a></p>
+  <p id="hint" class="hint" hidden>Drag to rotate. Pinch or scroll to zoom.</p>
+  <nav aria-label="Carton views" hidden>
+    <button type="button" data-orbit="33deg 73deg 103%" aria-pressed="true">3D view</button>
+    <button type="button" data-orbit="0deg 90deg 100%" aria-pressed="false">Front</button>
+    <button type="button" data-orbit="180deg 90deg 100%" aria-pressed="false">Back</button>
+    <button type="button" data-orbit="-90deg 90deg 100%" aria-pressed="false">Left</button>
+    <button type="button" data-orbit="90deg 90deg 100%" aria-pressed="false">Right</button>
+    <button type="button" data-orbit="0deg 0deg 100%" aria-pressed="false">Top</button>
+    <button type="button" data-orbit="0deg 180deg 100%" aria-pressed="false">Bottom</button>
+  </nav>
+  <noscript><p><a href="./poster.jpg">View product photo</a></p></noscript>
+</main>
+<script type="module">
+  const carton = document.querySelector('#carton');
+  const status = document.querySelector('#status');
+  const hint = document.querySelector('#hint');
+  const nav = document.querySelector('nav');
+  const views = nav.querySelectorAll('button');
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  const fail = () => {
+    status.firstChild.textContent = 'The 3D view is unavailable. ';
+    status.hidden = false;
+    nav.hidden = hint.hidden = true;
+  };
+  carton.addEventListener('load', () => {
+    status.hidden = true;
+    nav.hidden = hint.hidden = false;
+  }, { once: true });
+  carton.addEventListener('error', fail);
+  carton.addEventListener('camera-change', event => {
+    if (event.detail.source === 'user-interaction') {
+      views.forEach(view => view.setAttribute('aria-pressed', 'false'));
+    }
+  });
+  views.forEach(view => view.addEventListener('click', () => {
+    carton.cameraOrbit = view.dataset.orbit;
+    if (reducedMotion.matches) carton.jumpCameraToGoal();
+    views.forEach(button => button.setAttribute('aria-pressed', String(button === view)));
+  }));
+  import('./model-viewer.min.js').catch(fail);
+</script>
+</body>
+</html>
+

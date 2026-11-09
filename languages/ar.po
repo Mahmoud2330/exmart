@@ -2044,3 +2044,11 @@ msgstr "عرض ثلاثي الأبعاد"
 #: inc/product-3d-viewer.php
 msgid "Show image %d"
 msgstr "عرض الصورة %d"
+
+#: inc/product-3d-viewer.php
+msgid "Left"
+msgstr "اليسار"
+
+#: inc/product-3d-viewer.php
+msgid "Right"
+msgstr "اليمين"

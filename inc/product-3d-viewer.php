@@ -3,32 +3,91 @@
  * Interactive 3D packaging viewer (Google <model-viewer>) as the first item
  * of the product page gallery, for selected products. The product photos
  * follow as thumbnails; product cards elsewhere keep the normal photo.
- * Assets live in assets/3d/<folder>/ (model .glb + poster.png); index.html
- * there is the supplier's standalone viewer, kept for direct testing.
+ * Assets live in assets/3d/<folder>/ (model .glb + poster); index.html there
+ * is the supplier's standalone viewer, kept for direct testing. The viewer
+ * library is self-hosted in assets/vendor/model-viewer/ (4.1.0, BSD-3-Clause,
+ * identical to the unpkg release).
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
- * Products with a 3D viewer: product ID => [ asset folder, GLB file name ].
- * 1110 = "Surecheck Pregnancy Kit" (SKU UN-0001), the SureCheck Cassette box;
- * same ID on staging and live. Simple products only — this gallery replaces
- * WooCommerce's, which variation image switching relies on.
+ * Products with a 3D viewer, keyed by product ID (same IDs on staging and
+ * live). Each entry: asset folder, model and poster file names, extra
+ * <model-viewer> attributes (supplier's camera settings; true = boolean
+ * attribute) and the side-view buttons [ label, camera-orbit, default? ].
+ * Simple products only — this gallery replaces WooCommerce's, which
+ * variation image switching relies on.
  *
- * @return array<int, array{0:string,1:string}>
+ * @return array<int, array>
  */
 function exmart_3d_viewer_products() {
 	return apply_filters(
 		'exmart_3d_viewer_products',
 		array(
-			1110 => array( 'surecheck-cassette', 'surecheck-cassette.glb' ),
+			// "Surecheck Pregnancy Kit" (SKU UN-0001), the SureCheck Cassette box,
+			// 150 × 73 × 20 mm. glTF units are metres; supplier distances 0.29 / 0.24 m
+			// scaled to 0.38 / 0.31 m so the box fits the square gallery.
+			1110 => array(
+				'folder' => 'surecheck-cassette',
+				'model'  => 'surecheck-cassette.glb',
+				'poster' => 'poster.png',
+				'attrs'  => array(
+					'camera-orbit'       => '28deg 70deg 0.38m',
+					'camera-target'      => '0m 0m 0m',
+					'min-camera-orbit'   => 'auto 0deg 0.15m',
+					'max-camera-orbit'   => 'auto 180deg 0.6m',
+					'field-of-view'      => '35deg',
+					'shadow-intensity'   => '0.7',
+					'shadow-softness'    => '0.9',
+					'environment-image'  => 'neutral',
+					'exposure'           => '1',
+					'interaction-prompt' => 'auto',
+				),
+				'views'  => array(
+					array( __( 'Front', 'exmart' ), '0deg 90deg 0.38m' ),
+					array( __( 'Back', 'exmart' ), '180deg 90deg 0.38m' ),
+					array( __( 'Top', 'exmart' ), '0deg 0deg 0.38m' ),
+					array( __( 'Bottom', 'exmart' ), '0deg 180deg 0.38m' ),
+					array( __( 'Barcode end', 'exmart' ), '-90deg 90deg 0.31m' ),
+					array( __( 'Symbols end', 'exmart' ), '90deg 90deg 0.31m' ),
+					array( __( '3D view', 'exmart' ), '28deg 70deg 0.38m', true ),
+				),
+			),
+			// "Oview ovulation kits" (SKU UN-0002), 150 × 73 × 25 mm carton.
+			// Supplier uses relative (%) camera distances, which frame the box automatically.
+			1111 => array(
+				'folder' => 'oview-carton',
+				'model'  => 'oview-carton.glb',
+				'poster' => 'poster.jpg',
+				'attrs'  => array(
+					'camera-orbit'       => '33deg 73deg 103%',
+					'min-camera-orbit'   => 'auto 0deg auto',
+					'max-camera-orbit'   => 'auto 180deg 145%',
+					'disable-pan'        => true,
+					'environment-image'  => 'neutral',
+					'shadow-intensity'   => '0.55',
+					'shadow-softness'    => '0.85',
+					'tone-mapping'       => 'neutral',
+					'interaction-prompt' => 'none',
+				),
+				'views'  => array(
+					array( __( '3D view', 'exmart' ), '33deg 73deg 103%', true ),
+					array( __( 'Front', 'exmart' ), '0deg 90deg 100%' ),
+					array( __( 'Back', 'exmart' ), '180deg 90deg 100%' ),
+					array( __( 'Left', 'exmart' ), '-90deg 90deg 100%' ),
+					array( __( 'Right', 'exmart' ), '90deg 90deg 100%' ),
+					array( __( 'Top', 'exmart' ), '0deg 0deg 100%' ),
+					array( __( 'Bottom', 'exmart' ), '0deg 180deg 100%' ),
+				),
+			),
 		)
 	);
 }
 
 /**
  * @param int $product_id
- * @return array{0:string,1:string}|null
+ * @return array|null
  */
 function exmart_3d_viewer_for( $product_id ) {
 	$map = exmart_3d_viewer_products();
@@ -43,7 +102,7 @@ function exmart_3d_viewer_enqueue() {
 	if ( ! function_exists( 'is_product' ) || ! is_product() || ! exmart_3d_viewer_for( get_queried_object_id() ) ) {
 		return;
 	}
-	wp_enqueue_script_module( 'exmart-model-viewer', 'https://unpkg.com/@google/model-viewer@4.1.0/dist/model-viewer.min.js', array(), null );
+	wp_enqueue_script_module( 'exmart-model-viewer', EXMART_URI . '/assets/vendor/model-viewer/model-viewer.min.js', array(), '4.1.0' );
 }
 add_action( 'wp_enqueue_scripts', 'exmart_3d_viewer_enqueue' );
 
@@ -63,7 +122,6 @@ add_action( 'woocommerce_before_single_product_summary', 'exmart_3d_gallery_swap
 /**
  * Gallery: the 3D model first (with the supplier's camera angles as side-view
  * buttons), then the product photos; thumbnails switch between them.
- * glTF units are metres; the SureCheck box is 150 × 73 × 20 mm.
  */
 function exmart_render_3d_gallery() {
 	global $product;
@@ -74,39 +132,26 @@ function exmart_render_3d_gallery() {
 	if ( ! $viewer ) {
 		return;
 	}
-	$base      = EXMART_URI . '/assets/3d/' . $viewer[0] . '/';
-	$poster    = $base . 'poster.png';
+	$base      = EXMART_URI . '/assets/3d/' . $viewer['folder'] . '/';
+	$poster    = $base . $viewer['poster'];
+	$views     = $viewer['views'];
 	$image_ids = array_values( array_filter( array_unique( array_merge( array( $product->get_image_id() ), $product->get_gallery_image_ids() ) ) ) );
-	$views     = array(
-		array( __( 'Front', 'exmart' ), '0deg 90deg 0.38m' ),
-		array( __( 'Back', 'exmart' ), '180deg 90deg 0.38m' ),
-		array( __( 'Top', 'exmart' ), '0deg 0deg 0.38m' ),
-		array( __( 'Bottom', 'exmart' ), '0deg 180deg 0.38m' ),
-		array( __( 'Barcode end', 'exmart' ), '-90deg 90deg 0.31m' ),
-		array( __( 'Symbols end', 'exmart' ), '90deg 90deg 0.31m' ),
-		array( __( '3D view', 'exmart' ), '28deg 70deg 0.38m', true ),
-	);
 	?>
 	<div class="em-3d-gallery" data-em-3d>
 		<div class="em-3d-stage">
 			<div class="em-3d-pane is-active" data-em-3d-pane="model">
 				<model-viewer
 					class="em-3d-viewer"
-					src="<?php echo esc_url( $base . $viewer[1] ); ?>"
+					src="<?php echo esc_url( $base . $viewer['model'] ); ?>"
 					poster="<?php echo esc_url( $poster ); ?>"
 					alt="<?php echo esc_attr( sprintf( /* translators: %s: product name */ __( '%s packaging. Rotate to inspect the front, back, top, bottom and both ends.', 'exmart' ), $product->get_name() ) ); ?>"
 					camera-controls
 					touch-action="pan-y"
-					camera-orbit="28deg 70deg 0.38m"
-					camera-target="0m 0m 0m"
-					min-camera-orbit="auto 0deg 0.15m"
-					max-camera-orbit="auto 180deg 0.6m"
-					field-of-view="35deg"
-					shadow-intensity="0.7"
-					shadow-softness="0.9"
-					environment-image="neutral"
-					exposure="1"
-					interaction-prompt="auto"
+					<?php
+					foreach ( $viewer['attrs'] as $attr => $value ) {
+						echo true === $value ? esc_attr( $attr ) . ' ' : esc_attr( $attr ) . '="' . esc_attr( $value ) . '" ';
+					}
+					?>
 					loading="eager"
 				></model-viewer>
 			</div>
