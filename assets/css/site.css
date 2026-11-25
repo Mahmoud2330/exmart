@@ -756,17 +756,28 @@
 	display: block;
 	margin: 0 auto;
 }
-.em-pdp-gallery .flex-control-thumbs {
+/* Thumb row: theme wants horizontal scroll; WooCommerce sets overflow:hidden on
+   `.woocommerce div.product div.images .flex-control-thumbs` (higher specificity
+   than `.em-pdp-gallery .flex-control-thumbs`), which clipped thumbs past the
+   gallery width (e.g. Good Sense Spring’s 7th image on phones). Beat WC’s
+   selector; keep the same look (no scrollbar). */
+.em-pdp-gallery .flex-control-thumbs,
+.woocommerce div.product.em-pdp div.images .flex-control-thumbs {
 	display: flex;
 	gap: var(--s2);
 	overflow-x: auto;
+	overflow-y: hidden;
 	-webkit-overflow-scrolling: touch;
+	touch-action: pan-x;
 	scrollbar-width: none;
 	margin: var(--s3) 0 0;
 	padding: 0;
 	list-style: none;
 }
-.em-pdp-gallery .flex-control-thumbs::-webkit-scrollbar { display: none; }
+.em-pdp-gallery .flex-control-thumbs::-webkit-scrollbar,
+.woocommerce div.product.em-pdp div.images .flex-control-thumbs::-webkit-scrollbar {
+	display: none;
+}
 .em-pdp-gallery .flex-control-thumbs li {
 	flex: 0 0 72px;
 	width: 72px;
