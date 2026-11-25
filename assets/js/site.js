@@ -154,6 +154,7 @@
 		initCartPageQty();
 		initCheckoutSteps();
 		initCheckoutConfirm();
+		initCheckoutCoupon();
 		initOrderCancel();
 		initOrderRemember();
 		initCutoffPill();
@@ -1738,6 +1739,125 @@
 	}
 
 	// ── Checkout multi-step (Figma: Contact → Address → Shipping → Payment)
+	// ── Checkout Order Summary coupon ─────────────────────
+	// Mirrors the cart promo field. Cannot use a nested <form> inside checkout,
+	// so Apply posts to WooCommerce's apply_coupon AJAX (same WC()->cart->add_discount
+	// path as cart / core checkout coupon). Coupons live in the cart session and
+	// flow into the order the same way.
+	function initCheckoutCoupon() {
+		if ( ! window.jQuery || typeof wc_checkout_params === 'undefined' ) return;
+		if ( ! document.querySelector( '[data-em-checkout-coupon]' ) ) return;
+
+		var $ = window.jQuery;
+
+		function clearError( wrap ) {
+			var err = wrap.querySelector( '.em-checkout-coupon-error' );
+			if ( err ) err.remove();
+			var input = wrap.querySelector( 'input' );
+			if ( input ) {
+				input.classList.remove( 'has-error' );
+				input.removeAttribute( 'aria-invalid' );
+				input.removeAttribute( 'aria-describedby' );
+			}
+		}
+
+		function showError( wrap, html ) {
+			clearError( wrap );
+			var msg = '';
+			try {
+				msg = $( $.parseHTML( html ) ).text().trim();
+			} catch ( err ) {
+				msg = '';
+			}
+			if ( ! msg ) return;
+			var input = wrap.querySelector( 'input' );
+			if ( input ) {
+				input.classList.add( 'has-error' );
+				input.setAttribute( 'aria-invalid', 'true' );
+				input.setAttribute( 'aria-describedby', 'em-checkout-coupon-error' );
+				input.focus();
+			}
+			var p = document.createElement( 'p' );
+			p.className = 'em-checkout-coupon-error';
+			p.id = 'em-checkout-coupon-error';
+			p.setAttribute( 'role', 'alert' );
+			p.textContent = msg;
+			wrap.appendChild( p );
+		}
+
+		function applyCoupon() {
+			var wrap = document.querySelector( '[data-em-checkout-coupon]' );
+			if ( ! wrap || wrap.classList.contains( 'is-processing' ) ) return;
+
+			var input = wrap.querySelector( 'input' );
+			var code = input ? String( input.value || '' ).replace( /^\s+|\s+$/g, '' ) : '';
+			clearError( wrap );
+
+			var emailEl = document.querySelector( 'form.checkout input[name="billing_email"]' );
+			var data = {
+				security: wc_checkout_params.apply_coupon_nonce,
+				coupon_code: code,
+				billing_email: emailEl ? emailEl.value : ''
+			};
+
+			wrap.classList.add( 'is-processing' );
+
+			$.ajax( {
+				type: 'POST',
+				url: wc_checkout_params.wc_ajax_url.toString().replace( '%%endpoint%%', 'apply_coupon' ),
+				data: data,
+				dataType: 'html',
+				success: function ( response ) {
+					wrap.classList.remove( 'is-processing' );
+					$( '.woocommerce-error, .woocommerce-message, .is-error, .is-success, .checkout-inline-error-message' ).remove();
+
+					var isError = response && ( response.indexOf( 'woocommerce-error' ) !== -1 || response.indexOf( 'is-error' ) !== -1 );
+					if ( isError ) {
+						showError( wrap, response );
+						$( document.body ).trigger( 'errored_coupon_in_checkout', [ data.coupon_code, response ] );
+					} else {
+						if ( input ) input.value = '';
+						if ( response ) {
+							var form = document.querySelector( 'form.checkout' );
+							if ( form ) {
+								$( response ).insertBefore( form );
+							}
+						}
+						$( document.body ).trigger( 'applied_coupon_in_checkout', [ data.coupon_code ] );
+					}
+
+					$( document.body ).trigger( 'update_checkout', { update_shipping_method: false } );
+				},
+				error: function () {
+					wrap.classList.remove( 'is-processing' );
+				}
+			} );
+		}
+
+		document.addEventListener( 'click', function ( e ) {
+			var btn = e.target.closest( '[data-em-apply-coupon]' );
+			if ( ! btn || ! btn.closest( '[data-em-checkout-coupon]' ) ) return;
+			e.preventDefault();
+			applyCoupon();
+		} );
+
+		// Enter in the coupon field must not submit Place order.
+		document.addEventListener( 'keydown', function ( e ) {
+			if ( e.key !== 'Enter' ) return;
+			var input = e.target.closest( '[data-em-checkout-coupon] input' );
+			if ( ! input ) return;
+			e.preventDefault();
+			applyCoupon();
+		} );
+
+		document.addEventListener( 'input', function ( e ) {
+			var input = e.target.closest( '[data-em-checkout-coupon] input' );
+			if ( ! input ) return;
+			var wrap = input.closest( '[data-em-checkout-coupon]' );
+			if ( wrap ) clearError( wrap );
+		} );
+	}
+
 	function initCheckoutSteps() {
 		var form = document.querySelector( 'form.checkout[data-em-checkout-steps]' );
 		if ( ! form ) return;

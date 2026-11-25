@@ -75,10 +75,19 @@ function exmart_scripts() {
 		wp_enqueue_script( 'wc-cart-fragments' );
 	}
 
+	$script_deps = array_filter( array(
+		'jquery',
+		wp_script_is( 'wc-cart-fragments', 'registered' ) ? 'wc-cart-fragments' : null,
+	) );
+	// Checkout coupon Apply uses wc_checkout_params (apply_coupon nonce + AJAX URL).
+	if ( function_exists( 'is_checkout' ) && is_checkout() && ! is_wc_endpoint_url( 'order-received' ) && wp_script_is( 'wc-checkout', 'registered' ) ) {
+		$script_deps[] = 'wc-checkout';
+	}
+
 	wp_enqueue_script(
 		'exmart-main',
 		EXMART_URI . '/assets/js/site.js',
-		array_filter( array( 'jquery', wp_script_is( 'wc-cart-fragments', 'registered' ) ? 'wc-cart-fragments' : null ) ),
+		$script_deps,
 		EXMART_VERSION,
 		true
 	);

@@ -5,7 +5,7 @@
  *
  * @see     https://woocommerce.com/document/template-structure/
  * @package exMart
- * @version 1.0.67
+ * @version 1.1.93
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -93,6 +93,30 @@ $steps = array(
 			<div id="order_review" class="woocommerce-checkout-review-order em-checkout-summary-wrap">
 				<?php do_action( 'woocommerce_checkout_order_review' ); ?>
 			</div>
+
+			<?php
+			/*
+			 * Promo field outside #order_review so update_checkout AJAX does not wipe
+			 * typed text or error messages. Not a <form> (nested inside checkout).
+			 * Apply uses WC apply_coupon AJAX — same cart session as the cart page.
+			 */
+			if ( wc_coupons_enabled() ) :
+				?>
+				<div class="em-cart-coupon em-checkout-coupon" data-em-checkout-coupon>
+					<input
+						type="text"
+						class="em-input input-text"
+						id="em_checkout_coupon_code"
+						value=""
+						placeholder="<?php esc_attr_e( 'Coupon code', 'exmart' ); ?>"
+						aria-label="<?php esc_attr_e( 'Coupon code', 'exmart' ); ?>"
+						autocomplete="off"
+					/>
+					<button type="button" class="em-btn em-btn-secondary" data-em-apply-coupon>
+						<?php esc_html_e( 'Apply', 'exmart' ); ?>
+					</button>
+				</div>
+			<?php endif; ?>
 
 			<?php do_action( 'woocommerce_checkout_after_order_review' ); ?>
 		</aside>

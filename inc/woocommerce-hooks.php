@@ -2422,8 +2422,8 @@ function exmart_checkout_shipping_fragment( $fragments ) {
 add_filter( 'woocommerce_update_order_review_fragments', 'exmart_checkout_shipping_fragment' );
 
 /**
- * Checkout coupon notice is noisy and not in Figma — remove it.
- * Coupons remain available on the cart page.
+ * Default WooCommerce “Have a coupon?” toggle above the form is noisy and not in Figma.
+ * Promo field lives in the sticky Order Summary instead (same WC cart coupon session).
  */
 remove_action( 'woocommerce_before_checkout_form', 'woocommerce_checkout_coupon_form', 10 );
 
